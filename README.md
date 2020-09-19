@@ -6,3 +6,5 @@ Education project at EPITA | Optical Character Recognition
 
 # <a name="team-members"></a>Team Members
 * "Charles SIMON-MEUNIER" <https://draze.fr>
+* "Charles SIMON-MEUNIER" <https://draze.fr>
+* "Charles SIMON-MEUNIER" <https://draze.fr>
