@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <SDL2/SDL.h>
 
 double Sigmoid(double Sum) {
 	return (1.0/(1.0 + exp(-Sum)));
