@@ -7,6 +7,7 @@
 
 SDL_Surface *cutLine(SDL_Surface *img);
 void linesToSurface(SDL_Surface *img);
+SDL_Surface *cutColumn(SDL_Surface *img);
 
 
 # endif

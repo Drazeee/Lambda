@@ -11,6 +11,7 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 #include "Detection/segmentation.h"
+#include "ImageTreatment/filters.h"
 
 double Sigmoid(double Sum) {
 	return (1.0/(1.0 + exp(-Sum)));
@@ -216,12 +217,18 @@ int main1() {
 }
 
 
-int main(int argc, const char * argv[]) {
+int main(void) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
 	img = SDL_LoadBMP("test.bmp");
 	
 	cutLine(img);
+
+	img = SDL_LoadBMP("new_image.bmp");
+	blackAndWhite(img);
+
+	img = SDL_LoadBMP("paragraph.bmp");
+	cutColumn(img);
 
 	SDL_Quit();
 	return 0;

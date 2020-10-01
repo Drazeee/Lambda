@@ -47,11 +47,13 @@ SDL_Surface *cutLine(SDL_Surface *img) {
             }
 
             // Cuts lines
+            /*
             for (int k = 0; k < img -> w; k++)
             {
                 pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                putpixel(img_copy, k, i - 1, pixel);
+                putpixel(img_copy, k, i, pixel);
             }
+            */
             firstCut = 0;
             printf("first cut");
         }
@@ -81,16 +83,17 @@ SDL_Surface *cutLine(SDL_Surface *img) {
                 for (int k = 0; k < img -> w; k++)
                 {
                     pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
-                    putpixel(img_copy, k, i - 1, pixel);
+                    putpixel(img_copy, k, i, pixel);
                 }
             }
             
             // Cuts lines
+            /*
             for (int k = 0; k < img -> w; k++)
             {
                 pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
                 putpixel(img_copy, k, i, pixel);
-            }
+            }*/
             firstCut = 1;
             printf("second cut");
         }
@@ -143,3 +146,82 @@ SDL_Surface *cutLine(SDL_Surface *img) {
         }
     }
 }*/
+
+
+SDL_Surface *cutColumn(SDL_Surface *img) {
+    int fullWhite = 1;
+    int firstCut = 1;
+    int endText = -1; //Gets the first pixel (height wise) with full white width
+    int beginingText = -1; //Gets the first pixel without full white width after several full white 
+    int lastLineHeight = -1; //Stores the number of pixels from the last text line
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    SDL_Surface *img_copy = copy_image(img);
+
+    for (int i = 0; i < img -> w; i++) 
+    {
+        fullWhite = 1;
+        //Returns whether img's width is full of white pixels or not
+        for (int j = 0; j < img -> h; j++)
+        {
+            Uint32 pixel = getpixel(img, i, j);
+            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+            if (r != 255 || g != 255 || b != 255)
+            {
+                fullWhite = 0;
+                break;
+            }
+        }
+
+        if (!fullWhite && firstCut)
+        {   
+            beginingText = i;
+
+            // Begins paragraphs
+            if (endText == -1 || lastLineHeight <= abs(endText - beginingText)){
+                for (int k = 0; k < img -> h; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, beginingText, k, pixel);
+                }   
+            }
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) {
+            endText = i-1;
+            lastLineHeight = 0.03 * img -> w;
+
+            // Ends paragraphs
+            int ii = i;
+            do
+            {
+                for (int j = 0; j < img -> h; j++)
+                {
+                    Uint32 pixel = getpixel(img, ii, j);
+                    SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+                    if (r != 255 || g != 255 || b != 255)
+                    {
+                        fullWhite = 0;
+                        break;
+                    }
+                }
+                ii++;
+            } while (fullWhite);
+            if (ii - endText >= 0.03 * img -> w || ii >= img -> w) {
+                //Draw line
+                for (int k = 0; k < img -> h; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, i, k, pixel);
+                }
+            }
+            firstCut = 1;
+        }
+        
+    }
+    SDL_SaveBMP(img_copy, "new_paragraph.bmp");
+    return img_copy;
+}
