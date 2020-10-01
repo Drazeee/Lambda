@@ -10,6 +10,7 @@
 #include <time.h>
 #include <math.h>
 #include <SDL2/SDL.h>
+#include "Detection/segmentation.h"
 
 double Sigmoid(double Sum) {
 	return (1.0/(1.0 + exp(-Sum)));
@@ -44,7 +45,7 @@ void shuffle(int *array, size_t n)
 }
 
 
-int main(int argc, const char * argv[]) {
+int main1() {
 	
 	/* Init random seed */
 	srand(time(NULL));
@@ -211,5 +212,17 @@ int main(int argc, const char * argv[]) {
 	}
 	printf("]\n");
 	
+	return 0;
+}
+
+
+int main(int argc, const char * argv[]) {
+	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Surface *img;
+	img = SDL_LoadBMP("img.bmp");
+	
+	cutLine(img);
+
+	SDL_Quit();
 	return 0;
 }
