@@ -2,7 +2,7 @@
 # define TOOLS_H_
 
 # include <stdlib.h>
-# include <SDL/SDL.h>
+# include <SDL2/SDL.h>
 # include <err.h>
 
 Uint32 getpixel(SDL_Surface *surface, unsigned x, unsigned y);

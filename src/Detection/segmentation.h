@@ -5,7 +5,8 @@
 # include <SDL2/SDL.h>
 # include "../Tools/tools.h"
 
-SDL_SURFACE* cutLine(SDL_SURFACE* img);
+SDL_Surface *cutLine(SDL_Surface *img);
+void linesToSurface(SDL_Surface *img);
 
 
 # endif

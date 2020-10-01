@@ -59,7 +59,7 @@ SDL_Surface* copy_image(SDL_Surface *img)
 {
   Uint32 pixel;
   SDL_Surface* copy;
-  copy = SDL_CreateRGBSurface(SDL_HWSURFACE,
+  copy = SDL_CreateRGBSurface(0,
                               img -> w,
                               img -> h,
                               img -> format -> BitsPerPixel,0,0,0,0);
