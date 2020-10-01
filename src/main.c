@@ -220,15 +220,15 @@ int main1() {
 int main(void) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
-	img = SDL_LoadBMP("test.bmp");
-	
-	cutLine(img);
 
-	img = SDL_LoadBMP("new_image.bmp");
-	blackAndWhite(img);
+	img = SDL_LoadBMP("test.bmp");
+	img = blackAndWhite(img);
 
 	img = SDL_LoadBMP("paragraph.bmp");
-	cutColumn(img);
+	img = cutColumn(img);
+
+	convertColumns(img);
+	/*img = cutLine(img);*/
 
 	SDL_Quit();
 	return 0;

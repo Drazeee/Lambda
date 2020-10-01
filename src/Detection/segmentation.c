@@ -55,7 +55,6 @@ SDL_Surface *cutLine(SDL_Surface *img) {
             }
             */
             firstCut = 0;
-            printf("first cut");
         }
         
         if(fullWhite && !firstCut) {
@@ -95,11 +94,10 @@ SDL_Surface *cutLine(SDL_Surface *img) {
                 putpixel(img_copy, k, i, pixel);
             }*/
             firstCut = 1;
-            printf("second cut");
         }
         
     }
-    SDL_SaveBMP(img_copy, "new_image.bmp");
+
     return img_copy;
 }
 
@@ -224,4 +222,110 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
     }
     SDL_SaveBMP(img_copy, "new_paragraph.bmp");
     return img_copy;
+}
+
+
+int paragraphsCount = 0;
+
+void removeLines(SDL_Surface *img) {
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int start = -1;
+    int stop = -1;
+    int positions[40];
+    int pos = 0;
+
+    for (int i = 0; i < img -> h; i++)
+    {
+        pixel = getpixel(img, 0, i);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+
+        if (start == -1 && (r != 255 && g == 255 && b != 255)) {
+            start = i;
+        }
+
+        else if (start != -1 && (r != 255 && g == 255 && b != 255)) {
+            stop = i;
+            positions[pos] = start;
+            positions[pos + 1] = stop;
+            pos += 2;
+            start = -1;
+            stop = -1;
+        }
+    }
+    
+    for (int i = 0; i < pos; i+=2) {
+        int height = positions[i + 1] - positions[i] - 1;
+        SDL_Surface *newImage = SDL_CreateRGBSurface(0, img -> w, height, 32,
+        0, 0, 0, 0);
+        for (int x = 0; x < img -> w; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                putpixel(newImage, x, y , getpixel(img,  x, positions[i] + y + 1));
+            }
+            
+        }
+        mkdir("paragraphs", 0777);
+        char path[22];
+        snprintf(path, 22, "paragraphs/%d.bmp", paragraphsCount);
+        paragraphsCount++;
+        printf("%s", path);
+        SDL_SaveBMP(newImage, path);
+        printf("(%d, %d), ", positions[i], positions[i + 1]);
+    }
+}
+
+void convertColumns(SDL_Surface *img)
+{
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int start = -1;
+    int stop = -1;
+    int positions[40];
+    int pos = 0;
+
+    for (int i = 0; i < img -> w; i++)
+    {
+        pixel = getpixel(img, i, 0);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+
+        if (start == -1 && (r != 255 && g == 255 && b != 255)) {
+            start = i;
+        }
+
+        else if (start != -1 && (r != 255 && g == 255 && b != 255)) {
+            stop = i;
+            positions[pos] = start;
+            positions[pos + 1] = stop;
+            pos += 2;
+            start = -1;
+            stop = -1;
+        }
+    }
+    
+
+    for (int i = 0; i < pos; i+=2)
+    {
+        int width = positions[i + 1] - positions[i] - 1;
+        SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
+        0, 0, 0, 0);
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < img -> h; y++)
+            {
+                putpixel(newImage, x, y , getpixel(img, positions[i] + x + 1, y));
+            }
+            
+        }
+
+        newImage = cutLine(newImage);
+
+        removeLines(newImage);
+    }
+    
 }

@@ -26,6 +26,6 @@ SDL_Surface *blackAndWhite(SDL_Surface *img) {
         }
         
     }
-    SDL_SaveBMP(img, "BandW.bmp");
+    
     return img;
 }
