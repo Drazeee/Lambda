@@ -219,7 +219,7 @@ int main1() {
 int main(int argc, const char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
-	img = SDL_LoadBMP("img.bmp");
+	img = SDL_LoadBMP("test.bmp");
 	
 	cutLine(img);
 
