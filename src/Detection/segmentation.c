@@ -26,7 +26,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
         {
             Uint32 pixel = getpixel(img, j, i);
             SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-            if (r != 255 || g != 255 || b != 255)
+            if (r < 250 || g < 250 || b < 250)
             {
                 fullWhite = 0;
                 break;
@@ -69,7 +69,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
                 {
                     Uint32 pixel = getpixel(img, j, ii);
                     SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-                    if (r != 255 || g != 255 || b != 255)
+                    if (r < 250 || g < 250 || b < 250)
                     {
                         fullWhite = 0;
                         break;
@@ -77,7 +77,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
                 }
                 ii++;
             } while (fullWhite);
-            if (ii - endText >= lastLineHeight || ii >= img -> h) {
+            if ((ii - endText >= lastLineHeight && ii - endText > 4) || ii >= img -> h) {
                 //Draw line
                 for (int k = 0; k < img -> w; k++)
                 {
@@ -102,50 +102,6 @@ SDL_Surface *cutLine(SDL_Surface *img) {
 }
 
 
-/*void lineToSurface(SDL_Surface *img) {
-    // Variables
-    Uint32 pixel;
-    Uint8 r;
-    Uint8 g;
-    Uint8 b;
-    int firstCut;
-    int lastCut = 0;
-
-
-    //Code
-    for(int i = 0; i < (img -> h); i++) {
-        // If i is less than the last cut line and the latter has been modified
-        if(i != 0 && i <= lastCut)
-        {
-            continue;
-        }
-
-        // Get first pixel of each line
-        pixel = getpixel(img, 0, j);
-        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-
-        if(r == 255 && b == 0 && g == 0)
-        {
-        firstCut = i + 1;
-
-        for(int j = firstCut + 1; j < (img -> h); j++)
-        {
-            pixel = getpixel(img, 0, j);
-            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-
-            //Detect the second line
-            if(r == 255 && b==0 && g == 0)
-            {
-                lastCut = j;
-                //Isolate into a surface the linecut
-                cuttedSurface(img, firstCut, lastCut, net);
-                break;
-            }
-        }
-    }
-}*/
-
-
 SDL_Surface *cutColumn(SDL_Surface *img) {
     int fullWhite = 1;
     int firstCut = 1;
@@ -166,7 +122,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
         {
             Uint32 pixel = getpixel(img, i, j);
             SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-            if (r != 255 || g != 255 || b != 255)
+            if (r < 250 || g < 250 || b < 250)
             {
                 fullWhite = 0;
                 break;
@@ -200,7 +156,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
                 {
                     Uint32 pixel = getpixel(img, ii, j);
                     SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-                    if (r != 255 || g != 255 || b != 255)
+                    if (r < 250 || g < 250 || b < 250)
                     {
                         fullWhite = 0;
                         break;
@@ -242,11 +198,11 @@ void removeLines(SDL_Surface *img) {
         pixel = getpixel(img, 0, i);
         SDL_GetRGB(pixel, img -> format, &r, &g, &b);
 
-        if (start == -1 && (r != 255 && g == 255 && b != 255)) {
+        if (start == -1 && (r < 250 && g == 255 && b < 250)) {
             start = i;
         }
 
-        else if (start != -1 && (r != 255 && g == 255 && b != 255)) {
+        else if (start != -1 && (r < 250 && g == 255 && b < 250)) {
             stop = i;
             positions[pos] = start;
             positions[pos + 1] = stop;
@@ -272,9 +228,8 @@ void removeLines(SDL_Surface *img) {
         char path[22];
         snprintf(path, 22, "paragraphs/%d.bmp", paragraphsCount);
         paragraphsCount++;
-        printf("%s", path);
+        printf("%s, ", path);
         SDL_SaveBMP(newImage, path);
-        printf("(%d, %d), ", positions[i], positions[i + 1]);
     }
 }
 
@@ -294,11 +249,11 @@ void convertColumns(SDL_Surface *img)
         pixel = getpixel(img, i, 0);
         SDL_GetRGB(pixel, img -> format, &r, &g, &b);
 
-        if (start == -1 && (r != 255 && g == 255 && b != 255)) {
+        if (start == -1 && (r < 250 && g == 255 && b < 250)) {
             start = i;
         }
 
-        else if (start != -1 && (r != 255 && g == 255 && b != 255)) {
+        else if (start != -1 && (r < 250 && g == 255 && b < 250)) {
             stop = i;
             positions[pos] = start;
             positions[pos + 1] = stop;
