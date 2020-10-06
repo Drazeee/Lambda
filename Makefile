@@ -1,10 +1,12 @@
 all: main
 
 main: main.o segmentation.o tools.o detect_char.o filters.o
-	gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays `pkg-config --cflags --libs gtk+-3.0` -lSDL2
+	#gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays `pkg-config --cflags --libs gtk+-3.0` -lSDL2
+	gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays -lSDL2
 
 main.o: src/main.c segmentation.o tools.o detect_char.o filters.o
-	gcc -c src/main.c `pkg-config --cflags --libs gtk+-3.0`
+	#gcc -c src/main.c `pkg-config --cflags --libs gtk+-3.0`
+	gcc -c src/main.c
 
 segmentation.o: src/Detection/segmentation.c
 	gcc -c src/Detection/segmentation.c
