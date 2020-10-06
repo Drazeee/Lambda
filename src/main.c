@@ -1,18 +1,4 @@
-//
-//  main.c
-//  XorLearning
-//
-//  Created by Maxime on 15/09/2020.
-//
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <SDL2/SDL.h>
-#include "Detection/segmentation.h"
-#include <gtk/gtk.h>
-#include "ImageTreatment/filters.h"
+#include "main.h"
 
 double Sigmoid(double Sum) {
 	return (1.0/(1.0 + exp(-Sum)));
@@ -228,13 +214,9 @@ activate (GtkApplication* app)
   gtk_widget_show_all (window);
 }
 
-int main(int    argc,
-      char **argv) {
+int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
-
-	img = SDL_LoadBMP("test.bmp");
-	img = blackAndWhite(img);
 
 	img = SDL_LoadBMP("paragraph.bmp");
 	img = cutColumn(img);
@@ -243,13 +225,14 @@ int main(int    argc,
 	/*img = cutLine(img);*/
 
 	SDL_Quit();
-	GtkApplication *app;
-	int status;
+	printf("%s", "good");
+	// GtkApplication *app;
+	// int status;
 
-	app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
-	g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-	status = g_application_run (G_APPLICATION (app), argc, argv);
-	g_object_unref (app);
+	// app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
+	// g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+	// status = g_application_run (G_APPLICATION (app), argc, argv);
+	// g_object_unref (app);
 
-	return status;
+	return 0;
 }
