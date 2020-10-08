@@ -218,10 +218,11 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
 
-	img = SDL_LoadBMP("epita.bmp");
-	img = cutColumn(img);
+	img = SDL_LoadBMP("phrase.bmp");
+	img = cutCharacters(img);
+	//img = cutColumn(img);
 
-	convertColumns(img);
+	//convertColumns(img);
 	/*img = cutLine(img);*/
 
 	SDL_Quit();
