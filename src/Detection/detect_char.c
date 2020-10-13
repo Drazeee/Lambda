@@ -10,10 +10,12 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
     Uint8 b;
     int fullWhite = 1;
     int firstCut = 1;
-    int averageCharLength = 0;
+
+    // On utilise width = height * 0.5
+    float averageCharLength = (img -> h)*0.5;
     int beginingCharPixel = 0;
     int endingCharPixel = 0;
-    short nbChars = 0;
+    short nbChars = 1;
 
     // for (int j = 0; j < img -> w; j++)
     // {
@@ -91,7 +93,7 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
         {
             Uint32 pixel = getpixel(img, j, i);
             SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-            if (r < 150  || g < 150 || b < 150 )
+            if (r < 100  || g < 100 || b < 100 )
             {
                 fullWhite = 0;
                 break;
@@ -110,7 +112,7 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
                 putpixel(img_copy, j, k, pixel);
             }
             firstCut = 0;
-            printf("first cut");
+            //printf("first cut");
         }
         
         if(fullWhite && !firstCut) 
@@ -125,10 +127,10 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
                 putpixel(img_copy, j, i, pixel);
             }
             firstCut = 1;
-            printf("second cut");
+            printf("Char width: %i, average: %f\n", actualCharLength, averageCharLength);
 
             // Traitement dans le cas ou le caratère découpé est trop long 
-            if (actualCharLength >= 1.9*averageCharLength)
+            if (actualCharLength > 2*averageCharLength)
             {
                 // Découpage au milieu
 
@@ -141,6 +143,8 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
                         putpixel(img_copy, middle, i, pixel);
                     }
                 }
+                nbChars += 2;
+                averageCharLength = (averageCharLength*(nbChars-2) + actualCharLength)/nbChars;
             }
             else {
                 nbChars += 1;
@@ -150,6 +154,6 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
     }
 
 
-    SDL_SaveBMP(img_copy, "new_image_char.bmp");
+    SDL_SaveBMP(img_copy, "chars.bmp");
     return img_copy;
 }
