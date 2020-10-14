@@ -154,6 +154,6 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
     }
 
 
-    SDL_SaveBMP(img_copy, "chars.bmp");
+    SDL_SaveBMP(img_copy, "easy-test.bmp");
     return img_copy;
 }
