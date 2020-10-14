@@ -69,7 +69,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
                 {
                     Uint32 pixel = getpixel(img, j, ii);
                     SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-                    if (r < 250 || g < 250 || b < 250)
+                    if (r < 200 || g < 200 || b < 200)
                     {
                         fullWhite = 0;
                         break;
@@ -97,6 +97,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
         }
         
     }
+    removeLines(img_copy, "lines");
     return img_copy;
 }
 
@@ -181,7 +182,14 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
 
 int paragraphsCount = 0;
 
-void removeLines(SDL_Surface *img) {
+/*
+ * Removes green separating lines between paragraphs and lines and stores each of them in a folder
+ * Param:
+ *      - img : image to compute
+ *      - directory : the directory name to store the different parts cut
+ */
+
+void removeLines(SDL_Surface *img, char *directory) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -222,9 +230,65 @@ void removeLines(SDL_Surface *img) {
             }
             
         }
-        mkdir("paragraphs", 0777);
+        mkdir(directory, 0777);
         char path[22];
-        snprintf(path, 22, "paragraphs/%d.bmp", paragraphsCount);
+        snprintf(path, 22, "%s/%d.bmp", directory, paragraphsCount);
+        paragraphsCount++;
+        SDL_SaveBMP(newImage, path);
+    }
+}
+
+/*
+ * Removes blue separating lines between characters and stores each of them in a folder
+ * Param:
+ *      - img : image to compute
+ *      - directory : the directory name to store the different parts cut
+ */
+
+void removeLinesForCharacters(SDL_Surface *img, char *directory) {
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int start = -1;
+    int stop = -1;
+    int positions[300];
+    int pos = 0;
+
+    for (int j = 0; j < img -> w; j++)
+    {
+        pixel = getpixel(img, j, 0);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+
+        if (start == -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
+            start = j;
+        }
+
+        else if (start != -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
+            stop = j;
+            positions[pos] = start;
+            positions[pos + 1] = stop;
+            pos += 2;
+            start = -1;
+            stop = -1;
+        }
+    }
+    
+    for (int i = 0; i < pos; i+=2) {
+        int width = positions[i + 1] - positions[i] - 1;
+        SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
+        0, 0, 0, 0);
+        for (int y = 0; y < img -> h; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                putpixel(newImage, x, y , getpixel(img,  x, positions[i] + y + 1));
+            }
+            
+        }
+        mkdir(directory, 0777);
+        char path[22];
+        snprintf(path, 22, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(newImage, path);
     }
@@ -276,7 +340,7 @@ void convertColumns(SDL_Surface *img)
         }
         newImage = cutLine(newImage);
 
-        removeLines(newImage);
+        removeLines(newImage, "paragraphs");
     }
     
 }

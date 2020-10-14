@@ -218,12 +218,16 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
 
-	img = SDL_LoadBMP("test.bmp");
-	img = cutCharacters(img);
-	//img = cutColumn(img);
+	img = SDL_LoadBMP("lines/0.bmp");
 
+	//img = cutLine(img);
+	img = cutCharacters(img);
+	//removeLinesForCharacters(img, "lines/characters");
+
+	//img = cutColumn(img);
 	//convertColumns(img);
-	/*img = cutLine(img);*/
+
+	
 
 	SDL_Quit();
 	// GtkApplication *app;

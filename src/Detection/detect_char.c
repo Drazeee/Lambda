@@ -85,7 +85,6 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
         
         
     // }
-
     for (int j = 0; j < img -> w; j++)
     {
         fullWhite = 1;
@@ -153,7 +152,6 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
         }
     }
 
-
-    SDL_SaveBMP(img_copy, "easy-test.bmp");
+    SDL_SaveBMP(img_copy, "lines/cut-phrase.bmp");
     return img_copy;
 }
