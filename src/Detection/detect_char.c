@@ -152,6 +152,6 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
         }
     }
 
-    SDL_SaveBMP(img_copy, "lines/cut-phrase.bmp");
+    SDL_SaveBMP(img_copy, "phrase.bmp");
     return img_copy;
 }
