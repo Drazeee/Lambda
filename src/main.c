@@ -220,9 +220,9 @@ int main(int argc, char **argv) {
 
 	img = SDL_LoadBMP("phrase.bmp");
 
-	img = blackAndWhite(img);
+	//img = blackAndWhite(img);
 	img = cutCharacters(img);
-	removeLinesForCharacters(img, "lines/");
+	removeLinesForCharacters(img, "lines/smallChars");
 
 	//img = cutColumn(img);
 	//convertColumns(img);

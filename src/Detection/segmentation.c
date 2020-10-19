@@ -271,6 +271,9 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
             pos += 2;
             start = -1;
             stop = -1;
+            if (r == 255){
+                j--;
+            }
         }
     }
     
@@ -278,6 +281,8 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
         int width = positions[i + 1] - positions[i] - 1;
         SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
         0, 0, 0, 0);
+
+        // Parcours le character dans l'image initial (encore entre deux barres bleues) pour le copier dans une image seule
         for (int y = 0; y < img -> h; y++)
         {
             for (int x = 0; x < width; x++)
@@ -286,11 +291,76 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
             }
             
         }
+
+        printf("tout début\n");
+
+        // Parcours de l'image seule pour enlever les pixels blancs en haut et en bas de l'image
+        unsigned int cut_top = 0;
+        unsigned int cut_bottom = 0;
+
+        // De haut en bas (cut_top)
+        for (unsigned int h = 0; h < newImage -> h; h++)
+        {
+            unsigned char fullwhite = 1;
+            for (unsigned int w = 0; w < newImage -> w && fullwhite; w++)
+            {
+                pixel = getpixel(newImage, w, h);
+                SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
+                fullwhite = r > 249 && g > 249 && b > 249;
+            }
+
+            // Coupe l'image en haut
+            if (!fullwhite) {
+
+                // Coupe 1 index plus haut et 0 sinon
+                cut_top = h > 0 ? h-1 : 0;
+                break;
+            }
+        }
+
+        printf("cut_top done (val: %u, height: %i)\n", cut_top, newImage -> h);
+
+        // De bas en haut (cut_bottom)
+        for (int h = (newImage -> h) - 1; h >= 0; h--)
+        {
+            unsigned char fullwhite = 1;
+            for (unsigned int w = 0; w < newImage -> w && fullwhite; w++)
+            {
+                pixel = getpixel(newImage, w, h);
+                SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
+                fullwhite = r > 249 && g > 249 && b > 249;
+            }
+
+            // Coupe l'image en bas
+            if (!fullwhite) {
+
+                // Coupe 1 index plus bas et newImage->h-1 sinon
+                cut_bottom = h < (newImage -> h) - 1 ? h+1 : (newImage -> h) - 1;
+                break;
+            }
+        }
+
+        printf("cut_bottom done (val: %u)\n", cut_bottom);
+
+        // Nouvelle image du caractère sans le haut et bas
+        SDL_Surface *newImageSmall = SDL_CreateRGBSurface(0, newImage -> w, cut_bottom - cut_top, 32,
+        0, 0, 0, 0);
+        for (int y = cut_top; y < cut_bottom + 1; y++)
+        {
+            for (int x = 0; x < newImage -> w; x++)
+            {
+                putpixel(newImageSmall, x, y , getpixel(newImage, x, y));
+            }
+        }
+
+        printf("finished\n");
+        
+        // Enregistre l'image finale dans le dossier directory
         mkdir(directory, 0777);
         char path[22];
         snprintf(path, 22, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
-        SDL_SaveBMP(newImage, path);
+        SDL_SaveBMP(newImageSmall, path);
     }
 }
 
