@@ -282,7 +282,7 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
         {
             for (int x = 0; x < width; x++)
             {
-                putpixel(newImage, x, y , getpixel(img,  x, positions[i] + y + 1));
+                putpixel(newImage, x, y , getpixel(img, positions[i] + x + 1, y));
             }
             
         }
