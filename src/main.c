@@ -222,7 +222,7 @@ int main(int argc, char **argv) {
 
 	//img = blackAndWhite(img);
 	img = cutCharacters(img);
-	removeLinesForCharacters(img, "lines/smallChars");
+	removeLinesForCharacters(img, "lines/");
 
 	//img = cutColumn(img);
 	//convertColumns(img);
