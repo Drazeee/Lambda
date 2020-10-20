@@ -1,7 +1,7 @@
 # include "segmentation.h"
 
 /* insert red line after and before lines */
-
+// Use removeLines after to save each line/paragraph
 SDL_Surface *cutLine(SDL_Surface *img) {
     // Variables
     int fullWhite = 1;
@@ -19,19 +19,9 @@ SDL_Surface *cutLine(SDL_Surface *img) {
     // Code
     for (int i = 0; i < img -> h; i++)
     {
-        fullWhite = 1;
 
         //Returns whether img's width is full of white pixels or not
-        for (int j = 0; j < img -> w; j++)
-        {
-            Uint32 pixel = getpixel(img, j, i);
-            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-            if (r < 250 || g < 250 || b < 250)
-            {
-                fullWhite = 0;
-                break;
-            }
-        }
+        fullWhite = fullWhiteWidth(img, i);
 
         if (!fullWhite && firstCut)
         {   
@@ -101,7 +91,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
     return img_copy;
 }
 
-
+// Use convertColumn after to save each word
 SDL_Surface *cutColumn(SDL_Surface *img) {
     int fullWhite = 1;
     int firstCut = 1;
@@ -116,18 +106,8 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
 
     for (int i = 0; i < img -> w; i++) 
     {
-        fullWhite = 1;
-        //Returns whether img's width is full of white pixels or not
-        for (int j = 0; j < img -> h; j++)
-        {
-            Uint32 pixel = getpixel(img, i, j);
-            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-            if (r < 250 || g < 250 || b < 250)
-            {
-                fullWhite = 0;
-                break;
-            }
-        }
+        //Returns whether img's height is full of white pixels or not
+        fullWhite = fullWhiteHeight(img, i);
 
         if (!fullWhite && firstCut)
         {   
@@ -179,6 +159,71 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
     return img_copy;
 }
 
+SDL_Surface *cutWord(SDL_Surface *img) {
+    int fullWhite = 1;
+    int firstCut = 1;
+    int endText = -1; //Gets the first pixel (height wise) with full white width
+    int beginingText = -1; //Gets the first pixel without full white width after several full white 
+    float spaceAverage = img -> h * 0.22; //Average width of a space character, const
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    SDL_Surface *img_copy = copy_image(img);
+
+    for (int i = 0; i < img -> w; i++) 
+    {
+        //Returns whether img's height is full of white pixels or not
+        fullWhite = fullWhiteHeight(img, i);
+
+        if (!fullWhite && firstCut)
+        {   
+            beginingText = i;
+
+            // Begins word
+            if (endText == -1 || spaceAverage <= abs(endText - beginingText)){
+                for (int k = 0; k < img -> h; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, beginingText-1, k, pixel);
+                }   
+            }
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) {
+            endText = i;
+
+            // Ends paragraphs
+            int ii = i;
+            do
+            {
+                for (int j = 0; j < img -> h; j++)
+                {
+                    Uint32 pixel = getpixel(img, ii, j);
+                    SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+                    if (r < 250 || g < 250 || b < 250)
+                    {
+                        fullWhite = 0;
+                        break;
+                    }
+                }
+                ii++;
+            } while (fullWhite);
+            if (ii - endText >= spaceAverage || ii >= img -> w) { // Word ending
+                //Draw line
+                for (int k = 0; k < img -> h; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, i, k, pixel);
+                }
+                firstCut = 1;
+            }
+        }
+    }
+    SDL_SaveBMP(img_copy, "wordsCut.bmp");
+    return img_copy;
+}
 
 int paragraphsCount = 0;
 
@@ -239,7 +284,7 @@ void removeLines(SDL_Surface *img, char *directory) {
 }
 
 /*
- * Removes blue separating lines between characters and stores each of them in a folder
+ * Removes blue/red separating lines between characters and stores each of them in a folder
  * Param:
  *      - img : image to compute
  *      - directory : the directory name to store the different parts cut
@@ -391,6 +436,76 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
         SDL_SaveBMP(lastImage, path);
     }
 }
+
+
+/*
+ * Removes green separating lines between words and stores each of them in a folder
+ * Param:
+ *      - img : image to compute
+ *      - directory : the directory name to store the different parts cut
+ */
+
+void removeLinesForWords(SDL_Surface *img, char *directory) {
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int start = -1;
+    int stop = -1;
+    int positions[300];
+    int pos = 0;
+
+    for (int j = 0; j < img -> w; j++)
+    {
+        pixel = getpixel(img, j, 0);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+
+        if (start == -1 && (r < 200 && g == 255 && b < 200)) {
+            start = j;
+        }
+
+        else if (start != -1 && (r < 200 && g == 255 && b < 200)) {
+            stop = j;
+            positions[pos] = start;
+            positions[pos + 1] = stop;
+            pos += 2;
+            start = -1;
+            stop = -1;
+            if (r == 255){
+                j--;
+            }
+        }
+    }
+    
+    for (int i = 0; i < pos; i+=2) {
+        int width = positions[i + 1] - positions[i] - 1;
+        SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
+        0, 0, 0, 0);
+
+        // Parcours le mot dans l'image initiale (encore entre deux barres vertes) pour le copier dans une image seule
+        for (int y = 0; y < img -> h; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                putpixel(newImage, x, y , getpixel(img, positions[i] + x + 1, y));
+            }
+            
+        }
+        
+        // Enregistre l'image finale dans le dossier directory
+        mkdir(directory, 0777);
+        char path[22];
+        snprintf(path, 22, "%s/%d.bmp", directory, paragraphsCount);
+        paragraphsCount++;
+        SDL_SaveBMP(newImage, path);
+    }
+}
+
+/*
+ * Removes green separating lines between columns and calls removeLines for each column
+ * Param:
+ *      - img : image to compute
+ */
 
 void convertColumns(SDL_Surface *img)
 {

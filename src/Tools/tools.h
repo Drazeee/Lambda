@@ -11,4 +11,8 @@ void putpixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 
 SDL_Surface* copy_image(SDL_Surface *img);
 
+unsigned char fullWhiteHeight(SDL_Surface *img, int width_index);
+
+unsigned char fullWhiteWidth(SDL_Surface *img, int height_index);
+
 # endif

@@ -1,5 +1,12 @@
 # include "tools.h"
 
+/* Variables */
+Uint32 pixel;
+Uint8 r;
+Uint8 g;
+Uint8 b;
+
+
 /* Classic tools */
 static inline Uint8* pixelref(SDL_Surface *surf, unsigned x, unsigned y)
 {
@@ -72,4 +79,34 @@ SDL_Surface* copy_image(SDL_Surface *img)
     }
   }
   return(copy);
+}
+
+unsigned char fullWhiteHeight(SDL_Surface *img, int width_index) {
+    unsigned char fullWhite = 1;
+    for (int j = 0; j < img -> h; j++)
+    {
+        Uint32 pixel = getpixel(img, width_index, j);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        if (r < 250 || g < 250 || b < 250)
+        {
+            fullWhite = 0;
+            break;
+        }
+    }
+    return fullWhite;
+}
+
+unsigned char fullWhiteWidth(SDL_Surface *img, int height_index) {
+    unsigned char fullWhite = 1;
+    for (int j = 0; j < img -> w; j++)
+    {
+        Uint32 pixel = getpixel(img, j, height_index);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        if (r < 250 || g < 250 || b < 250)
+        {
+            fullWhite = 0;
+            break;
+        }
+    }
+    return fullWhite;
 }

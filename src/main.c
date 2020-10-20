@@ -223,9 +223,10 @@ int main(int argc, char **argv) {
 	img = grayscale(img);
 	img = blackAndWhite(img);
 	img = cutCharacters(img);
-	removeLinesForCharacters(img, "lines/");
+	//removeLinesForCharacters(img, "lines/chars");
 
-	//img = cutColumn(img);
+	img = cutWord(img);
+	removeLinesForWords(img, "words");
 	//convertColumns(img);
 
 	
