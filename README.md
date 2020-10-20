@@ -2,9 +2,12 @@
 
 Education project at EPITA | Optical Character Recognition
 
+We are a groupe composed of 4 students at EPITA, a french IT engineer school. We do an OCR from scratch ans we are doing everything to achieve this project as sucessful as possible.
+
 # Table of Contents
 
 * [Team Members](#team-members)
+* [The project](#the-project)
 * [Compilation](#compilation)
 * [Features](#features)
 
@@ -14,6 +17,12 @@ Education project at EPITA | Optical Character Recognition
 * "Quentin FISCH" [https://qfisch.fr](https://qfisch.fr)
 * "Maxime MADRAU" [https://madrau.fr](https://madrau.fr)
 * "Nathan AVÉ"
+
+# <a name="the-project"></a>The project
+
+See the specificatons for this project [here](http://debug-pro.com/epita/prog/s3/project/s3_project_en.pdf) (french version [here](http://debug-pro.com/epita/prog/s3/project/s3_project_fr.pdf))
+
+All this project is written is C language. Defense reports are written in TeX and could be found [here](https://bitarrays.fr/lamba)
 
 # <a name="compilation"></a>Compilation
 
