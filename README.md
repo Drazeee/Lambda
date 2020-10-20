@@ -9,6 +9,7 @@ We are a groupe composed of 4 students at EPITA, a french IT engineer school. We
 * [Team Members](#team-members)
 * [The project](#the-project)
 * [Compilation](#compilation)
+* [Execution](#execution)
 * [Features](#features)
 
 # <a name="team-members"></a>Team Members
@@ -22,7 +23,7 @@ We are a groupe composed of 4 students at EPITA, a french IT engineer school. We
 
 See the specificatons for this project [here](http://debug-pro.com/epita/prog/s3/project/s3_project_en.pdf) (french version [here](http://debug-pro.com/epita/prog/s3/project/s3_project_fr.pdf))
 
-All this project is written is C language. Defense reports are written in TeX and could be found [here](https://bitarrays.fr/lamba)
+All this project is written is C language. Defense reports are written in TeX and could be found [here](https://bitarrays.fr/projects/lamba)
 
 # <a name="compilation"></a>Compilation
 
@@ -38,6 +39,26 @@ gcc -c src/Detection/detect_char.c
 gcc -c src/ImageTreatment/filters.c
 gcc -c src/main.c
 gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays -lSDL2 -lm
+```
+
+# <a name="execution"></a>Execution
+
+For instance, our project only got 3 commands. If you want to use our grayscale filter just execute the command line below
+
+```bash
+./OCR\ -\ Bitarrays grayscale "image-path" "destination"
+```
+
+Use our filters on your image by using this command line
+
+```bash
+./OCR\ -\ Bitarrays filters "image-path" "destination"
+```
+
+To finish, try our segmentation algorithm with this command line
+
+```bash
+./OCR\ -\ Bitarrays segmentation "image-path" "destination"
 ```
 
 # <a name="features"></a> Features
