@@ -28,13 +28,25 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
             beginingText = i;
 
             // Begins paragraphs
-            if (endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3)){
-                for (int k = 0; k < img -> w; k++)
-                {
-                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
-                    putpixel(img_copy, k, beginingText, pixel);
-                }   
+            if (!first) {
+                if (endText == -1 || (lastLineHeight * 0.3 <= abs(endText - beginingText) && lastLineHeight > 3)){
+                    for (int k = 0; k < img -> w; k++)
+                    {
+                        pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                        putpixel(img_copy, k, beginingText, pixel);
+                    }   
+                }
             }
+            else {
+                if (endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3)){
+                    for (int k = 0; k < img -> w; k++)
+                    {
+                        pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                        putpixel(img_copy, k, beginingText, pixel);
+                    }   
+                }
+            }
+            
 
             // Cuts lines
             /*
@@ -45,6 +57,14 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
             }
             */
             firstCut = 0;
+        }
+
+        if (i == img -> h - 1 && !firstCut) {
+            for (int k = 0; k < img -> w; k++)
+            {
+                pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                putpixel(img_copy, k, i, pixel);
+            }
         }
         
         if(fullWhite && !firstCut) {
