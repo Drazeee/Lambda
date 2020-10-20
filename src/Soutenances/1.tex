@@ -1,0 +1,182 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{multimedia}
+\usepackage[top=3cm, bottom=4cm, left=3cm, right=3cm, a4paper]{geometry}
+\usepackage{lipsum}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{tabto}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{eurosym}
+\usepackage{xcolor}
+\usepackage{blindtext}
+\definecolor{back}{rgb}{0.15, 0.15, 0.15}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{multirow}
+
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{whiteback}{rgb}{0.95, 0.95, 0.95}
+
+\lstset{
+language=csh,
+basicstyle=\footnotesize\ttfamily,
+numbers=left,
+numberstyle=\tiny,
+numbersep=-3pt,
+tabsize=2,
+extendedchars=true,
+breaklines=true,
+frame=b,
+stringstyle=\color{mygreen}\ttfamily,
+showspaces=false,
+showtabs=false,
+xleftmargin=-30pt,
+xrightmargin=-30pt,
+columns=fullflexible,
+framexleftmargin=10pt,
+framexrightmargin=5pt,
+framexbottommargin=10pt,
+framextopmargin=4pt,
+commentstyle=\color{mygreen},
+morecomment=[l]{//},
+morecomment=[s]{/*}{*/},
+showstringspaces=false,
+morekeywords={ abstract, event, new, struct,
+as, explicit, null, switch,
+base, extern, object, this,
+bool, false, operator, throw,
+break, finally, out, true,
+byte, fixed, override, try,
+case, float, params, typeof,
+catch, for, private, uint,
+char, foreach, protected, ulong,
+checked, goto, public, unchecked,
+class, if, readonly, unsafe,
+const, implicit, ref, ushort,
+continue, in, return, using,
+decimal, int, sbyte, virtual,
+default, interface, sealed, volatile,
+delegate, internal, short, void,
+do, is, sizeof, while,
+double, lock, stackalloc,
+else, long, static,
+enum, namespace, string},
+keywordstyle=\color{blue},
+identifierstyle=\color{back},
+backgroundcolor=\color{whiteback},
+}
+
+\setcounter{page}{1}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrule}{{\color{gray}\vskip-\footruleskip\vskip-\footrulewidth \hrule width\headwidth height\footrulewidth\vskip\footruleskip}}
+\renewcommand{\footrule}{{\color{gray}\vskip-\footruleskip\vskip-\footrulewidth \hrule width\headwidth height\footrulewidth\vskip\footruleskip}}
+\renewcommand{\footrulewidth}{0.5pt}
+
+\rhead{}
+\lhead{}
+
+
+\usepackage{tocloft}
+
+
+\begin{document}
+
+    \headsep = 12pt
+    \vspace*{\stretch{1}}
+		\begin{center}
+			\begin{LARGE}
+				\textbf{Rapport de soutenance}
+				\paragraph{}Charles\hspace{0.7cm}Quentin\hspace{0.7cm}Maxime\hspace{0.7cm}Nathan
+			\end{LARGE}
+		\end{center}
+		\vspace{1.5cm}
+		\begin{center}
+			\includegraphics[scale=0.3]{LogoBitarrays.png}
+    		\paragraph{} Par BITARRAYS
+		\end{center}
+		\vspace*{\stretch{1}}
+	
+	\newpage
+    \pagestyle{fancy}
+    \fancyhf{}
+    \lhead{Rapport de soutenance\vspace{0.25cm}}
+    \rhead{Table des matières}
+    \cfoot{\thepage}
+    \chead{\includegraphics[scale=0.05]{LogoBitarrays.png}}
+    \vspace*{2.5cm}
+    \tableofcontents
+    
+\newpage
+\rhead{\textit{Prologue}\vspace{0.25cm}}
+\cfoot{\thepage}
+\chead{\includegraphics[scale=0.05]{LogoBitarrays.png}}
+\vspace*{5cm}
+\begin{huge}
+\hspace{-0.9cm}
+\textbf{\emph{Prologue}}
+\end{huge}
+\vspace*{1cm}
+\vspace{0.4cm}
+	\paragraph{}
+    à travers ce cahier des charges, notre équipe présente ses ambitions pour réaliser le projet du deuxième semestre de l'EPITA, qui durera environ 6 mois, rythmé par trois soutenances intermédiaires et une finale.
+	
+	\paragraph{}
+    Nous étions huit étudiants, attirés par la création d'un groupe en commun. Suite à un débat d'idées et au fil des discussions, les deux groupes se sont constitués naturellement, en fonction des idées qui ont été proposées. Ainsi, nous avons créé un groupe de 4 personnes très inspirées par l'idée d'un jeu d'énigme. Cela nous obligera à réfléchir individuellement à des énigmes innovantes, nouvelles, avec un niveau de difficulté suffisant pour permettre l'amusement et la durabilité de notre jeu.
+	
+	\paragraph{}
+    Nous allons apprendre à communiquer et à s'adapter aux différents caractères des membres de notre groupe. Nous avons, par expérience, déjà compris qu'un projet de groupe est un réel défi au niveau humain mais ce projet s'annonce encore plus complexe.
+    Nous sommes tous très motivés par la création de ce jeu.
+	
+	\paragraph{}
+    Notre investissement se devra d'être maximal. Nous allons nous découvrir dans les moments durs et stressants qui rythmeront nos 6 prochains mois et nous apprendrons à travailler efficacement en équipe.
+
+	\paragraph{}
+    Nous allons maintenant expliquer les différents objectifs de notre projet, de la création, à la réalisation en passant par les coûts et la rentabilité ainsi que le respect de nos délais.
+
+\newpage
+\lhead{Cahier des charges\vspace{0.25cm}}
+\rhead{\textit{Introduction}\vspace{0.25cm}}
+\vspace*{\stretch{1}}
+\section{Présentations}
+\subsection{Les membres}
+\subsubsection{Quentin "Scout" FISCH}
+\paragraph{}J'ai vraiment découvert ma passion pour l'informatique par le biais de TP effectués en Sciences de L'ingénieur en Première et Terminale. J'ai donc décider d'étudier car je suis très intéressé en ce qui concerne la robotique et le développement de technologies dans les systèmes embarqués. Ce projet sera pour moi mon premier jeu à créer de A à Z et m'apprendra comment gérer un tel projet en respectant des deadlines et diverses contraintes. Je suis ainsi très motivé à sortir le meilleur projet possible et développer mes compétences en informatique.
+
+\subsubsection{Maxime "Maxmad" MADRAU}
+\paragraph{}Passionné d'informatique depuis toujours, j'ai commencé a développer des programmes simples très tôt dans mon enfance. J'ai par la suite appris des langages comme le Python, le Lua, le Javascript, le Swift, et les langages web comme le HTML et le CSS. Mes domaines de prédilection sont les applications mobiles, les bases de données et le client/serveur. La conception de jeux vidéo a pour moi commencé en année de Terminale, pour le Bac d'ISN, où on a du développer un jeu en Python avec la bibliothèque Pygame. Ce projet m'a permis de découvrir le développement de projets dans le respect de contraintes de temps, de ressources ainsi que de licences et de droits.
+
+\subsubsection{Charles "Draze" SIMON-MEUNIER}
+\paragraph{}Passionné d'informatique depuis mes années du collège ou j'ai commencé à développer des serveurs sur Minecraft, EPITA est pour moi une révélation. Une école avec une formation permettant d'atteindre le statut d'ingénieur ainsi que des compétences en informatique plus que confortables est pour moi le cursus idéal. J'ai appris par moi même certains langages comme le HTML/CSS, Java et aujourd'hui je me perfectionne et corrige mes défauts grâce à l'école. Ce projet devrait m'apporter à titre personnel beaucoup d'expérience, autant au niveau humain que dans les compétences informatiques.
+
+\subsubsection{Nathan "Goruza" AVÉ}
+
+\vspace*{\stretch{1}}
+
+\newpage
+
+
+\subsection{Le groupe}
+
+\paragraph{}Nous avons créé notre groupe en reprenant les membres avec qui nous avions travaillé l'année dernière car l'entente était très bonne tout comme l'efficacité au sein du groupe. De plus, nous avons déjà quelques projets de groupe à notre actif ce qui permet de connaître les points forts et faibles de chacun. Malheureusement nous n'étions que 3 et il fallait trouver un dernier membre pour former un groupe de 4 personnes. Nathan était le bon candidat car nous nous connaissons bien et le travail pourrait alors être efficace.
+\paragraph{}
+
+\newpage
+
+\section{Traitement de l'image (pré-traitement)}
+
+\section{Segmentation de l'image}
+
+\section{Réseau de neurones}
+
+\end{document}

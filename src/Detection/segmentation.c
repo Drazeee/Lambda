@@ -313,7 +313,7 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
             if (!fullwhite) {
 
                 // Coupe 1 index plus haut et 0 sinon
-                cut_top = h > 0 ? h-1 : 0;
+                cut_top = h;
                 break;
             }
         }
@@ -335,7 +335,7 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
             if (!fullwhite) {
 
                 // Coupe 1 index plus bas et newImage->h-1 sinon
-                cut_bottom = h < (newImage -> h) - 1 ? h+1 : (newImage -> h) - 1;
+                cut_bottom = h;
                 break;
             }
         }
@@ -343,24 +343,52 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
         printf("cut_bottom done (val: %u)\n", cut_bottom);
 
         // Nouvelle image du caractère sans le haut et bas
-        SDL_Surface *newImageSmall = SDL_CreateRGBSurface(0, newImage -> w, cut_bottom - cut_top, 32,
+        SDL_Surface *newImageSmall;
+        newImageSmall = SDL_CreateRGBSurface(0, newImage -> w, cut_bottom - cut_top + 1, 32,
         0, 0, 0, 0);
         for (int y = cut_top; y < cut_bottom + 1; y++)
         {
             for (int x = 0; x < newImage -> w; x++)
             {
-                putpixel(newImageSmall, x, y , getpixel(newImage, x, y));
+                putpixel(newImageSmall, x, y - cut_top, getpixel(newImage, x, y));
             }
         }
 
         printf("finished\n");
+
+
+        // Ajoute l'image sur une un fond blanc de 32x32
+        // TODO: Redimensionner si plus grand que 32x32
+
+        SDL_Surface *lastImage = SDL_CreateRGBSurface(0, 32, 32, 32,
+        0, 0, 0, 0);
+
+        pixel = SDL_MapRGB(newImageSmall -> format, 255, 255, 255);
+
+        for (int i = 0; i < 32; i++)
+        {
+            for (int j = 0; j < 32; j++)
+            {
+                putpixel(lastImage, i, j, pixel);
+            }
+            
+        }
+        
+
+        for (int y = 0; y < newImageSmall -> h; y++)
+        {
+            for (int x = 0; x < newImageSmall -> w; x++)
+            {
+                putpixel(lastImage, x, y, getpixel(newImageSmall, x, y));
+            }
+        }
         
         // Enregistre l'image finale dans le dossier directory
         mkdir(directory, 0777);
         char path[22];
         snprintf(path, 22, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
-        SDL_SaveBMP(newImageSmall, path);
+        SDL_SaveBMP(lastImage, path);
     }
 }
 
