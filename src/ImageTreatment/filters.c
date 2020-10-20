@@ -14,7 +14,7 @@ SDL_Surface *blackAndWhite(SDL_Surface *img) {
             pixel = getpixel(img, i, j);
             SDL_GetRGB(pixel, img -> format, &r, &g, &b);
 
-            if ((r + g + b)/3 > 140)
+            if ((r + g + b)/3 > 190)
             {
                 pixel = SDL_MapRGB(img -> format, 255, 255, 255);
                 putpixel(img, i, j, pixel);

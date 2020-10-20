@@ -1,4 +1,5 @@
 #include "main.h"
+#include <dirent.h>
 
 double Sigmoid(double Sum) {
 	return (1.0/(1.0 + exp(-Sum)));
@@ -218,16 +219,54 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Surface *img;
 
-	img = SDL_LoadBMP("phrase.bmp");
+	//img = SDL_LoadBMP("paragraph.bmp");
+	img = SDL_LoadBMP("paragraph.bmp");
 
 	img = grayscale(img);
 	img = blackAndWhite(img);
-	img = cutCharacters(img);
-	//removeLinesForCharacters(img, "lines/chars");
-
-	img = cutWord(img);
-	removeLinesForWords(img, "words");
-	//convertColumns(img);
+	img = cutColumn(img); 
+	convertColumns(img, "columns");
+	DIR *d;
+	struct dirent *dir;
+	d = opendir("columns");
+	int index = 0;
+	int index1 = 0;
+	int index2 = 0;
+	if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+			if (dir->d_name[0] != '.') {
+				char path[22];
+        		snprintf(path, 22, "%s/%s", "columns", dir->d_name);
+				img = SDL_LoadBMP(path);
+				img = cutLine(img, 1);
+        		snprintf(path, 22, "%s%i", "lines", index);
+				removeLines(img, path);
+				DIR *d1 = opendir(path);
+				struct dirent *dir1;
+				if (d1) {
+					while ((dir1 = readdir(d1)) != NULL) {
+						if (dir1->d_name[0] != '.') {
+							char path1[22];
+							snprintf(path1, 22, "%s/%s", path, dir1->d_name);
+							img = SDL_LoadBMP(path1);
+							img = cutLine(img, 0);
+							snprintf(path1, 22, "%s/%s%i", path, "sublines", index1);
+							index1++;
+							removeLines(img, path1);
+						}
+					}
+				}
+				index++;
+			}
+        }
+        closedir(d);
+    }
+	// img = cutWord(img);
+	// removeLinesForWords(img, "words");
+	// img = cutCharacters(img);
+	// removeLinesForCharacters(img, "char");
 
 	
 

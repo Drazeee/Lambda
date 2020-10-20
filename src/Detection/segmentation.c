@@ -2,7 +2,7 @@
 
 /* insert red line after and before lines */
 // Use removeLines after to save each line/paragraph
-SDL_Surface *cutLine(SDL_Surface *img) {
+SDL_Surface *cutLine(SDL_Surface *img, int first) {
     // Variables
     int fullWhite = 1;
     int firstCut = 1;
@@ -28,7 +28,7 @@ SDL_Surface *cutLine(SDL_Surface *img) {
             beginingText = i;
 
             // Begins paragraphs
-            if (endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 6)){
+            if (endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3)){
                 for (int k = 0; k < img -> w; k++)
                 {
                     pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -67,27 +67,49 @@ SDL_Surface *cutLine(SDL_Surface *img) {
                 }
                 ii++;
             } while (fullWhite);
-            if ((ii - endText >= lastLineHeight && ii - endText > 6) || ii >= img -> h) {
+            if (!first) {
+                if ((ii - endText >= lastLineHeight * 0.3 && ii - endText > 3) || ii >= img -> h) {
                 //Draw line
+                    for (int k = 0; k < img -> w; k++)
+                    {
+                        pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                        putpixel(img_copy, k, i, pixel);
+                    }
+                }
+                
+                // Cuts lines
+                /*
                 for (int k = 0; k < img -> w; k++)
                 {
-                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
                     putpixel(img_copy, k, i, pixel);
+                }*/
+                firstCut = 1;
+            }
+            else {
+                if ((ii - endText >= lastLineHeight && ii - endText > 3) || ii >= img -> h) {
+                //Draw line
+                    for (int k = 0; k < img -> w; k++)
+                    {
+                        pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                        putpixel(img_copy, k, i, pixel);
+                    }
                 }
+                
+                // Cuts lines
+                /*
+                for (int k = 0; k < img -> w; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
+                    putpixel(img_copy, k, i, pixel);
+                }*/
+                firstCut = 1;
             }
             
-            // Cuts lines
-            /*
-            for (int k = 0; k < img -> w; k++)
-            {
-                pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                putpixel(img_copy, k, i, pixel);
-            }*/
-            firstCut = 1;
         }
         
     }
-    removeLines(img_copy, "lines");
+    //removeLines(img_copy, "lines");
     return img_copy;
 }
 
@@ -276,8 +298,8 @@ void removeLines(SDL_Surface *img, char *directory) {
             
         }
         mkdir(directory, 0777);
-        char path[22];
-        snprintf(path, 22, "%s/%d.bmp", directory, paragraphsCount);
+        char path[40];
+        snprintf(path, 40, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(newImage, path);
     }
@@ -507,7 +529,7 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
  *      - img : image to compute
  */
 
-void convertColumns(SDL_Surface *img)
+void convertColumns(SDL_Surface *img, char *directory)
 {
     Uint32 pixel;
     Uint8 r;
@@ -551,9 +573,11 @@ void convertColumns(SDL_Surface *img)
             }
             
         }
-        newImage = cutLine(newImage);
 
-        removeLines(newImage, "paragraphs");
+        mkdir(directory, 0777);
+        char path[22];
+        snprintf(path, 22, "%s/%d.bmp", directory, i/2);
+        SDL_SaveBMP(newImage, path);
     }
     
 }
