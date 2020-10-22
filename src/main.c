@@ -1,5 +1,4 @@
 #include "main.h"
-#include <dirent.h>
 
 double Sigmoid(double Sum) {
 	return (1.0/(1.0 + exp(-Sum)));
@@ -34,7 +33,7 @@ void shuffle(int *array, size_t n)
 }
 
 
-int main1() {
+int xorNetwork() {
 	
 	/* Init random seed */
 	srand(time(NULL));
@@ -204,6 +203,115 @@ int main1() {
 	return 0;
 }
 
+
+int fullSegmentation(char *imagePath) {
+	SDL_Surface *img;
+	img = SDL_LoadBMP(imagePath);
+
+	if (!img) {
+		return 0;
+	}
+
+	// Filters
+	img = grayscale(img, 0, "");
+	img = blackAndWhite(img);
+	img = cutColumn(img);
+
+
+	// Multi columns
+	convertColumns(img, "columns");
+
+
+	// Open columns directory
+	DIR *d;
+	struct dirent *dir;
+	d = opendir("columns");
+
+	// Variables declaration
+	int indexLines = 0;
+	int indexSublines = 0;
+	int indexWords = 0;
+	int indexCharacters = 0;
+	// Conditions on read files
+	if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+			// End
+			if (dir->d_name[0] != '.') {
+
+				// Paragraphs segmentation | Directory: linesI/*.bmp
+				char path[22];
+        		snprintf(path, 22, "%s/%s", "columns", dir->d_name);
+				img = SDL_LoadBMP(path);
+				img = cutLine(img, 1);
+        		snprintf(path, 22, "%s%i", "lines", indexLines);
+				removeLines(img, path);
+				DIR *d1 = opendir(path);
+				struct dirent *dir1;
+				if (d1) {
+					while ((dir1 = readdir(d1)) != NULL) {
+						if (dir1->d_name[0] != '.') {
+
+							// Lines segmentation | Directory: linesI/sublinesJ/*.bmp
+							char path1[22];
+							snprintf(path1, 22, "%s/%s", path, dir1->d_name);
+							img = SDL_LoadBMP(path1);
+							img = cutLine(img, 0);
+							snprintf(path1, 22, "%s/%s%i", path, "sublines", indexSublines);
+							removeLines(img, path1);
+							DIR *d2 = opendir(path1);
+							struct dirent *dir2;
+							if (d2) {
+								while ((dir2 = readdir(d2)) != NULL) {
+									if (dir2->d_name[0] != '.') {
+
+										// Characters pre-segmentation | Directory: linesI/sublinesJ/words/line.bmp
+										char path2[100];
+										snprintf(path2, 100, "%s/%s", path1, dir2->d_name);
+										img = SDL_LoadBMP(path2);
+										snprintf(path2, 100, "%s/%s%i", path1, "words", indexWords);
+										img = cutCharacters(img, path2);
+
+										// Words segmentation | Directory: linesI/sublinesJ/words/*.bmp
+										char path3[100];
+										snprintf(path3, 100, "%s/line.bmp", path2);
+										img = SDL_LoadBMP(path3);
+										img = cutWord(img);
+										removeLinesForWords(img, path2);
+										DIR *d3 = opendir(path2);
+										struct dirent *dir3;
+										if (d3) {
+											while ((dir3 = readdir(d3)) != NULL) {
+												if (dir3->d_name[0] != '.' && strcmp(dir3->d_name, "line.bmp") != 0) {
+
+													// Characters segmentation | Directory: linesI/sublinesJ/words/characters/*.bmp
+													char path4[130];
+													snprintf(path4, 130, "%s/%s", path2, dir3->d_name);
+													img = SDL_LoadBMP(path4);
+													snprintf(path4, 130, "%s/%s%i", path2, "characters", indexCharacters);
+													removeLinesForCharacters(img, path4);
+													indexCharacters++;
+												}
+											}
+										}
+										indexWords++;
+									}
+								}	
+							}
+							indexSublines++;
+						}
+					}
+				}
+				indexLines++;
+			}
+        }
+        closedir(d);
+    }
+	return 1;
+}
+
+
 // static void
 // activate (GtkApplication* app)
 // {
@@ -217,55 +325,55 @@ int main1() {
 
 int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Surface *img;
 
-	img = SDL_LoadBMP("paragraph.bmp");
+	if (argc < 2) {
+		printf("OCR Bitarrays: Error during parsing command\n");
+		return 1;
+	}
 
-	img = grayscale(img);
-	img = blackAndWhite(img);
-	img = cutColumn(img); 
-	convertColumns(img, "columns");
-	DIR *d;
-	struct dirent *dir;
-	d = opendir("columns");
-	int index = 0;
-	int index1 = 0;
-	int index2 = 0;
-	if (d)
-    {
-        while ((dir = readdir(d)) != NULL)
-        {
-			if (dir->d_name[0] != '.') {
-				char path[22];
-        		snprintf(path, 22, "%s/%s", "columns", dir->d_name);
-				img = SDL_LoadBMP(path);
-				img = cutLine(img, 1);
-        		snprintf(path, 22, "%s%i", "lines", index);
-				removeLines(img, path);
-				DIR *d1 = opendir(path);
-				struct dirent *dir1;
-				if (d1) {
-					while ((dir1 = readdir(d1)) != NULL) {
-						if (dir1->d_name[0] != '.') {
-							char path1[22];
-							snprintf(path1, 22, "%s/%s", path, dir1->d_name);
-							img = SDL_LoadBMP(path1);
-							img = cutLine(img, 0);
-							snprintf(path1, 22, "%s/%s%i", path, "sublines", index1);
-							index1++;
-							removeLines(img, path1);
-						}
-					}
-				}
-				index++;
+	// Grayscale command
+
+	if (strcmp(argv[1], "grayscale") == 0) {
+		if (argc == 4) {
+			SDL_Surface *imgDefault;
+			imgDefault = SDL_LoadBMP(argv[2]);
+			if (!imgDefault) {
+				printf("Error: unable to find bmp file at %s\n", argv[2]);
+				return 1;
 			}
-        }
-        closedir(d);
-    }
-	// img = cutWord(img);
-	// removeLinesForWords(img, "words");
-	// img = cutCharacters(img);
-	// removeLinesForCharacters(img, "char");
+			imgDefault = grayscale(imgDefault, 1, argv[3]);
+			return 0;
+		}
+		else {
+			printf("OCR Bitarrays: Grayscale take exactly 3 paramaters but was called with %i parameter(s)\n", argc - 1);
+			return 1;
+		}
+	}
+	else if (strcmp(argv[1], "filters") == 0)
+	{
+		printf("Filters command will be soon avaiable\n");
+		return 0;
+	}
+
+	else if (strcmp(argv[1], "segmentation") == 0) {
+		if (argc == 3) {
+			if (!fullSegmentation(argv[2])) {
+				printf("OCR Bitarrays: Error during segmentation execution\n");
+				return 1;
+			}
+			printf("OCR Bitarrays: Segmentation ended successfully\n");
+			return 0;
+		}
+		else {
+			printf("OCR Bitarrays: Segmetation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 1);
+			return 1;
+		}
+	}
+
+	else {
+		printf("OCR Bitarrays: Error during parsing command\n");
+		return 1;
+	}
 
 	
 

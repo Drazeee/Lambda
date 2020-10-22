@@ -1,6 +1,7 @@
 # include "detect_char.h"
 
-SDL_Surface *cutCharacters(SDL_Surface *img){
+
+SDL_Surface *cutCharacters(SDL_Surface *img, char *directory){
 
     //Variables
     SDL_Surface *img_copy = copy_image(img);
@@ -126,7 +127,6 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
                 putpixel(img_copy, j, i, pixel);
             }
             firstCut = 1;
-            printf("Char width: %i, average: %f\n", actualCharLength, averageCharLength);
 
             // Traitement dans le cas ou le caratère découpé est trop long 
             if (actualCharLength > 2*averageCharLength)
@@ -151,7 +151,9 @@ SDL_Surface *cutCharacters(SDL_Surface *img){
             }
         }
     }
-
-    SDL_SaveBMP(img_copy, "charCut.bmp");
+    mkdir(directory, 0777);
+    char path[100];
+    snprintf(path, 100, "%s/%s.bmp", directory, "line");
+    SDL_SaveBMP(img_copy, path);
     return img_copy;
 }

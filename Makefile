@@ -23,3 +23,5 @@ filters.o: src/ImageTreatment/filters.c
 clean:
 	rm OCR\ -\ Bitarrays
 	rm *.o
+	rm -r columns
+	rm -r lines*

@@ -1,6 +1,6 @@
 #ifndef MAIN_I
 #define MAIN_I
-int main(int argc, char **argv);
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -8,7 +8,12 @@ int main(int argc, char **argv);
 #include <SDL2/SDL.h>
 #include "Detection/segmentation.h"
 #include "Detection/detect_char.h"
+#include <dirent.h>
 // #include <gtk-3.0/gtk/gtk.h>
 #include "ImageTreatment/filters.h"
+
+int xorNetwork();
+int fullSegmentation(char *imagePath);
+int main(int argc, char **argv);
 
 #endif

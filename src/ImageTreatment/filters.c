@@ -31,26 +31,31 @@ SDL_Surface *blackAndWhite(SDL_Surface *img) {
 }
 
 
-SDL_Surface *grayscale(SDL_Surface *img) {
+SDL_Surface *grayscale(SDL_Surface *img, char save, char *path) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
     Uint8 b;
 
+    SDL_Surface *img_copy = copy_image(img);
+
     Uint8 average;
 
 
-    for (int i = 0; i < img -> w; i++)
+    for (int i = 0; i < img_copy -> w; i++)
     {
-        for (int j = 0; j < img -> h; j++)
+        for (int j = 0; j < img_copy -> h; j++)
         {
-            pixel = getpixel(img, i, j);
-            SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            pixel = getpixel(img_copy, i, j);
+            SDL_GetRGB(pixel, img_copy->format, &r, &g, &b);
             average = 0.3*r + 0.59*g + 0.11*b;
-            pixel = SDL_MapRGB(img->format, average, average, average);
-            putpixel(img, i, j, pixel);
+            pixel = SDL_MapRGB(img_copy->format, average, average, average);
+            putpixel(img_copy, i, j, pixel);
         }
     }
 
-    return img;
+    if (save) {
+        SDL_SaveBMP(img_copy, path);
+    }
+    return img_copy;
 }
