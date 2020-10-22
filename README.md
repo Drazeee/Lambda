@@ -58,7 +58,7 @@ Use our filters on your image by using this command line
 To finish, try our segmentation algorithm with this command line
 
 ```bash
-./OCR\ -\ Bitarrays segmentation "image-path" "destination"
+./OCR\ -\ Bitarrays segmentation "image-path"
 ```
 
 # <a name="features"></a> Features
