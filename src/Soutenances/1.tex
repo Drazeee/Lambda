@@ -176,6 +176,237 @@ backgroundcolor=\color{whiteback},
 \section{Traitement de l'image (pré-traitement)}
 
 \section{Segmentation de l'image}
+\subsection{Introduction}
+    \paragraph{}
+    Ce premier mois de projet nous a permis de commencer à implémenter des fonctionnalités primordiales pour la réalisation de notre projet final. En effet nous avons réalisé la segmentation des caractères, à reconnaître par la suite. \\
+    Ce processus est complexe et crucial pour pouvoir fournir au programme de reconnaissance des caractères bien découpés et formalisés comme le dataset utilisé pour l'entraîner.
+    
+\subsection{Segmentation de caractères}
+    \paragraph{}
+    Comme dit précédemment, la segmentation du texte initial en caractères reconnaissables par le programme est une des parties sur laquelle nous nous sommes le plus penché durant ce premier mois.
+    
+    \subsubsection{Découpage des colonnes}
+    \paragraph{}
+    Si la détection des caractères est primordiale, elle n'est que le point final du chaîne d'opérations sur l'image initiale. La première étape du processus de segmentation est le découpage des colonnes. Par exemple, l'image présentée ci-dessous comporte deux colonnes, qu'il faut séparer pour pouvoir continuer le processus de segmentation. \\
+    
+    $IMAGE paragraph.png$
+    
+    \paragraph{}
+    La détection des colonnes est un processus assez simple, qui tient compte de la "logique" d'organisation d'un texte. En effet, en tant qu'humains, nous distinguons deux colonnes comme des "colonnes" et non une suite de mots par l'espace situé entre les deux blocs qui est anormalement grand par rapport aux espaces présents entre les mots du texte.
+    \par
+    Ainsi, j'ai implémenté la même logique pour la segmentation, qui détecte un espace rempli de pixels blancs anormalement grand entre deux parties ne contenant pas uniquement des pixels blancs. Voici un aperçu du code implémenté:
+    
+    \begin{lstlisting}
+    
+    unsigned char fullWhite = 1;
+    unsigned char firstCut = 1;
+    int endText = -1; //Gets the first pixel (width wise) with full white width
+    int beginingText = -1; //Gets the first pixel without full white height after several full white 
+    lastLineWidth = 0.03 * img -> w;
+    
+		for (int i = 0; i < img -> w; i++) 
+    {
+        // Returns whether img's height is full of white pixels or not
+        fullWhite = fullWhite(img, i);
+
+        if (!fullWhite && firstCut)
+        {   
+            // Begins column cut
+            beginingText = i;
+            if (endText == -1 || lastLineWidth <= abs(endText - beginingText)){
+                //Draw line to separate column
+                for (int k = 0; k < img -> h; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, beginingText, k, pixel);
+                }   
+            }
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) {
+        
+            // Ends column cut
+            endText = i-1;
+            int ii = i;
+            do
+            {
+                fullWhite = fullWhite(img, ii);
+                ii++;
+            } while (fullWhite);
+            
+            if (ii - endText >= lastLineWidth || ii >= img -> w) {
+                // Space is too big, draw line to separate
+                for (int k = 0; k < img -> h; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, i, k, pixel);
+                }
+            }
+            firstCut = 1;
+        }
+    }	
+	\end{lstlisting}
+	
+	\par
+	Le principe est le suivant: on possède une variable \textit{fullWhite} qui indique si, pour un pixel donné (sur la largeur), tous les pixels sur la hauteur de l'image sont blancs. Cette variable est très importante, car combinée à \textit{firstCut}, on peut savoir si la partie de l'image où l'on se situe est du texte ou non. \textit{firstCut} permet de savoir si nous sommes en train de chercher le début d'une colonne (1 dans ce cas), ou si le début la colonne est déjà repéré et qu'on cherche donc la fin.
+	
+	\paragraph{}
+	Ainsi le code devient plus compréhensible. En parcourant toute la largeur de l'image, on regarde à chaque fois si toute la hauteur de l'image est blanche. 
+	\par
+	Si c'est n'est pas cas et que nous cherchons le début d'une colonne, alors nous l'avons trouvé et pouvons dessiner une ligne verticale pour marquer le début de la colonne.
+	\par
+	Si cependant nous ne cherchons plus le début mais la fin d'une colonne et qu'on se trouve sur un pixel dont la hauteur de l'image est toute blanche, alors nous évaluons les possibilités que ce soit la fin de la colonne. On note \textit{endText} comme l'indice final temporaire du texte. On continue d'avancer dans la largeur de l'image jusqu'au prochain pixel qui n'est pas \textit{fullWhite}. Enfin, la distance entre ce nouveau pixel et \textit{endText} est comparée à une constant représentant 3\% de la largeur de l'image. Si l'écart est supérieur à cette constante, on considère l'espace comme trop grand pour être un espace entre deux mots et on coupe la fin de la colonne au niveau de \textit{endText}. \\
+	
+	\paragraph{}
+	Le résultat de ce programme sur la photo précédente donne l'image ci-dessous, comportant en rouge les lignes tracées par la programme pour délimiter les colonnes, qui peuvent maintenant être coupées: \\
+	
+	$IMAGE\_AVEC\_LES\_LIGNES$
+	
+	\paragraph{}
+	Comme vous pouvez le voir, quatre lignes sont créées: la première correspond au début de la première question, la deuxième à la fin de cette même colonne. Les deux autres représentent respectivement le début et la fin de la deuxième colonne. Bien entendu, ici, les colonnes sont juste découpées par des lignes, mais il faudrait les séparer en deux images différentes, ce qui est fait par une autre fonction de notre programme.
+	
+	\subsubsection{Découpage des paragraphes}
+	\paragraph{}
+	Cette partie est la suite logique du découpage des colonnes. En effet, en regardant l'image 1 précédemment affichée, chaque colonne contient plusieurs paragraphes nettement distinguables. Ainsi, un programme similaire est utilisé sur chaque colonne trouvée pour découper les différents paragraphes afin qu'ils soient traités plus tard.
+	\par
+	Ici, le changement est principalement basé sur le fait de regarder si la largeur de l'image est complètement blanche, contrairement à la hauteur pour les colonnes. De plus, on détermine ici si un paragraphe se termine en fonction de la "hauteur" de la dernière ligne/du dernier paragraphe trouvé. Voici le nouveau code pour ce type de segmentation: \\
+	
+	\begin{lstlisting}
+    
+    unsigned char fullWhite = 1;
+    unsigned char firstCut = 1;
+    int endText = -1; //Gets the first pixel (height wise) with full white width
+    int beginingText = -1; //Gets the first pixel without full white width after several full white 
+    int lastLineHeight = -1; //Stores the number of pixels from the last text line
+    
+		for (int i = 0; i < img -> w; i++) 
+    {
+        // Returns whether img's height is full of white pixels or not
+        fullWhite = fullWhite(img, i);
+
+        if (!fullWhite && firstCut)
+        {   
+            // Begins column cut
+            beginingText = i;
+            if (endText == -1 || (lastLineHeight <= abs(endText - beginingText)){
+                for (int k = 0; k < img -> w; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, k, beginingText, pixel);
+                }   
+            }
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) {
+        
+            // Ends column cut
+            endText = i-1;
+            lastLineHeight = endText - beginingText;
+            int ii = i;
+            do
+            {
+                fullWhite = fullWhite(img, ii);
+                ii++;
+            } while (fullWhite);
+            
+            if (ii - endText >= lastLineWidth || ii >= img -> h) {
+                // Space is too big, draw line to separate
+                for (int k = 0; k < img -> w; k++)
+                {
+                    pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+                    putpixel(img_copy, k, i, pixel);
+                }
+            }
+            firstCut = 1;
+        }
+    }	
+	\end{lstlisting}
+	
+	\paragraph{}
+	Le résultat de ce nouveau programme, combiné à une fonction qui retire les lignes vertes créées, découpe et stocke les paragraphes dans de nouvelles images donne le résultat suivant: 
+	
+	$IMAGES\_DES\_PARAGRAPHES\_DECOUPES$
+	
+	\paragraph{}
+	Les paragraphes sont parfaitement découpés et près à être traités par la suite du programme jusqu'à pouvoir arriver à détecter des caractères.
+	
+	\subsubsection{Découpage des lignes}
+	\paragraph{}
+	Le découpage des mots est l'étape suivante que nous avons créée. En effet, les paragraphes sont des blocs de lignes qu'il faut séparer.
+	\par Cette partie ressemble très fortement, pour ne pas dire exactement, à la partie précédente. La seule différence apportée se situe au niveau de la tolérance de hauteur entre deux lignes. Pour détecter si on a bien affaire à un changement de ligne, il nous faut regarder l'espace entre la fin supposée de la ligne précédente et le début de la nouvelle. Si cet écart est trop faible, alors on ne considère pas la fin de ligne supposée comme une fin de ligne.
+	
+	\paragraph{}
+	C'est justement le degré considération qui change par rapport au découpage des paragraphes. Ici, on considère un changement si l'écart détecter entre le début et la fin des supposées lignes est supérieur à 0.2 fois la hauteur d'une ligne, comparé à la hauteur elle-même pour la détection de paragraphes.
+	\par Dans le code, cela revient à changer les conditions des lignes 17 et 39, on remplaçant \textit{lastLineHeight} par \textit{lastLineHeight * 0.2}. Tout comme le découpage des paragraphes, on dessine les lignes séparatrices puis découpe les lignes pour les stocker dans un dossier dédié. Voici le résultat du découpage des lignes par notre programme: \\
+	
+	$IMAGES\_DES\_LIGNES\_DECOUPES$
+	
+	\subsubsection{Découpage des mots et des caractères}
+	\paragraph{}
+	Nous présenter le découpage des mots et des caractères ensemble car ils sont effectués plus ou moins en même temps. En effet, le découpage des caractères reste une étape très délicate à appréhender car elle nécessite de prévoir ou doivent être découpés les caractères.
+	
+	\paragraph{}
+	L'ordre des segmentations voudrait que les mots soient découpés en premiers, puis les caractères ensuite. Au final, c'est plus ou moins ce qui se passe: on dessine les lignes séparant chaque caractère, puis on découpe les mots de la même façon que l'on découpe les colonnes, et enfin on découpe les caractères en utilisant les lignes dessinées auparavant, pour chacun des mots.
+	
+	\paragraph{}
+	Pourquoi faisons nous ces deux découpages en même temps? Tout simplement pour une question de précision sur le découpage des caractères. En effet, notre découpage des caractères se fait en fonction de la largeur moyenne d'un caractère de la phrase en cours de découpage.
+	\par Pour être encore plus clair, voici ce qu'il se passe précisément. Nous définissons la largeur moyenne d'un caractère comme \textit{0.5 * (image -> h)}, soit la moitié de la hauteur de l'image (résultat basé sur une comparaison des largeurs moyennes de caractères pour plusieurs polices, celles-ci étant centrées autour de cette valeur). Ensuite, nous parcourons l'image de gauche à droite, c'est-à-dire que nous cherchons le début d'un caractère (tous les pixels ne sont pas blancs sur la hauteur de l'image), puis nous cherchons sa fin (tous les pixels sont blancs). Cette fin n'est pas forcément la bonne, car deux caractères peuvent se chevaucher.
+	\par C'est alors qu'intervient notre variable de largeur moyenne d'un caractère. On regarde quelle largeur fait le supposé caractère sélectionné. S'il est x fois plus large que la moyenne, alors nous considérons que x caractères se chevauchent, et on coupe le bloc en x caractères différents. La moyenne est alors modifiée en fonction de la taille des caractères découpés.
+	\par Voici pourquoi nous faisons le découpage des caractères avant celui des mots, car plus la phrase contient de caractères, plus on peut être précis sur la façon de les découper.
+	
+	\paragraph{}
+	Voici à quoi ressemble le programme final pour le découpage des caractères:
+	\begin{lstlisting}
+	for (int j = 0; j < img -> w; j++)
+    {
+        fullWhite = fullWhiteHeight(img, j);
+        if (!fullWhite && firstCut)
+        {
+            beginingCharPixel = j;
+
+            /* Draw line for cut */
+
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) 
+        {
+            endingCharPixel = j-1;
+            int actualCharLength = abs(endingCharPixel - beginingCharPixel);
+            firstCut = 1;
+            
+            /* Draw line for cut */
+
+            // Bloc is too long
+            if (actualCharLength > 2*averageCharLength)
+            {
+                int times = round(actualCharLength/actualCharLength);
+                int middle = actualCharLength/2 + beginingCharPixel;
+                for (char k = 1; k <= times; k++){
+                    
+                    /* Draw line at beginingCharPixel + k*actualCharLength/times for cut */
+
+                }
+                nbChars += times;
+                averageCharLength = (averageCharLength*(nbChars-times) + actualCharLength)/nbChars;
+            }
+            else {
+                nbChars += 1;
+                averageCharLength = (averageCharLength*(nbChars-1) + actualCharLength)/nbChars;
+            }
+        }
+    }
+	\end{lstlisting}
+	
+	\paragraph{}
+	Comme dit précédemment, le découpage des mots est effectué après avoir dessiné les lignes pour celui des caractères. Ceci n'a pas d'impact sur son efficacité, et peut même aider au découpage car les espaces blancs entre les caractères ont été remplacés ou réduits avec les nouvelles lignes dessinées.
+	
+	\paragraph{}
+	La même technique est utilisée pour découper colonnes et mots, on regarde quelle taille fait l'espace entre la supposée fin d'un mot et le début de l'autre. Après avoir fait des recherches, un espace représente environ 25\% de la hauteur des caractères. On utilise ainsi cette donnée pour vérifié si l'espace trouvé est supérieur à 22\% de la hauteur de l'image. Cet algorithme fonctionne très bien est découpe brillamment les mots. En voici un exemple: \\
+	
+	$IMAGES\_DES\_MOTS\_DECOUPES$
 
 \section{Réseau de neurones}
 
