@@ -2,7 +2,7 @@ all: main
 
 main: main.o segmentation.o tools.o detect_char.o filters.o
 	# gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays `pkg-config --cflags --libs gtk+-3.0` -lSDL2
-	gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays -lSDL2 -lm
+	gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o Lambda -lSDL2 -lm
 
 main.o: src/main.c segmentation.o tools.o detect_char.o filters.o
 	# gcc -c src/main.c `pkg-config --cflags --libs gtk+-3.0`
@@ -21,7 +21,7 @@ filters.o: src/ImageTreatment/filters.c
 	gcc -c src/ImageTreatment/filters.c
 
 clean:
-	rm OCR\ -\ Bitarrays
+	rm Lambda
 	rm *.o
 	rm -r columns
 	rm -r lines*
