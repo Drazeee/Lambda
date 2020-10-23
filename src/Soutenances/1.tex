@@ -28,11 +28,11 @@
 \definecolor{whiteback}{rgb}{0.95, 0.95, 0.95}
 
 \lstset{
-language=csh,
+language=c,
 basicstyle=\footnotesize\ttfamily,
 numbers=left,
 numberstyle=\tiny,
-numbersep=-3pt,
+numbersep=5pt,
 tabsize=2,
 extendedchars=true,
 breaklines=true,
@@ -40,13 +40,13 @@ frame=b,
 stringstyle=\color{mygreen}\ttfamily,
 showspaces=false,
 showtabs=false,
-xleftmargin=-30pt,
-xrightmargin=-30pt,
+xleftmargin=0pt,
+xrightmargin=0pt,
 columns=fullflexible,
-framexleftmargin=10pt,
-framexrightmargin=5pt,
+framexleftmargin=15pt,
+framexrightmargin=0pt,
 framexbottommargin=10pt,
-framextopmargin=4pt,
+framextopmargin=15pt,
 commentstyle=\color{mygreen},
 morecomment=[l]{//},
 morecomment=[s]{/*}{*/},
@@ -145,8 +145,8 @@ backgroundcolor=\color{whiteback},
     Nous allons maintenant expliquer les différents objectifs de notre projet, de la création, à la réalisation en passant par les coûts et la rentabilité ainsi que le respect de nos délais.
 
 \newpage
-\lhead{Cahier des charges\vspace{0.25cm}}
-\rhead{\textit{Introduction}\vspace{0.25cm}}
+\lhead{Rapport de soutenance\vspace{0.25cm}}
+\rhead{\textit{Présentation}\vspace{0.25cm}}
 \vspace*{\stretch{1}}
 \section{Présentations}
 \subsection{Les membres}
@@ -173,8 +173,38 @@ backgroundcolor=\color{whiteback},
 
 \newpage
 
+\rhead{\textit{Pré-traitement}\vspace{0.25cm}}
 \section{Traitement de l'image (pré-traitement)}
 
+\subsection{Ce que nous devions faire}
+
+\paragraph{}Pour traiter les images de la meilleure des façons, il fallait penser à réaliser un pré traitement sur ces dernières pour que notre segmentation soit la meilleure possible. Il fallait réaliser un niveau de gris, une binarisation et appliquer des filtres permettant de réduire le bruit sur l'image. Toute cette partie est réalisée dans le fichier filters.c, contenu dans \textbf{"/src/ImageTreatment"}
+
+\subsection{Le niveau de gris}
+
+\paragraph{}Rien de compliqué pour réaliser cette fonction, il suffit de parcourir entièrement l'image et d'appliquer pour chacun des pixels une nouvelle valeur utilisant les valeurs de rouge, vert et bleu de chaque pixel. Les coefficients appliqués aux valeurs rouge, vert et bleu sont respectivement 0.3, 0.59, 0.11. Cela permet de créer un nouveau pixel avec cette nouvelle valeur pour sa valeur rouge, vert et bleu (pour obtenir un niveau de gris).
+
+\paragraph{}Pour utiliser cette fonctionnalité dans notre programme, il suffit d'exécuter
+\begin{lstlisting}
+./Lamba grayscale "image_path" "destination_path"
+\end{lstlisting}
+
+$ IMAGE NORMALE VERS GRIS $
+
+\subsection{Binarisation}
+
+\paragraph{}Pour binariser l'image (c'est à dire ne laisser que des pixels blancs ou noirs), nous avons appliqué une condition simple sur chacun des pixels qui compose l'image. Nous faisons la moyenne des valeurs rouge, vert et bleu et vérifions sur cette dernière est supérieure ou non à 127. Si elle est supérieure, nous mettons un pixel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.
+\paragraph{} Ce n'est pas ici la fonction la plus compliquée de notre code mais ce sont des éléments essentiels pour la suite.
+
+
+\subsection{Réduction de bruit}
+
+$ TODO $
+
+
+
+\newpage
+\rhead{\textit{Segmentation de l'image}\vspace{0.25cm}}
 \section{Segmentation de l'image}
 \subsection{Introduction}
     \paragraph{}
@@ -407,7 +437,266 @@ backgroundcolor=\color{whiteback},
 	La même technique est utilisée pour découper colonnes et mots, on regarde quelle taille fait l'espace entre la supposée fin d'un mot et le début de l'autre. Après avoir fait des recherches, un espace représente environ 25\% de la hauteur des caractères. On utilise ainsi cette donnée pour vérifié si l'espace trouvé est supérieur à 22\% de la hauteur de l'image. Cet algorithme fonctionne très bien est découpe brillamment les mots. En voici un exemple: \\
 	
 	$IMAGES\_DES\_MOTS\_DECOUPES$
+	
+\newpage
 
+\rhead{\textit{Réseau de neurones}\vspace{0.25cm}}
 \section{Réseau de neurones}
+
+
+\subsection{Fonction XOR}
+
+\paragraph{} La première étape pour obtenir un bon réseau de neurones était de développer un réseau capable d'apprendre la fonction XOR. Cela a pour avantage que le réseau serait rapide à entraîner, le réseau n'a que 2 entrées pour une seule sortie, et seulement 4 motifs d'entrainements.
+
+\begin{center}
+\vspace*{0.2cm}
+\begin{tabular}{|l|l|c|r|}
+  \hline
+  & entrée 1 & entrée 2 & sortie \\
+  \hline
+  Motif 1 & 0 & 0 & 0 \\
+  Motif 2 & 0 & 1 & 1 \\
+  Motif 3 & 1 & 0 & 1 \\
+  Motif 4 & 1 & 1 & 0 \\
+  \hline
+\end{tabular}
+\end{center}
+
+
+\paragraph{}N'étant alors pas tout à fait à l'aise avec ce « nouveau » langage qu'est le C, j'ai d'abord cherché à faire ce réseau en Python, un langage que je maîtrise depuis plusieurs années. J'ai donc cherché de l'aide et des exemples de réseaux de neurones par rétropropagation en Python, mais la plupart des résultats utilisaient le module Numpy pour la manipulation de matrice ainsi que certains calculs, or, en C, tout cela doit être traité manuellement.
+
+\paragraph{}Après plusieurs heures de recherche, je suis tombé sur un très bon tutoriel qui expliquait en détail le fonctionnement d'un tel programme, avec des exemples en C++. J'ai facilement réussi à refaire le programme en Python, puis en C.
+
+\paragraph{}Ensuite, pour voir si un tel réseau était adaptable à d'autres algorithmes, j'ai essayé de lui faire apprendre d'autres motifs, comme une fonction qui à partir de trois entrées, renvoie 1 si au moins 2 sont à 1 (et 0 sinon).
+
+\subsection{Reconnaissance de caractères}
+
+\paragraph{}Une seconde étape était de prévoir une structure pour notre réseau de neurones.
+Au final, le réseau qui apprendra à reconnaître des caractères est un réseau semblable à notre réseau XOR, avec un nombre d'entrées égal à nombre de pixel dans une image, et le nombre de sorties serait égal au nombre de caractères à reconnaître.
+
+\paragraph{}Les entrées sont des doubles compris entre 0 et 1, un 0 correspond à un pixel dont la couleur est celle du fond de l'image, un 1 correspond à un pixel de la couleur d'écriture du caractère.
+
+\paragraph{}Les images qui lui seront transmises auront une taille de 32×32 et seront collées au coin supérieur gauche. Le réseau a donc 1024 entrées.
+
+\paragraph{}Le nombre de sorties est égal au nombre de caractères à reconnaître. On suppose donc que la sortie ayant la plus grande valeur correspond au caractère reconnu.
+
+\paragraph{} Dès la réception du cahier des charges le 10 septembre, j'ai écris un programme C qui à l'aide de SDL2, lit des images et enregistre la valeur des pixels dans un tableau. Ce programme est encore utilisé aujourd'hui, mais sera surement modifié d'ici à la fin du projet pour mieux correspondre avec le traitement de l'image effectué par mes camarades.
+
+\paragraph{}Ensuite, il nous fallait un catalogue d'images (dataset) qui pourrait être utilisé pour l'entraînement et les tests du réseau. Les catalogues trouvés sur internet étaient très limités (taille des images ne correspondant pas, trop peu d'images,…), la meilleure solution était de créer nos propres datasets.
+
+\paragraph{}Pour cela, j'ai écris un petit script en Python qui génère des images avec un caractère dessus (grâce à la bibliothèque PIL). La police, couleur et taille sont aléatoires afin d'obtenir un entraînement plus diversifié.
+
+\paragraph{}Le premier réseau devait apprendre à reconnaître les caractères numériques 0 à 9. Les résultats n'étaient au début pas très probants. Et pour cause: les poids et biais des neurones étaient mal initialisés (Ils étaient initialisés entre 0 et 1 au lieu de entre -0.5 et 0.5). Une fois ce problème corrigé, le réseau arrivait à apprendre et reconnaissait les caractères avec une précision de 67\% environ. Deux problèmes se posaient alors:
+
+\begin{itemize}
+	\item Le réseau ne montait pas au dessus de 67\% de réussite
+	\item Il avait besoin de beaucoup de neurones (plus de 1000) dans sa couche intermédiaire.
+\end{itemize}
+
+\paragraph{} Ces problèmes m'ont pas mal pris la tête, et m'ont obligé à revoir l'ensemble du programme.
+Au bout de deux semaines de migraines, l'origine du problème m'est apparue: la dérivée de la fonction Sigmoïde était mal implémentée.
+
+La dérivée de la sigmoïde s'écrit comme ceci:
+
+\begin{center}
+	$\frac{d\sigma(x)}{dx} = \sigma(x)\dot{}(1 - \sigma(x))$
+\end{center}
+
+\paragraph{}Or, les paramètres récupérés et qui passent dans cette fonction sont déjà $\sigma(x)$. Du coup, la dérivée était au final calculée comme $\sigma(\sigma(x))\dot{}(1 - \sigma(\sigma(x)))$
+
+\paragraph{}Une fois ce problème résolu, on a obtenu des résultats proches de 95\% pour une couche intermédiaire de seulement 760 neurones.
+
+
+\subsection{Scripting}
+
+\paragraph{}Une fois que j'étais sûr que le réseau était bien en train d'apprendre, je me suis chargé du scripting, c'est à dire de créer des structs et des fonctions qui permettent d'interagir avec le réseau plutôt que de tout avoir dans un même fichier .c.
+
+Le réseau de neurones tourne donc autour de deux structs: 
+
+\begin{itemize}
+	\item MMImage est une struct qui contient toutes les informations caractérisant une image pour une prédiction (dimensions de l'image, valeurs des pixels, …) ou le training (caractère que c'est vraiment, …)
+	\item MMNetwork, qui contient les informations à propos d'un réseau de neurones (nombre d'entrées, sorties, neurones, les poids et les biais)
+\end{itemize}
+
+\paragraph{}J'ai implémenté des fonctions autour de ces structs, comme la fonction LoadDataset, qui permet de charger un dataset complet en mémoire, ou LoadImage qui permet de ne charger qu'une seule image.
+
+\begin{lstlisting}
+MMImage*		LoadDataset(int noChars, int imagesPerChar);
+MMImage		LoadImage(char* path);
+\end{lstlisting}
+
+\paragraph{}Concernant MMNetwork, on peut initialiser un réseau grâce à la fonction InitNetwork.
+Pour libérer la mémoire, on a la fonction DestroyNetwork.
+
+\begin{lstlisting}
+MMNetwork InitNetwork(unsigned int numInputs, unsigned short numHiddenNodes, unsigned int numOutputs);
+void DestroyNetwork(struct MMNetwork n);
+
+\end{lstlisting}
+
+\paragraph{}L'avantage de MMNetwork, c'est qu'il peut être enregistré et chargé dans des fichiers. Cela sert notamment à sauvegarder l'état d'un réseau enregistré pour pouvoir le récupérer ensuite pour faire les prédictions.
+
+\begin{lstlisting}
+void SaveNetwork(MMNetwork n, char* path);
+MMNetwork LoadNetwork(char* path);
+\end{lstlisting}
+
+
+\paragraph{}
+À partir de là, les bases sont posées pour effectuer n'importe quel type d'opérations avec les réseaux. En effet, une simple prédiction peut se faire avec la fonction Predict, qui à partir d'un MMImage et d'un MMNetwork, renvoie les valeurs de la couche de sortie du réseau, qui peut être analysée par la fonction OutputChar.
+
+\begin{lstlisting}
+double*	Predict(MMNetwork network, const MMImage* image);
+char OutputChar(double* outputLayer);
+\end{lstlisting}
+
+
+\textbf{Exemple de programme:}
+
+\paragraph{}Analysons maintenant le programme suivant, qui permet de prédire le caractère présent sur une image:
+
+\begin{center}
+	\includegraphics[scale=0.8]{maxime1}
+\end{center}
+
+
+\begin{itemize}
+	\item Ligne 6: on charge une image à partir de son chemin d'accès dans une variable img
+	\item Ligne 7: On charge le réseau précédemment entraîné à partir du chemin où il a été enregistré dans une variable n
+	\item Ligne 9: On fait une prédiction sur l'image img par le réseau n. Les valeurs de la couche de sortie sont enregistrées dans une variable output.
+	\item Ligne 10: À partir de la couche de sortie output, on récupère le caractère correspondant. C'est ce caractère qui est écrit sur l'image.
+\end{itemize}
+
+\paragraph{}Juste ces 4 lignes permettent de faire une prédiction sur le caractère écrit sur une image.
+
+\newpage
+
+\subsection{Fonctionnement du réseau}
+
+\paragraph{}L'apprentissage du réseau utilise un algorithme du gardient stochastique (Stochastic Gradient Descent), une "variante" de la descente du gradient qui a pour particularité de l'utiliser qu'un seul élément (en l'occurrence une image) choisi aléatoirement du training-set à la fois pour modifier les poids. (Un algorithme standard de descente du gradient utilisera tous les éléments en même temps).
+
+\paragraph{}Voici un schéma simplifié de notre réseau.
+(Le réseau comporte 1024 entrées, 760 neurones cachés, et 78 sorties. Pour des raisons de clarté, je n'ai représenté que certains d'entre eux.)
+
+\begin{center}
+	\includegraphics[scale=0.5]{Neuron}
+\end{center}
+
+\paragraph{}Chaque entrée influera sur chaque neurone caché par l'intermédiaire d'un poids caché (hidden weight) et du biais du neurone caché.
+De même, chaque neurone caché influera sur chaque neurone de sortie par l'intermédiaire d'un poids de sortie (output weight) et du biais du neurone de sortie.
+À chaque itération de l'apprentissage, une valeur est calculée pour chaque neurone caché et chaque neurone de sortie par
+
+\begin{center}
+	$hiddenLayer_j=\sigma(hiddenLayerBias_j+\sum input_i\times hiddenWeight_{i\rightarrow j})$
+	\vspace*{0.3cm}
+	$outputLayer_j=\sigma(outputLayerBias_j+\sum hiddenLayer_k\times outputWeight_{j\rightarrow k})$
+	\includegraphics[scale=0.5]{Meme}
+\end{center}
+
+\newpage
+\rhead{\textit{Correcteur orthographique}\vspace{0.25cm}}
+\section{Correcteur orthographique}
+
+\newpage
+\rhead{\textit{Command parser}\vspace{0.25cm}}
+\section{Command parser}
+
+\subsection{L'objectif}
+
+\paragraph{}Notre but ici était de permettre l'utilisation de notre programme via des lignes de commandes dans un premier temps avant de réaliser l'interface graphique.
+
+\paragraph{}Nous avons donc ajouté 3 commandes qui permettent d'exécuter des fonctionnalités clés telles que nos filtres, notre niveau de gris ainsi que la segmentation d'une image quelconque.
+
+\subsection{Grayscale}
+
+\paragraph{}C'est une fonction qui a besoin de 2 paramètres, le premier est le chemin de l'image d'origine et le deuxième le chemin auquel l'image en niveau de gris sera sauvegardée. Si les deux paramètres ne sont pas entrés ou bien que l'image entrée en paramètre ne peut être chargée, le programme s'arrête et renvoie un message d'erreur.
+
+\begin{lstlisting}
+
+	if (argc == 4) {
+		SDL_Surface *imgDefault;
+		imgDefault = SDL_LoadBMP(argv[2]);
+		if (!imgDefault) {
+			printf("Error: unable to find bmp file at %s\n", argv[2]);
+			return 1;
+		}
+		imgDefault = grayscale(imgDefault, 1, argv[3]);
+		return 0;
+	}
+	else {
+		printf("Lambda: Grayscale take exactly 2 parameters but was called with %i parameter(s)\n", argc - 2);
+		return 1;
+	}
+\end{lstlisting}
+
+\paragraph{}Ici, l'objectif est de couvrir tous les cas d'utilisation et d'éviter les crash de notre programme. Ainsi la fonction n'est appelée uniquement lorsque tous les paramètres sont entrés et la fonction grayscale renvoi un booléen indiquant qu'une erreur s'est produite pendant l'exécution et ainsi permet au parser de prévenir l'utilisateur.
+
+\subsection{Filters}
+
+\subsection{Segmentation}
+
+La fonction de segmentation s'exécute avec simplement un paramètre: le chemin de l'image qu'il faut segmenter. Pour le reste, tout est géré via une architecture de dossiers et fichiers précise, l'utilisateur n'a pour l'instant pas le choix de ce dernier.
+
+\begin{lstlisting}
+	if (argc == 3) {
+		if (!fullSegmentation(argv[2])) {
+			printf("Lambda: Error during segmentation execution\n");
+			return 1;
+		}
+		printf("Lambda: Segmentation ended successfully\n");
+		return 0;
+	}
+	else {
+		printf("Lambda: Segmentation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
+		return 1;
+	}
+\end{lstlisting}
+
+\newpage
+\rhead{\textit{Avancement}\vspace{0.25cm}}
+\section{Notre avancement et répartition des tâches}
+
+
+\subsection{Répartition des tâches à la première soutenance}
+
+\paragraph{} Nous vous avons présenté les fonctionnalités de notre projet sans dire qui était en charge de ces dernières. Ce tableau est le récapitulatif global de nos tâches respectives pour la première soutenance, le X signifie que la personne a participé à cette tâche. L'objectif ici est de clarifier nos rôles, nous formons un seul groupe qui progresse et se donne des objectifs en fonction des possibilités et envies de chacun. Le nombre de tâches réalisées n'a pas de rapport avec l'investissement dans le projet car la complexité est différente.
+\begin{center}
+\vspace*{0.2cm}
+\begin{tabular}{|l|c|c|c|c|}
+  \hline
+  & Quentin & Maxime & Charles & Nathan \\
+  \hline
+  Pré-traitement & X &  & X &  \\
+  \hline
+  Segmentation de l'image & X &  & X &  \\
+  \hline
+  Réseau de neurones &  & X &  &  \\
+  \hline
+  Correcteur orthographique &  &  &  & X \\
+  \hline
+  Command parser &  &  & X &  \\
+  \hline
+\end{tabular}
+\end{center}
+
+
+\subsection{Nos objectifs et envies}
+
+\paragraph{}La deuxième soutenance sera la dernière pour ce projet, il faut donc qu'il soit terminé d'ici là. Nous devons donc mettre tout en oeuvre pour lier la segmentation en caractères de notre image source avec la reconnaissance de ces derniers pour permettre à l'utilisateur de récupérer son texte.
+
+\paragraph{}Il nous faut aussi commencer l'interface graphique pour donner vie à notre projet et lui faire dépasser le stade des lignes de commandes. Nous avons déjà commencé à utiliser pour GTK et Glade pour créer cette dernière et elle sera terminée pour la deuxième soutenance. L'objectif est créer une interface en adéquation avec le style graphique que nous avons mis au point pour le groupe.
+
+\paragraph{}La finalisation du correcteur orthographique est une étape importante pour le projet. Elle ajouterai une fonctionnalité utile pour l'utilisateur. Cela nous apportera beaucoup dans la compréhension de l'implémentation d'un correcteur orthographique et sa réalisation et nous fera réfléchir à l'optimisation de notre programme pour ne pas perdre trop de temps sur la correction. 
+
+\paragraph{}L'IA doit encore être entrainée pour avoir un taux d'erreur le plus bas possible et reconnaître au mieux les caractères de l'image. Il faut penser à la reconnaissance des accents, virgules, points, ...
+
+\paragraph{}Nous devons aussi penser à améliorer notre segmentation des caractères pour éviter les problèmes auxquels nous sommes confrontés aujourd'hui et peut être créer un réseau de neurones qui pourrait apprendre à reconnaître des caractères sur une ligne grâce si nous avons le temps.
+
+\newpage
+\rhead{\textit{Conclusion}\vspace{0.25cm}}
+\section{Conclusion}
+
+\newpage
+
 
 \end{document}

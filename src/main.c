@@ -327,7 +327,7 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	if (argc < 2) {
-		printf("OCR Bitarrays: Error during parsing command\n");
+		printf("Lambda: Error during parsing command\n");
 		return 1;
 	}
 
@@ -345,7 +345,7 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		else {
-			printf("OCR Bitarrays: Grayscale take exactly 3 paramaters but was called with %i parameter(s)\n", argc - 1);
+			printf("Lambda: Grayscale take exactly 2 paramaters but was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
@@ -358,20 +358,20 @@ int main(int argc, char **argv) {
 	else if (strcmp(argv[1], "segmentation") == 0) {
 		if (argc == 3) {
 			if (!fullSegmentation(argv[2])) {
-				printf("OCR Bitarrays: Error during segmentation execution\n");
+				printf("Lambda: Error during segmentation execution\n");
 				return 1;
 			}
-			printf("OCR Bitarrays: Segmentation ended successfully\n");
+			printf("Lambda: Segmentation ended successfully\n");
 			return 0;
 		}
 		else {
-			printf("OCR Bitarrays: Segmetation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 1);
+			printf("Lambda: Segmentation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
 
 	else {
-		printf("OCR Bitarrays: Error during parsing command\n");
+		printf("Lambda: Error during parsing command\n");
 		return 1;
 	}
 
