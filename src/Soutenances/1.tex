@@ -443,8 +443,9 @@ $ TODO $
 \rhead{\textit{Réseau de neurones}\vspace{0.25cm}}
 \section{Réseau de neurones}
 
+\subsection{Avancée}
 
-\subsection{Fonction XOR}
+\subsubsection{Fonction XOR}
 
 \paragraph{} La première étape pour obtenir un bon réseau de neurones était de développer un réseau capable d'apprendre la fonction XOR. Cela a pour avantage que le réseau serait rapide à entraîner, le réseau n'a que 2 entrées pour une seule sortie, et seulement 4 motifs d'entrainements.
 
@@ -469,14 +470,14 @@ $ TODO $
 
 \paragraph{}Ensuite, pour voir si un tel réseau était adaptable à d'autres algorithmes, j'ai essayé de lui faire apprendre d'autres motifs, comme une fonction qui à partir de trois entrées, renvoie 1 si au moins 2 sont à 1 (et 0 sinon).
 
-\subsection{Reconnaissance de caractères}
+\subsubsection{Reconnaissance de caractères}
 
 \paragraph{}Une seconde étape était de prévoir une structure pour notre réseau de neurones.
 Au final, le réseau qui apprendra à reconnaître des caractères est un réseau semblable à notre réseau XOR, avec un nombre d'entrées égal à nombre de pixel dans une image, et le nombre de sorties serait égal au nombre de caractères à reconnaître.
 
 \paragraph{}Les entrées sont des doubles compris entre 0 et 1, un 0 correspond à un pixel dont la couleur est celle du fond de l'image, un 1 correspond à un pixel de la couleur d'écriture du caractère.
 
-\paragraph{}Les images qui lui seront transmises auront une taille de 32×32 et seront collées au coin supérieur gauche. Le réseau a donc 1024 entrées.
+\paragraph{}Les images qui lui seront transmises auront une taille de 32$\times$32 et seront collées au coin supérieur gauche. Le réseau a donc 1024 entrées.
 
 \paragraph{}Le nombre de sorties est égal au nombre de caractères à reconnaître. On suppose donc que la sortie ayant la plus grande valeur correspond au caractère reconnu.
 
@@ -502,12 +503,13 @@ La dérivée de la sigmoïde s'écrit comme ceci:
 	$\frac{d\sigma(x)}{dx} = \sigma(x)\dot{}(1 - \sigma(x))$
 \end{center}
 
-\paragraph{}Or, les paramètres récupérés et qui passent dans cette fonction sont déjà $\sigma(x)$. Du coup, la dérivée était au final calculée comme $\sigma(\sigma(x))\dot{}(1 - \sigma(\sigma(x)))$
+\paragraph{}Or, les paramètres récupérés et qui passent dans cette fonction sont déjà $\sigma(x)$. Du coup, la dérivée était au final calculée comme $\sigma^2(x)\dot{}(1 - \sigma^2(x))$
 
 \paragraph{}Une fois ce problème résolu, on a obtenu des résultats proches de 95\% pour une couche intermédiaire de seulement 760 neurones.
 
+\subsection{Fonctionnement}
 
-\subsection{Scripting}
+\subsubsection{Scripting}
 
 \paragraph{}Une fois que j'étais sûr que le réseau était bien en train d'apprendre, je me suis chargé du scripting, c'est à dire de créer des structs et des fonctions qui permettent d'interagir avec le réseau plutôt que de tout avoir dans un même fichier .c.
 
@@ -555,13 +557,30 @@ char OutputChar(double* outputLayer);
 
 \paragraph{}Analysons maintenant le programme suivant, qui permet de prédire le caractère présent sur une image:
 
-\begin{center}
-	\includegraphics[scale=0.8]{maxime1}
-\end{center}
+
+\begin{lstlisting}
+#include <stdio.h>
+#include "LambdaNeuralNetwork.h"
+
+int main(int argc, const char* argv[]) {
+
+	MMImage img = LoadImage("/Users/maxime/Documents/OCR/W.bmp");
+	MMNetwork n = LoadNetwork("/Users/maxime/Documents/OCR/IA");
+	
+	double* output = Predict(n, &img);
+	char character = OutputChar(output);
+	
+	printf("Recognized as a %d\n", character);
+	printf("\n");
+	
+	return 0;
+}
+\end{lstlisting}
 
 
 \begin{itemize}
-	\item Ligne 6: on charge une image à partir de son chemin d'accès dans une variable img
+	\item Ligne 2: On inclut le header principal, qui définit toutes les fonctions et structs utilisées pour la prédiction et l'utilisation des réseaux de neurones du projet.
+	\item Ligne 6: On charge une image à partir de son chemin d'accès dans une variable img
 	\item Ligne 7: On charge le réseau précédemment entraîné à partir du chemin où il a été enregistré dans une variable n
 	\item Ligne 9: On fait une prédiction sur l'image img par le réseau n. Les valeurs de la couche de sortie sont enregistrées dans une variable output.
 	\item Ligne 10: À partir de la couche de sortie output, on récupère le caractère correspondant. C'est ce caractère qui est écrit sur l'image.
@@ -571,7 +590,7 @@ char OutputChar(double* outputLayer);
 
 \newpage
 
-\subsection{Fonctionnement du réseau}
+\subsubsection{Fonctionnement du réseau}
 
 \paragraph{}L'apprentissage du réseau utilise un algorithme du gardient stochastique (Stochastic Gradient Descent), une "variante" de la descente du gradient qui a pour particularité de l'utiliser qu'un seul élément (en l'occurrence une image) choisi aléatoirement du training-set à la fois pour modifier les poids. (Un algorithme standard de descente du gradient utilisera tous les éléments en même temps).
 
@@ -582,14 +601,25 @@ char OutputChar(double* outputLayer);
 	\includegraphics[scale=0.5]{Neuron}
 \end{center}
 
-\paragraph{}Chaque entrée influera sur chaque neurone caché par l'intermédiaire d'un poids caché (hidden weight) et du biais du neurone caché.
-De même, chaque neurone caché influera sur chaque neurone de sortie par l'intermédiaire d'un poids de sortie (output weight) et du biais du neurone de sortie.
-À chaque itération de l'apprentissage, une valeur est calculée pour chaque neurone caché et chaque neurone de sortie par
+\paragraph{} Chaque entrée influera sur chaque neurone caché par l’intermédiaire d’un poids caché (hidden weight) et du biais du neurone caché.
+De même, chaque neurone caché influera sur chaque neurone de sortie par l’intermédiaire d’un poids de sortie (output weight) et du biais du neurone de sortie.
+À chaque itération de l’apprentissage, une valeur est calculée pour chaque neurone caché:
+\newline
+
+$hiddenLayer_j=\sigma(hiddenLayerBias_j+\sum_i input_i\times hiddenWeight_{i\rightarrow j})$
+
+\paragraph(où $hiddenLayerBias_j$ est le biais du neurone, $hiddenWeight_{i\rightarrow j}$ le poids de la transition de l’entrée i vers le neurone)
+
+\vspace*{0.3cm}
+
+\paragraph{} Idem pour les valeurs de la couche de sortie:\newline
+
+$outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_{j\rightarrow k})$
+
+
+(où $outputLayerBias_k$ est le biais du neurone, $outputWeight_{j\rightarrow k}$ le poids de la transition du neurone caché i vers le neurone de sortie)
 
 \begin{center}
-	$hiddenLayer_j=\sigma(hiddenLayerBias_j+\sum input_i\times hiddenWeight_{i\rightarrow j})$
-	\vspace*{0.3cm}
-	$outputLayer_j=\sigma(outputLayerBias_j+\sum hiddenLayer_k\times outputWeight_{j\rightarrow k})$
 	\includegraphics[scale=0.5]{Meme}
 \end{center}
 
