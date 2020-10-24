@@ -186,7 +186,7 @@ backgroundcolor=\color{whiteback},
 
 \paragraph{}Pour utiliser cette fonctionnalité dans notre programme, il suffit d'exécuter
 \begin{lstlisting}
-./Lamba grayscale "image_path" "destination_path"
+./Lambda grayscale "image_path" "destination_path"
 \end{lstlisting}
 
 $ IMAGE NORMALE VERS GRIS $
@@ -443,7 +443,7 @@ $ TODO $
 \rhead{\textit{Réseau de neurones}\vspace{0.25cm}}
 \section{Réseau de neurones}
 
-\subsection{Avancée}
+\subsection{Avancées}
 
 \subsubsection{Fonction XOR}
 
@@ -536,7 +536,7 @@ void DestroyNetwork(struct MMNetwork n);
 
 \end{lstlisting}
 
-\paragraph{}L'avantage de MMNetwork, c'est qu'il peut être enregistré et chargé dans des fichiers. Cela sert notamment à sauvegarder l'état d'un réseau enregistré pour pouvoir le récupérer ensuite pour faire les prédictions.
+\paragraph{}L'avantage de MMNetwork, c'est qu'il peut être enregistré et chargé dans des fichiers. Cela sert notamment à sauvegarder l'état d'un réseau entraîné pour pouvoir le récupérer par la suite pour faire des prédictions.
 
 \begin{lstlisting}
 void SaveNetwork(MMNetwork n, char* path);
@@ -551,7 +551,6 @@ MMNetwork LoadNetwork(char* path);
 double*	Predict(MMNetwork network, const MMImage* image);
 char OutputChar(double* outputLayer);
 \end{lstlisting}
-
 
 \textbf{Exemple de programme:}
 
@@ -590,6 +589,32 @@ int main(int argc, const char* argv[]) {
 
 \newpage
 
+\subsubsection{Compilation}
+Le réseau de neurones a été entièrement programmé sur l'IDE Xcode, et a été organisé en 3 projets:
+
+
+\begin{itemize}
+	\item La library "LambdaNeuralNetwork" qui contient les fonctions et les structs
+	\item Un programme "Learning" qui s'occupe de l'entraînement du réseau
+	\item Un programme "Analyze" qui va effectuer des prédiction sur un testing-set afin d'obtenir un taux de réussite sur un réseau après entraînement
+\end{itemize}
+Un Makefile permet de compiler chacun de ces projets:
+
+\begin{lstlisting}
+make lib
+make analyze
+make learning
+
+make all
+make clean
+\end{lstlisting}
+
+Effectuer un make pour compiler un des programme va créer l'exécutable correspondant dans un dossier bin.
+Compiler la lib va créer un dossier lib contenant des fichiers .o. Le fichier principal LambdaNeuralNetwork.o est le lien vers tous les autres .o.
+
+Importer le fichier LambdaNeuralNetwork.o et include le fichier "include/LambdaNeuralNetwork.h" suffit pour pouvoir utiliser toutes les fonction et les structs.
+
+
 \subsubsection{Fonctionnement du réseau}
 
 \paragraph{}L'apprentissage du réseau utilise un algorithme du gardient stochastique (Stochastic Gradient Descent), une "variante" de la descente du gradient qui a pour particularité de l'utiliser qu'un seul élément (en l'occurrence une image) choisi aléatoirement du training-set à la fois pour modifier les poids. (Un algorithme standard de descente du gradient utilisera tous les éléments en même temps).
@@ -608,7 +633,7 @@ De même, chaque neurone caché influera sur chaque neurone de sortie par l’in
 
 $hiddenLayer_j=\sigma(hiddenLayerBias_j+\sum_i input_i\times hiddenWeight_{i\rightarrow j})$
 
-\paragraph(où $hiddenLayerBias_j$ est le biais du neurone, $hiddenWeight_{i\rightarrow j}$ le poids de la transition de l’entrée i vers le neurone)
+(où $hiddenLayerBias_j$ est le biais du neurone, $hiddenWeight_{i\rightarrow j}$ le poids de la transition de l’entrée i vers le neurone)
 
 \vspace*{0.3cm}
 
