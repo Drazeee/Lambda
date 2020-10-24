@@ -52,7 +52,7 @@ For instance, our project only got 3 commands. If you want to use our grayscale 
 Use our filters on your image by using this command line
 
 ```bash
-./Lamba filters "image-path" "destination"
+./Lambda filters "image-path" "destination"
 ```
 
 To finish, try our segmentation algorithm with this command line
@@ -70,7 +70,7 @@ To finish, try our segmentation algorithm with this command line
 * [X] Saving and loading of neural network weights
 * [X] Dataset for learning
 * [X] Manipulation of files for saving results
-* [ ] Complete neural network for reconizing characters
+* [ ] Complete neural network for recognizing characters
 * [ ] Text reconstruction and saving
 * [ ] User interface
 * [ ] Spell checker
