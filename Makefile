@@ -21,7 +21,9 @@ filters.o: src/ImageTreatment/filters.c
 	gcc -c src/ImageTreatment/filters.c
 
 clean:
-	rm Lambda
-	rm *.o
-	rm -r columns
-	rm -r lines*
+	rm -f Lambda
+	rm -f *.o
+	rm -rf columns
+	rm -rf lines*
+	rm -rf chars
+	rm -rf exampleChars
