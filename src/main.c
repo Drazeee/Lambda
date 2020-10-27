@@ -370,6 +370,25 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	else if (strcmp(argv[1], "example") == 0) {
+		if (argc == 3) {
+			SDL_Surface *img;
+			img = SDL_LoadBMP(argv[2]);
+			img = cutCharacters(img, "exampleChars/");
+			if (!img) {
+				printf("Lambda: Error during segmentation execution\n");
+				return 1;
+			}
+			removeLinesForCharacters(img, "chars/");
+			printf("Lambda: Segmentation ended successfully\n");
+			return 0;
+		}
+		else {
+			printf("Lambda: Segmentation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
+			return 1;
+		}
+	}
+
 	else {
 		printf("Lambda: Error during parsing command\n");
 		return 1;
