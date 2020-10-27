@@ -36,7 +36,6 @@ SDL_Surface *grayscale(SDL_Surface *img, char save, char *path) {
     Uint8 r;
     Uint8 g;
     Uint8 b;
-
     SDL_Surface *img_copy = copy_image(img);
 
     Uint8 average;
@@ -103,8 +102,8 @@ SDL_Surface *convolute(SDL_Surface *img, float mask[], int num_rows, int num_col
 }
 
 
-/* Grayscale image */
-SDL_Surface *histogramNormalization(SDL_Surface *img) {
+// Grayscale image
+SDL_Surface *contrast(SDL_Surface *img) {
     unsigned long nbPixels = img->w * img->h;
     SDL_Surface *imgCopy = copy_image(img);
 
@@ -155,8 +154,8 @@ SDL_Surface *histogramNormalization(SDL_Surface *img) {
     return imgCopy;
 }
 
-/* Noise reduction function
-/* img: the image */
+// Noise reduction function
+// img: the image
 
 SDL_Surface *noiseReduction(SDL_Surface *img) {
     // Variables

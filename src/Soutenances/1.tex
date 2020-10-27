@@ -20,6 +20,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{geometry}
 \usepackage{multirow}
+\usepackage{mathtools}
 
 \usepackage{listings}
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -103,7 +104,9 @@ backgroundcolor=\color{whiteback},
 		\vspace{1.5cm}
 		\begin{center}
 			\includegraphics[scale=0.3]{LogoBitarrays.png}
-    		\paragraph{} Par BITARRAYS
+		\end{center}
+		\begin{center}
+			\par Par Bitarrays | Projet "Lambda"
 		\end{center}
 		\vspace*{\stretch{1}}
 	
@@ -114,7 +117,6 @@ backgroundcolor=\color{whiteback},
     \rhead{Table des matières}
     \cfoot{\thepage}
     \chead{\includegraphics[scale=0.05]{LogoBitarrays.png}}
-    \vspace*{2.5cm}
     \tableofcontents
     
 \newpage
@@ -129,25 +131,25 @@ backgroundcolor=\color{whiteback},
 \vspace*{1cm}
 \vspace{0.4cm}
 	\paragraph{}
-    à travers ce cahier des charges, notre équipe présente ses ambitions pour réaliser le projet du deuxième semestre de l'EPITA, qui durera environ 6 mois, rythmé par trois soutenances intermédiaires et une finale.
+    Voici le premier rapport de soutenance pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L''objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
 	
 	\paragraph{}
-    Nous étions huit étudiants, attirés par la création d'un groupe en commun. Suite à un débat d'idées et au fil des discussions, les deux groupes se sont constitués naturellement, en fonction des idées qui ont été proposées. Ainsi, nous avons créé un groupe de 4 personnes très inspirées par l'idée d'un jeu d'énigme. Cela nous obligera à réfléchir individuellement à des énigmes innovantes, nouvelles, avec un niveau de difficulté suffisant pour permettre l'amusement et la durabilité de notre jeu.
+    Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et avons directement dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
 	
 	\paragraph{}
     Nous allons apprendre à communiquer et à s'adapter aux différents caractères des membres de notre groupe. Nous avons, par expérience, déjà compris qu'un projet de groupe est un réel défi au niveau humain mais ce projet s'annonce encore plus complexe.
-    Nous sommes tous très motivés par la création de ce jeu.
+    Nous sommes tous très motivés par la création de l'OCR.
 	
 	\paragraph{}
-    Notre investissement se devra d'être maximal. Nous allons nous découvrir dans les moments durs et stressants qui rythmeront nos 6 prochains mois et nous apprendrons à travailler efficacement en équipe.
+    Ce fut un gros investissement pour nous 4 durant ce premier mois pour proposer une segmentation des caractères convenable ainsi que le début de la réalisation de plusieurs éléments qui rendront notre OCR fonctionnel pour la date de la deuxième soutenance.
 
 	\paragraph{}
-    Nous allons maintenant expliquer les différents objectifs de notre projet, de la création, à la réalisation en passant par les coûts et la rentabilité ainsi que le respect de nos délais.
+    Nous allons présenter ici nos réalisation ainsi que nos problèmes rencontrés jusqu'à aujourd'hui.
 
 \newpage
 \lhead{Rapport de soutenance\vspace{0.25cm}}
 \rhead{\textit{Présentation}\vspace{0.25cm}}
-\vspace*{\stretch{1}}
+\vspace*{2cm}
 \section{Présentations}
 \subsection{Les membres}
 \subsubsection{Quentin "Scout" FISCH}
@@ -160,16 +162,31 @@ backgroundcolor=\color{whiteback},
 \paragraph{}Passionné d'informatique depuis mes années du collège ou j'ai commencé à développer des serveurs sur Minecraft, EPITA est pour moi une révélation. Une école avec une formation permettant d'atteindre le statut d'ingénieur ainsi que des compétences en informatique plus que confortables est pour moi le cursus idéal. J'ai appris par moi même certains langages comme le HTML/CSS, Java et aujourd'hui je me perfectionne et corrige mes défauts grâce à l'école. Ce projet devrait m'apporter à titre personnel beaucoup d'expérience, autant au niveau humain que dans les compétences informatiques.
 
 \subsubsection{Nathan "Goruza" AVÉ}
+\paragraph{}Après une première année de sup ou j’ai pu vivre ma première expérience de travail de groupe à EPITA, je poursuis l’aventure avec plus d’expérience dans les projets de ce type et aussi un groupe différent. Pour moi, l’OCR est une seconde expérience de travail où je vais devoir apprendre à maitriser des notions par moi-même et non pas lors des cours. Cela s’inscrit dans la continuité de mon stage réalisé cet été par l’apprentissage d’un nouveau langage et la similarité de mes collègues pour ce projet ayant fait ce stage avec Quentin et Charles. Préparez-vous ce projet sera légendaire !
 
-\vspace*{\stretch{1}}
 
 \newpage
 
+\vspace*{\stretch{1}}
 
 \subsection{Le groupe}
 
 \paragraph{}Nous avons créé notre groupe en reprenant les membres avec qui nous avions travaillé l'année dernière car l'entente était très bonne tout comme l'efficacité au sein du groupe. De plus, nous avons déjà quelques projets de groupe à notre actif ce qui permet de connaître les points forts et faibles de chacun. Malheureusement nous n'étions que 3 et il fallait trouver un dernier membre pour former un groupe de 4 personnes. Nathan était le bon candidat car nous nous connaissons bien et le travail pourrait alors être efficace.
-\paragraph{}
+
+\paragraph{}Comme nous avons l'habitude de travailler ensemble, nous savons comment chacun fonctionne et comment chacun réalise ses tâches. Maxime est plus solitaire mais très acharné et réussi donc toujours à réaliser ce qu'il doit faire, Nathan sait innover et trouver les idées pour apporter des améliorations sur des réalisations tandis que Quentin et Charles arrivent à travailler efficacement en binôme plutôt que seuls.
+
+\paragraph{}Avec ses données, chacun a pu trouver dans ce projet sa place et fournir un travail qui permet de répondre aux attentes de cette première soutenance. Tout ce que nous avons développé n'est pas parfait mais les idées sont là et ne peuvent qu'être améliorées par la suite.
+
+\paragraph{}Ainsi l'entente au sein du groupe est très bonne et devrait permettre de continuer dans ce projet motivant pour révéler le meilleur de chacun et pouvoir réaliser des bonus et rendre notre projet utilisable par la suite.
+
+\paragraph{}Notre groupe de projet pour le même nom que l'année dernière (Bitarrays) car nous avons continué de le faire vivre après la fin du projet de S2. Nous avons décidé de donner le nom Lambda à notre projet de cette année.
+
+\vspace*{0.5cm}
+\begin{center}
+	\includegraphics[scale=0.4]{work}
+\end{center}
+
+\vspace*{\stretch{1}}
 
 \newpage
 
@@ -189,18 +206,73 @@ backgroundcolor=\color{whiteback},
 ./Lambda grayscale "image_path" "destination_path"
 \end{lstlisting}
 
-$ IMAGE NORMALE VERS GRIS $
+\paragraph{}Et voici le résultat obtenu une fois le programme exécuté
+\begin{center}
+	\includegraphics[scale=0.45]{a}
+\end{center}
+
 
 \subsection{Binarisation}
 
 \paragraph{}Pour binariser l'image (c'est à dire ne laisser que des pixels blancs ou noirs), nous avons appliqué une condition simple sur chacun des pixels qui compose l'image. Nous faisons la moyenne des valeurs rouge, vert et bleu et vérifions sur cette dernière est supérieure ou non à 127. Si elle est supérieure, nous mettons un pixel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.
 \paragraph{} Ce n'est pas ici la fonction la plus compliquée de notre code mais ce sont des éléments essentiels pour la suite.
 
+\newpage
 
-\subsection{Réduction de bruit}
+\subsection{Augmentation des contrastes}
 
-$ TODO $
+\paragraph{}Sur certaines images, les contrastes ne sont pas assez prononcés et il faut alors les augmenter. Pour cela, nous avons créé une fonction utilisant un histogramme normalisé de tous les pixels d'une image en niveaux de gris. L'histogramme est représenté par une liste de taille 256.
 
+\paragraph{}Comme l'image traitée est en niveau de gris, nous construisons l'histogramme en parcourant chaque pixel et en ajoutant la valeur rouge du pixel par exemple (comme les valeurs de rouge, bleu et vert sont les mêmes).
+
+\paragraph{}Ensuite, l'objectif est de trouver une nouvelle valeur pour chaque pixel de l'image. Pour cela, nous repassons à nouveau dans chaque pixel et utilisons la formule:\newline
+\begin{center}
+	$\sum_{n=0}^{k}\frac{255}{nbPixels}*histogram[n]$
+\end{center}
+
+\paragraph{}qui correspond à la somme du nombre de pixels de l'image dont la valeur est inférieure ou égale au pixel traité. Nous multiplions ensuite cette donnée par $\frac{255}{nbPixels}$ pour normaliser et obtenir la nouvelle valeur de gris du pixel.
+
+
+\subsection{Réduction des bruits}
+
+\paragraph{}Nous n'appliquons ce filtre que sur des images en niveaux de gris.
+
+\paragraph{}Pour réduire les bruits sur l'image, nous suivons un algorithme qui s'applique sur chaque pixel. Nous faisons la somme des valeurs des pixels voisins (les 8 pixels qui entourent le pixel actuel s'ils existent). La valeur du nouveau pixel est la moyenne des valeurs des pixels voisins.
+
+\paragraph{}Voici la fonction qui est utilisée dans notre code
+
+\begin{lstlisting}
+	// Foreach pixels
+    for (int i = 0; i < img->w; i++)
+    {
+        for (int j = 0; j < img->h; j++)
+        {
+            // Sum of each neighbors pixels
+            Uint32 sum = 0;
+            short count = 0;
+            for (int k = -1; k < 2; k++)
+            {
+                for (int l = -1; l < 2; l++)
+                {
+                    if (i + k > -1 && 
+                        i + k < img->w && 
+                        j + l > - 1 && 
+                        j + l < img->h) 
+                    {
+                        pixel = getpixel(img, i + k, j + l);
+                        SDL_GetRGB(pixel, img->format, &r, &g, &b);
+                        sum += r;
+                        count += 1;
+                    }
+                }
+            }
+            // Average of pixels values to get the new current pixel value
+            sum /= count;
+            pixel = SDL_MapRGB(img->format, sum, sum, sum);
+            putpixel(imgCopy, i, j, pixel);
+        }
+    }
+\end{lstlisting}
 
 
 \newpage
@@ -652,6 +724,24 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 \rhead{\textit{Correcteur orthographique}\vspace{0.25cm}}
 \section{Correcteur orthographique}
 
+\subsection{L'objectif}
+
+\paragraph{}Notre but ici était de pouvoir corriger les fautes dans un texte scanné par l’OCR et avoir une vérification supplémentaire de ce qu’a renvoyé le réseau de neurones.
+
+\subsection{La ponctuation}
+
+\paragraph{}
+Pour vérifier la ponctuation d’un texte j’ai opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s’il y a bien un espace après le point et une majuscule.
+
+\paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d’être utilisé avec un main qui leur enverrait l’index des points dans un texte.
+
+\subsection{La cohérence}
+\paragraph{}Cette fonction a vu le jour pour palier un problème du réseau de neurones. En effet, il pouvait arriver que l’IA confonde une majuscule avec une minuscule. La fonction ci-dessous vérifie alors s’il y a plus de lettre majuscule ou minuscule dans le mot et change le tout.  Cette fonction nous apporte une sécurité supplémentaire.
+
+\subsection{La distance de Levensthein}
+\paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l’heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l’utilisation d’une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
+
+
 \newpage
 \rhead{\textit{Command parser}\vspace{0.25cm}}
 \section{Command parser}
@@ -686,10 +776,40 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 
 \paragraph{}Ici, l'objectif est de couvrir tous les cas d'utilisation et d'éviter les crash de notre programme. Ainsi la fonction n'est appelée uniquement lorsque tous les paramètres sont entrés et la fonction grayscale renvoi un booléen indiquant qu'une erreur s'est produite pendant l'exécution et ainsi permet au parser de prévenir l'utilisateur.
 
-\subsection{Filters}
+\subsection{Filtres}
+
+\paragraph{}Il fallait ajouter la possibilité d'utiliser les filtres de notre programme. Pour cela, nous avons créé la fonction filters à notre programme. Celle ci applique une augmentation des contrastes de façon systématique et la reduction de bruits si le 3ème paramètre est vrai.
+
+\paragraph{}De la même façon que les autres commandes, il ne faut pas faire crasher le programme de façon involontaire. C'est pour cela que nous avons fait en sorte de sortir des exceptions et d'arrêter le programme dès qu'une erreur peut se produire. Voici le code pour cette commande:
+
+\begin{lstlisting}
+	if (argc == 4 || argc == 5) {
+			SDL_Surface *imgDefault;
+			imgDefault = SDL_LoadBMP(argv[2]);
+			if (!imgDefault) {
+				printf("Error: unable to find bmp file at %s\n", argv[2]);
+				return 1;
+			}
+			if (argc == 5 && strcmp(argv[4], "true") == 0)
+			{
+				imgDefault = contrast(imgDefault);
+				printf("Lambda: Noise reduction ended successfully\n");
+			}
+			
+			imgDefault = contrast(imgDefault);
+			printf("Lambda: Contrast ended successfully\n");
+			SDL_SaveBMP(imgDefault, argv[3]);
+			return 0;
+		}
+		else {
+			printf("Lambda: Filters take 1 or 2 paramaters but was called with %i parameter(s)\n", argc - 2);
+			return 1;
+		}
+\end{lstlisting}
 
 \subsection{Segmentation}
 
+\subsubsection{Segmentation complète}
 La fonction de segmentation s'exécute avec simplement un paramètre: le chemin de l'image qu'il faut segmenter. Pour le reste, tout est géré via une architecture de dossiers et fichiers précise, l'utilisateur n'a pour l'instant pas le choix de ce dernier.
 
 \begin{lstlisting}
@@ -705,6 +825,29 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 		printf("Lambda: Segmentation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
 		return 1;
 	}
+\end{lstlisting}
+
+\subsubsection{Segmentation d'une ligne}
+
+\paragraph{}Notre programme gérant le multi-colonnes, nous avons dans l'idée d'ajouter une option pour que l'utilisateur indique si oui ou non l'image entrée est sur une colonne ou sur plusieurs. Voici la fonction qui gère ce cas:
+
+\begin{lstlisting}
+	if (argc == 3) {
+			SDL_Surface *img;
+			img = SDL_LoadBMP(argv[2]);
+			img = cutCharacters(img, "exampleChars/");
+			if (!img) {
+				printf("Lambda: Error during segmentation execution\n");
+				return 1;
+			}
+			removeLinesForCharacters(img, "chars/");
+			printf("Lambda: Segmentation ended successfully\n");
+			return 0;
+		}
+		else {
+			printf("Lambda: Characters take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
+			return 1;
+		}
 \end{lstlisting}
 
 \newpage
@@ -734,6 +877,7 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \end{tabular}
 \end{center}
 
+\vspace*{1cm}
 
 \subsection{Nos objectifs et envies}
 
@@ -746,6 +890,35 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \paragraph{}L'IA doit encore être entrainée pour avoir un taux d'erreur le plus bas possible et reconnaître au mieux les caractères de l'image. Il faut penser à la reconnaissance des accents, virgules, points, ...
 
 \paragraph{}Nous devons aussi penser à améliorer notre segmentation des caractères pour éviter les problèmes auxquels nous sommes confrontés aujourd'hui et peut être créer un réseau de neurones qui pourrait apprendre à reconnaître des caractères sur une ligne grâce si nous avons le temps.
+
+\newpage
+\subsection{Utilisation du programme}
+
+\paragraph{}Il faut d'abord générer notre exécutable en entrant la commande make dans le dossier parent de notre projet. Le nom de l'exécutable est Lambda il faut donc utiliser ./Lambda pour commencer à utiliser notre programme. Voici la liste des fonctions qui sont utilisables:
+
+\vspace*{0.5cm}
+
+\begin{lstlisting}
+	./Lambda grayscale "image_path" "destination"
+	// Appliquer le filtre de niveaux de gris sur l'image et l'enregistrer dans la destination
+\end{lstlisting}
+
+
+\begin{lstlisting}
+	./Lambda filters "image_path" "destination" true 
+	// Applique l'augmentation de contrastes sur l'image et la sauvegarde dans la destination
+	// Dernier argument optionnel: permet d'appliquer la reduction de bruits
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda segmentation "image_path"
+	// Applique la segmentation complète et génère l'architecture de dossiers/fichiers
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda characters "image_path"
+	// Applique la segmentation partielle et génère l'architecture de dossiers/fichiers
+\end{lstlisting}
 
 \newpage
 \rhead{\textit{Conclusion}\vspace{0.25cm}}

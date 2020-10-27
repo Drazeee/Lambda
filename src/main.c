@@ -342,6 +342,7 @@ int main(int argc, char **argv) {
 				return 1;
 			}
 			imgDefault = grayscale(imgDefault, 1, argv[3]);
+			printf("Lambda: Grayscale ended successfully\n");
 			return 0;
 		}
 		else {
@@ -351,8 +352,28 @@ int main(int argc, char **argv) {
 	}
 	else if (strcmp(argv[1], "filters") == 0)
 	{
-		printf("Filters command will be soon avaiable\n");
-		return 0;
+		if (argc == 4 || argc == 5) {
+			SDL_Surface *imgDefault;
+			imgDefault = SDL_LoadBMP(argv[2]);
+			if (!imgDefault) {
+				printf("Error: unable to find bmp file at %s\n", argv[2]);
+				return 1;
+			}
+			if (argc == 5 && strcmp(argv[4], "true") == 0)
+			{
+				imgDefault = contrast(imgDefault);
+				printf("Lambda: Noise reduction ended successfully\n");
+			}
+			
+			imgDefault = contrast(imgDefault);
+			printf("Lambda: Contrast ended successfully\n");
+			SDL_SaveBMP(imgDefault, argv[3]);
+			return 0;
+		}
+		else {
+			printf("Lambda: Filters take 1 or 2 paramaters but was called with %i parameter(s)\n", argc - 2);
+			return 1;
+		}
 	}
 
 	else if (strcmp(argv[1], "segmentation") == 0) {
@@ -370,7 +391,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	else if (strcmp(argv[1], "example") == 0) {
+	else if (strcmp(argv[1], "characters") == 0) {
 		if (argc == 3) {
 			SDL_Surface *img;
 			img = SDL_LoadBMP(argv[2]);
@@ -384,7 +405,7 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		else {
-			printf("Lambda: Segmentation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
+			printf("Lambda: Characters take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}

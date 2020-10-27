@@ -38,7 +38,7 @@ gcc -c src/Tools/tools.c
 gcc -c src/Detection/detect_char.c
 gcc -c src/ImageTreatment/filters.c
 gcc -c src/main.c
-gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o OCR\ -\ Bitarrays -lSDL2 -lm
+gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o Lambda -lSDL2 -lm
 ```
 
 # <a name="execution"></a>Execution
@@ -59,6 +59,12 @@ To finish, try our segmentation algorithm with this command line
 
 ```bash
 ./Lambda segmentation "image-path"
+```
+
+Specification: if your image doesn't contains multi-columns please use this command
+
+```bash
+./Lambda characters "image-path"
 ```
 
 # <a name="features"></a> Features
