@@ -241,11 +241,11 @@ int fullSegmentation(char *imagePath) {
 			if (dir->d_name[0] != '.') {
 
 				// Paragraphs segmentation | Directory: linesI/*.bmp
-				char path[22];
-        		snprintf(path, 22, "%s/%s", "columns", dir->d_name);
+				char path[20];
+        		snprintf(path, 20, "%.8s/%.11s", "columns", dir->d_name);
 				img = SDL_LoadBMP(path);
 				img = cutLine(img, 1);
-        		snprintf(path, 22, "%s%i", "lines", indexLines);
+        		snprintf(path, 20, "%.6s%i", "lines", indexLines);
 				removeLines(img, path);
 				DIR *d1 = opendir(path);
 				struct dirent *dir1;
@@ -254,11 +254,11 @@ int fullSegmentation(char *imagePath) {
 						if (dir1->d_name[0] != '.') {
 
 							// Lines segmentation | Directory: linesI/sublinesJ/*.bmp
-							char path1[22];
-							snprintf(path1, 22, "%s/%s", path, dir1->d_name);
+							char path1[35];
+							snprintf(path1, 35, "%.20s/%.14s", path, dir1->d_name);
 							img = SDL_LoadBMP(path1);
 							img = cutLine(img, 0);
-							snprintf(path1, 22, "%s/%s%i", path, "sublines", indexSublines);
+							snprintf(path1, 35, "%.20s/%.9s%i", path, "sublines", indexSublines);
 							removeLines(img, path1);
 							DIR *d2 = opendir(path1);
 							struct dirent *dir2;
@@ -267,15 +267,15 @@ int fullSegmentation(char *imagePath) {
 									if (dir2->d_name[0] != '.') {
 
 										// Characters pre-segmentation | Directory: linesI/sublinesJ/words/line.bmp
-										char path2[100];
-										snprintf(path2, 100, "%s/%s", path1, dir2->d_name);
+										char path2[60];
+										snprintf(path2, 60, "%.35s/%.24s", path1, dir2->d_name);
 										img = SDL_LoadBMP(path2);
-										snprintf(path2, 100, "%s/%s%i", path1, "words", indexWords);
+										snprintf(path2, 60, "%.35s/%.6s%i", path1, "words", indexWords);
 										img = cutCharacters(img, path2);
 
 										// Words segmentation | Directory: linesI/sublinesJ/words/*.bmp
-										char path3[100];
-										snprintf(path3, 100, "%s/line.bmp", path2);
+										char path3[75];
+										snprintf(path3, 75, "%.60s/line.bmp", path2);
 										img = SDL_LoadBMP(path3);
 										img = cutWord(img);
 										removeLinesForWords(img, path2);
@@ -286,10 +286,10 @@ int fullSegmentation(char *imagePath) {
 												if (dir3->d_name[0] != '.' && strcmp(dir3->d_name, "line.bmp") != 0) {
 
 													// Characters segmentation | Directory: linesI/sublinesJ/words/characters/*.bmp
-													char path4[130];
-													snprintf(path4, 130, "%s/%s", path2, dir3->d_name);
+													char path4[100];
+													snprintf(path4, 100, "%.60s/%.39s", path2, dir3->d_name);
 													img = SDL_LoadBMP(path4);
-													snprintf(path4, 130, "%s/%s%i", path2, "characters", indexCharacters);
+													snprintf(path4, 100, "%.60s/%.11s%i", path2, "characters", indexCharacters);
 													removeLinesForCharacters(img, path4);
 													indexCharacters++;
 												}
