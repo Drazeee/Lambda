@@ -153,10 +153,10 @@ backgroundcolor=\color{whiteback},
 \section{Présentations}
 \subsection{Les membres}
 \subsubsection{Quentin "Scout" FISCH}
-\paragraph{}J'ai vraiment découvert ma passion pour l'informatique par le biais de TP effectués en Sciences de L'ingénieur en Première et Terminale. J'ai donc décider d'étudier car je suis très intéressé en ce qui concerne la robotique et le développement de technologies dans les systèmes embarqués. Ce projet sera pour moi mon premier jeu à créer de A à Z et m'apprendra comment gérer un tel projet en respectant des deadlines et diverses contraintes. Je suis ainsi très motivé à sortir le meilleur projet possible et développer mes compétences en informatique.
+\paragraph{}J'ai vraiment découvert ma passion pour l'informatique par le biais de TP effectués en Sciences de L'ingénieur en Première et Terminale. J'ai donc décider d'étudier car je suis très intéressé en ce qui concerne la robotique et le développement de technologies dans les systèmes embarqués. Ce projet sera pour moi le premier en langage C et m'apprendra comment gérer un tel projet en respectant des deadlines et diverses contraintes. Je suis ainsi très motivé à sortir le meilleur projet possible et développer mes compétences en informatique.
 
 \subsubsection{Maxime "Maxmad" MADRAU}
-\paragraph{}Passionné d'informatique depuis toujours, j'ai commencé a développer des programmes simples très tôt dans mon enfance. J'ai par la suite appris des langages comme le Python, le Lua, le Javascript, le Swift, et les langages web comme le HTML et le CSS. Mes domaines de prédilection sont les applications mobiles, les bases de données et le client/serveur. La conception de jeux vidéo a pour moi commencé en année de Terminale, pour le Bac d'ISN, où on a du développer un jeu en Python avec la bibliothèque Pygame. Ce projet m'a permis de découvrir le développement de projets dans le respect de contraintes de temps, de ressources ainsi que de licences et de droits.
+\paragraph{}Passionné d'informatique depuis toujours, j'ai commencé a développer des programmes simples très tôt dans mon enfance. J'ai par la suite appris des langages comme le Python, le Lua, le Javascript, le Swift, et les langages web comme le HTML et le CSS. Mes domaines de prédilection sont les applications mobiles, les bases de données et le client/serveur.
 
 \subsubsection{Charles "Draze" SIMON-MEUNIER}
 \paragraph{}Passionné d'informatique depuis mes années du collège ou j'ai commencé à développer des serveurs sur Minecraft, EPITA est pour moi une révélation. Une école avec une formation permettant d'atteindre le statut d'ingénieur ainsi que des compétences en informatique plus que confortables est pour moi le cursus idéal. J'ai appris par moi même certains langages comme le HTML/CSS, Java et aujourd'hui je me perfectionne et corrige mes défauts grâce à l'école. Ce projet devrait m'apporter à titre personnel beaucoup d'expérience, autant au niveau humain que dans les compétences informatiques.
@@ -291,7 +291,9 @@ backgroundcolor=\color{whiteback},
     \paragraph{}
     Si la détection des caractères est primordiale, elle n'est que le point final du chaîne d'opérations sur l'image initiale. La première étape du processus de segmentation est le découpage des colonnes. Par exemple, l'image présentée ci-dessous comporte deux colonnes, qu'il faut séparer pour pouvoir continuer le processus de segmentation. \\
     
-    $IMAGE paragraph.png$
+    \begin{center}
+    	\includegraphics[scale=0.3]{paragraph}
+    \end{center}
     
     \paragraph{}
     La détection des colonnes est un processus assez simple, qui tient compte de la "logique" d'organisation d'un texte. En effet, en tant qu'humains, nous distinguons deux colonnes comme des "colonnes" et non une suite de mots par l'espace situé entre les deux blocs qui est anormalement grand par rapport aux espaces présents entre les mots du texte.
@@ -349,7 +351,7 @@ backgroundcolor=\color{whiteback},
         }
     }	
 	\end{lstlisting}
-	
+	\vspace*{0.5cm}
 	\par
 	Le principe est le suivant: on possède une variable \textit{fullWhite} qui indique si, pour un pixel donné (sur la largeur), tous les pixels sur la hauteur de l'image sont blancs. Cette variable est très importante, car combinée à \textit{firstCut}, on peut savoir si la partie de l'image où l'on se situe est du texte ou non. \textit{firstCut} permet de savoir si nous sommes en train de chercher le début d'une colonne (1 dans ce cas), ou si le début la colonne est déjà repéré et qu'on cherche donc la fin.
 	
@@ -361,9 +363,11 @@ backgroundcolor=\color{whiteback},
 	Si cependant nous ne cherchons plus le début mais la fin d'une colonne et qu'on se trouve sur un pixel dont la hauteur de l'image est toute blanche, alors nous évaluons les possibilités que ce soit la fin de la colonne. On note \textit{endText} comme l'indice final temporaire du texte. On continue d'avancer dans la largeur de l'image jusqu'au prochain pixel qui n'est pas \textit{fullWhite}. Enfin, la distance entre ce nouveau pixel et \textit{endText} est comparée à une constant représentant 3\% de la largeur de l'image. Si l'écart est supérieur à cette constante, on considère l'espace comme trop grand pour être un espace entre deux mots et on coupe la fin de la colonne au niveau de \textit{endText}. \\
 	
 	\paragraph{}
-	Le résultat de ce programme sur la photo précédente donne l'image ci-dessous, comportant en rouge les lignes tracées par la programme pour délimiter les colonnes, qui peuvent maintenant être coupées: \\
+	Le résultat de ce programme sur la photo précédente donne l'image ci-dessous, comportant en vert les lignes tracées par la programme pour délimiter les colonnes, qui peuvent maintenant être coupées: \\
 	
-	$IMAGE\_AVEC\_LES\_LIGNES$
+	\begin{center}
+		\includegraphics[scale=0.3]{columns}
+	\end{center}
 	
 	\paragraph{}
 	Comme vous pouvez le voir, quatre lignes sont créées: la première correspond au début de la première question, la deuxième à la fin de cette même colonne. Les deux autres représentent respectivement le début et la fin de la deuxième colonne. Bien entendu, ici, les colonnes sont juste découpées par des lignes, mais il faudrait les séparer en deux images différentes, ce qui est fait par une autre fonction de notre programme.
@@ -375,7 +379,6 @@ backgroundcolor=\color{whiteback},
 	Ici, le changement est principalement basé sur le fait de regarder si la largeur de l'image est complètement blanche, contrairement à la hauteur pour les colonnes. De plus, on détermine ici si un paragraphe se termine en fonction de la "hauteur" de la dernière ligne/du dernier paragraphe trouvé. Voici le nouveau code pour ce type de segmentation: \\
 	
 	\begin{lstlisting}
-    
     unsigned char fullWhite = 1;
     unsigned char firstCut = 1;
     int endText = -1; //Gets the first pixel (height wise) with full white width
@@ -429,7 +432,9 @@ backgroundcolor=\color{whiteback},
 	\paragraph{}
 	Le résultat de ce nouveau programme, combiné à une fonction qui retire les lignes vertes créées, découpe et stocke les paragraphes dans de nouvelles images donne le résultat suivant: 
 	
-	$IMAGES\_DES\_PARAGRAPHES\_DECOUPES$
+	\begin{center}
+		\includegraphics[scale=0.4]{cutColumns}
+	\end{center}
 	
 	\paragraph{}
 	Les paragraphes sont parfaitement découpés et près à être traités par la suite du programme jusqu'à pouvoir arriver à détecter des caractères.
@@ -443,7 +448,9 @@ backgroundcolor=\color{whiteback},
 	C'est justement le degré considération qui change par rapport au découpage des paragraphes. Ici, on considère un changement si l'écart détecter entre le début et la fin des supposées lignes est supérieur à 0.2 fois la hauteur d'une ligne, comparé à la hauteur elle-même pour la détection de paragraphes.
 	\par Dans le code, cela revient à changer les conditions des lignes 17 et 39, on remplaçant \textit{lastLineHeight} par \textit{lastLineHeight * 0.2}. Tout comme le découpage des paragraphes, on dessine les lignes séparatrices puis découpe les lignes pour les stocker dans un dossier dédié. Voici le résultat du découpage des lignes par notre programme: \\
 	
-	$IMAGES\_DES\_LIGNES\_DECOUPES$
+	\begin{center}
+		\includegraphics[scale=0.5]{cutLines}
+	\end{center}
 	
 	\subsubsection{Découpage des mots et des caractères}
 	\paragraph{}
@@ -508,7 +515,17 @@ backgroundcolor=\color{whiteback},
 	\paragraph{}
 	La même technique est utilisée pour découper colonnes et mots, on regarde quelle taille fait l'espace entre la supposée fin d'un mot et le début de l'autre. Après avoir fait des recherches, un espace représente environ 25\% de la hauteur des caractères. On utilise ainsi cette donnée pour vérifié si l'espace trouvé est supérieur à 22\% de la hauteur de l'image. Cet algorithme fonctionne très bien est découpe brillamment les mots. En voici un exemple: \\
 	
-	$IMAGES\_DES\_MOTS\_DECOUPES$
+	\begin{center}
+		\includegraphics[scale=0.4]{cutWords}
+	\end{center}
+	
+	\paragraph{}Dans ce même dossier se trouvent des dossiers pour les caractères de chaque mots contenus qui contiennent les images en 32x32 pixels avec le caractère positionné en haut à gauche de l'image. Voici donc l'architecture finale de notre projet:
+	
+	\begin{center}
+		\includegraphics[scale=0.35]{cutCharacters}
+	\end{center}
+	
+	\paragraph{}Cette architecture n'est pas la finalité de notre projet, nous allons traiter en temps réel les caractères pour les reconnaître et les écrire sans passer par cette étape de sauvegarde pour la suite. C'est une solution simple à utiliser pour pouvoir présenter notre avancée pour cette première soutenance et cela sera amélioré par la suite.
 	
 \newpage
 
@@ -731,15 +748,15 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 \subsection{La ponctuation}
 
 \paragraph{}
-Pour vérifier la ponctuation d’un texte j’ai opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s’il y a bien un espace après le point et une majuscule.
+Pour vérifier la ponctuation d’un texte j'ai opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
 
-\paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d’être utilisé avec un main qui leur enverrait l’index des points dans un texte.
+\paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d'être utilisé avec une main qui leur enverrait l’index des points dans un texte.
 
 \subsection{La cohérence}
-\paragraph{}Cette fonction a vu le jour pour palier un problème du réseau de neurones. En effet, il pouvait arriver que l’IA confonde une majuscule avec une minuscule. La fonction ci-dessous vérifie alors s’il y a plus de lettre majuscule ou minuscule dans le mot et change le tout.  Cette fonction nous apporte une sécurité supplémentaire.
+\paragraph{}Cette fonction a vu le jour pour palier un problème du réseau de neurones. En effet, il pouvait arriver que l'IA confonde une majuscule avec une minuscule. La fonction ci-dessous vérifie alors s’il y a plus de lettre majuscule ou minuscule dans le mot et change le tout.  Cette fonction nous apporte une sécurité supplémentaire.
 
 \subsection{La distance de Levensthein}
-\paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l’heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l’utilisation d’une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
+\paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l'heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l'utilisation d'une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
 
 
 \newpage

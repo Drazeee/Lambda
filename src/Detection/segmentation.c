@@ -200,6 +200,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
         }
         
     }
+    SDL_SaveBMP(img_copy, "salut.bmp");
     return img_copy;
 }
 
