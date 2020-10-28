@@ -750,13 +750,86 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 \paragraph{}
 Pour vérifier la ponctuation d’un texte j'ai opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
 
+\begin{lstlisting}
+	char* dot_check (char* text_to_check, unsigned long start){
+    unsigned int i = start;
+    char *dest = calloc(4,sizeof(char));
+    dest[0] = '.';
+    dest[1] = ' ';
+
+    if (text_to_check[i+1] != ' ' ){
+        i--;
+    }
+    if (text_to_check[i+2] >= 'A' && text_to_check[i+2] <= 'Z')
+    {
+        dest[2] = text_to_check[i+2];
+    }
+    else if (text_to_check[i+2] >= 'a' && text_to_check[i+2] <= 'z')
+    {
+        dest[2] = text_to_check[i+2] - 32;
+    }
+    else
+    {
+        /* Make a call for the dictionnary function */
+    }
+
+    return dest;
+\end{lstlisting}
+
 \paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d'être utilisé avec une main qui leur enverrait l’index des points dans un texte.
 
 \subsection{La cohérence}
 \paragraph{}Cette fonction a vu le jour pour palier un problème du réseau de neurones. En effet, il pouvait arriver que l'IA confonde une majuscule avec une minuscule. La fonction ci-dessous vérifie alors s’il y a plus de lettre majuscule ou minuscule dans le mot et change le tout.  Cette fonction nous apporte une sécurité supplémentaire.
 
+\begin{lstlisting}
+	char* capital_check (char* word){
+    size_t count_capital = 0;
+    size_t len = strlen(word);
+    size_t half = len / 2;
+    size_t i = 0;
+    char *dest = calloc(len + 1,sizeof(char));
+
+    while (i < len && count_capital < half){
+        if (word[i] >= 'A' && word[i] <= 'Z'){
+            count_capital++;
+        }
+        i++;
+    }
+    if (i < len){
+        for (size_t y = 0; y < len; y++)
+        {
+            if (word[y] >= 'a' && word[y] <= 'z'){
+                dest[y] = word[y] - 32;
+            }
+            else
+            {
+                dest[y] = word[y];
+            }
+        }
+    }
+    else
+    {
+        for (size_t y = 0; y < len; y++)
+        {
+            if (word[y] >= 'A' && word[y] <= 'Z'){
+                dest[y] = word[y] + 32;
+            }
+            else
+            {
+                dest[y] = word[y];
+            }
+        }
+    }
+
+    return dest;
+\end{lstlisting}
+
 \subsection{La distance de Levensthein}
 \paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l'heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l'utilisation d'une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
+
+\begin{center}
+	\includegraphics[scale=0.45]{matrice}
+\end{center}
 
 
 \newpage
@@ -940,6 +1013,9 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \newpage
 \rhead{\textit{Conclusion}\vspace{0.25cm}}
 \section{Conclusion}
+
+\paragraph{}Ce projet est très motivant pour nous tous. Il nous permet d'expérimenter et de réfléchir à des problématiques intéressantes que nous prenons comme des défis. 
+
 
 \newpage
 
