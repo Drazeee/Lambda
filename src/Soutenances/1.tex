@@ -131,10 +131,10 @@ backgroundcolor=\color{whiteback},
 \vspace*{1cm}
 \vspace{0.4cm}
 	\paragraph{}
-    Voici le premier rapport de soutenance pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L''objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
+    Voici le premier rapport de soutenance pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L'objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
 	
 	\paragraph{}
-    Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et avons directement dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
+    Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et sommes directement entrés dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
 	
 	\paragraph{}
     Nous allons apprendre à communiquer et à s'adapter aux différents caractères des membres de notre groupe. Nous avons, par expérience, déjà compris qu'un projet de groupe est un réel défi au niveau humain mais ce projet s'annonce encore plus complexe.
@@ -214,7 +214,7 @@ backgroundcolor=\color{whiteback},
 
 \subsection{Binarisation}
 
-\paragraph{}Pour binariser l'image (c'est à dire ne laisser que des pixels blancs ou noirs), nous avons appliqué une condition simple sur chacun des pixels qui compose l'image. Nous faisons la moyenne des valeurs rouge, vert et bleu et vérifions sur cette dernière est supérieure ou non à 127. Si elle est supérieure, nous mettons un pixel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.
+\paragraph{}Pour binariser l'image (c'est à dire ne laisser que des pixels blancs ou noirs), nous avons appliqué une condition simple sur chacun des pixels qui composent l'image. Nous faisons la moyenne des valeurs rouge, vert et bleu et vérifions si cette dernière est supérieure ou non à 127. Si elle est supérieure, nous mettons un pixel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.
 \paragraph{} Ce n'est pas ici la fonction la plus compliquée de notre code mais ce sont des éléments essentiels pour la suite.
 
 \newpage
@@ -298,7 +298,7 @@ backgroundcolor=\color{whiteback},
     \paragraph{}
     La détection des colonnes est un processus assez simple, qui tient compte de la "logique" d'organisation d'un texte. En effet, en tant qu'humains, nous distinguons deux colonnes comme des "colonnes" et non une suite de mots par l'espace situé entre les deux blocs qui est anormalement grand par rapport aux espaces présents entre les mots du texte.
     \par
-    Ainsi, j'ai implémenté la même logique pour la segmentation, qui détecte un espace rempli de pixels blancs anormalement grand entre deux parties ne contenant pas uniquement des pixels blancs. Voici un aperçu du code implémenté:
+    Ainsi, nous avons implémenté la même logique pour la segmentation, qui détecte un espace rempli de pixels blancs anormalement grand entre deux parties ne contenant pas uniquement des pixels blancs. Voici un aperçu du code implémenté:
     
     \begin{lstlisting}
     
@@ -374,7 +374,7 @@ backgroundcolor=\color{whiteback},
 	
 	\subsubsection{Découpage des paragraphes}
 	\paragraph{}
-	Cette partie est la suite logique du découpage des colonnes. En effet, en regardant l'image 1 précédemment affichée, chaque colonne contient plusieurs paragraphes nettement distinguables. Ainsi, un programme similaire est utilisé sur chaque colonne trouvée pour découper les différents paragraphes afin qu'ils soient traités plus tard.
+	Cette partie est la suite logique du découpage des colonnes. En effet, en regardant l'image précédemment affichée, chaque colonne contient plusieurs paragraphes nettement distinguables. Ainsi, un programme similaire est utilisé sur chaque colonne trouvée pour découper les différents paragraphes afin qu'ils soient traités plus tard.
 	\par
 	Ici, le changement est principalement basé sur le fait de regarder si la largeur de l'image est complètement blanche, contrairement à la hauteur pour les colonnes. De plus, on détermine ici si un paragraphe se termine en fonction de la "hauteur" de la dernière ligne/du dernier paragraphe trouvé. Voici le nouveau code pour ce type de segmentation: \\
 	
@@ -437,7 +437,7 @@ backgroundcolor=\color{whiteback},
 	\end{center}
 	
 	\paragraph{}
-	Les paragraphes sont parfaitement découpés et près à être traités par la suite du programme jusqu'à pouvoir arriver à détecter des caractères.
+	Les paragraphes sont parfaitement découpés et prêts à être traités par la suite du programme jusqu'à pouvoir arriver à détecter des caractères.
 	
 	\subsubsection{Découpage des lignes}
 	\paragraph{}
@@ -525,7 +525,8 @@ backgroundcolor=\color{whiteback},
 		\includegraphics[scale=0.35]{cutCharacters}
 	\end{center}
 	
-	\paragraph{}Cette architecture n'est pas la finalité de notre projet, nous allons traiter en temps réel les caractères pour les reconnaître et les écrire sans passer par cette étape de sauvegarde pour la suite. C'est une solution simple à utiliser pour pouvoir présenter notre avancée pour cette première soutenance et cela sera amélioré par la suite.
+	\paragraph{}Cette architecture n'est pas la finalité de notre projet, nous allons traiter en temps réel les caractères pour les reconnaître et les écrire sans passer par cette étape de sauvegarde pour la suite. C'est une solution simple à utiliser pour pouvoir présenter notre avancée pour cette première soutenance et cela sera amélioré par la suite. \\
+	\par Cette architecture ne semblant pas être supportée par les machines de l'ecole, l'excécution du programme réalisant ce processus peut produire des segmentation fault. Ainsi, nous avons réalisé un command parser "proof of concept" permetant de réaliser chaque étape du processus individuellement. Ces commandes sont explicitées dans le README du projet.
 	
 \newpage
 
@@ -553,7 +554,7 @@ backgroundcolor=\color{whiteback},
 \end{center}
 
 
-\paragraph{}N'étant alors pas tout à fait à l'aise avec ce « nouveau » langage qu'est le C, j'ai d'abord cherché à faire ce réseau en Python, un langage que je maîtrise depuis plusieurs années. J'ai donc cherché de l'aide et des exemples de réseaux de neurones par rétropropagation en Python, mais la plupart des résultats utilisaient le module Numpy pour la manipulation de matrice ainsi que certains calculs, or, en C, tout cela doit être traité manuellement.
+\paragraph{}N'étant alors pas tout à fait à l'aise avec ce "nouveau" langage qu'est le C, j'ai d'abord cherché à faire ce réseau en Python, un langage que je maîtrise depuis plusieurs années. J'ai donc cherché de l'aide et des exemples de réseaux de neurones par rétropropagation en Python, mais la plupart des résultats utilisaient le module Numpy pour la manipulation de matrice ainsi que certains calculs, or, en C, tout cela doit être traité manuellement.
 
 \paragraph{}Après plusieurs heures de recherche, je suis tombé sur un très bon tutoriel qui expliquait en détail le fonctionnement d'un tel programme, avec des exemples en C++. J'ai facilement réussi à refaire le programme en Python, puis en C.
 
@@ -748,7 +749,7 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 \subsection{La ponctuation}
 
 \paragraph{}
-Pour vérifier la ponctuation d’un texte j'ai opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
+Pour vérifier la ponctuation d’un texte nous avons opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
 
 \begin{lstlisting}
 	char* dot_check (char* text_to_check, unsigned long start){
@@ -1001,13 +1002,33 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \end{lstlisting}
 
 \begin{lstlisting}
-	./Lambda segmentation "image_path"
-	// Applique la segmentation complète et génère l'architecture de dossiers/fichiers
+	./Lambda column "image_path"
+	// Applique la segmentation partielle en colonnes de l'image et créer l'architecture resultColumn/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda paragraph "image_path"
+	// Applique la segmentation partielle en paragraphes de l'image et créer l'architecture resultParagraph/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda line "image_path"
+	// Applique la segmentation partielle en lignes de l'image et créer l'architecture resultLine/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda word "image_path"
+	// Applique la segmentation partielle en mots de l'image et créer l'architecture resultWord/*.bmp
 \end{lstlisting}
 
 \begin{lstlisting}
 	./Lambda characters "image_path"
-	// Applique la segmentation partielle et génère l'architecture de dossiers/fichiers
+	// Applique la segmentation partielle en caractères de l'image et créer l'architecture resultCharacter/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda segmentation "image_path"
+	// Applique la segmentation complète et génère l'architecture de dossiers/fichiers
 \end{lstlisting}
 
 \newpage
@@ -1015,6 +1036,9 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \section{Conclusion}
 
 \paragraph{}Ce projet est très motivant pour nous tous. Il nous permet d'expérimenter et de réfléchir à des problématiques intéressantes que nous prenons comme des défis. 
+\paragraph{}Nous avons fortement aimé le sujet ainsi que le cahier des charges de ce projet, et nous nous sommes ainsi entièrement investis dans sa réalisation. Nous sommes toujours autant motivés par ce projet, malgré les hauts et les bas qui, pour les derniers, peuvent être vraiment complexes à solutionner.\\
+
+\paragraph{}Nous vous avons ici présenté ce que nous avons pu réaliser en un mois dans le respect des consignes proposées par le cahier des charges.
 
 
 \newpage
