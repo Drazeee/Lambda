@@ -43,16 +43,22 @@ gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.
 
 # <a name="execution"></a>Execution
 
-For instance, our project only got 3 commands. If you want to use our grayscale filter just execute the command line below
+For instance, our project only got 3 commands. If you want to use our grayscale filter just execute the command line below (provided example image is "exampleGrayscale.bmp")
 
 ```bash
 ./Lambda grayscale "image-path" "destination"
 ```
 
-Use our filters on your image by using this command line
+Use our contrast filter on your image by using this command line (provided example image is "exampleContrast.bmp")
 
 ```bash
-./Lambda filters "image-path" "destination"
+./Lambda contrast "image-path" "destination"
+```
+
+If you want to apply noise reduction before applying the contrast filter, precise 'true' after the "destination" parameter. It should look like this
+
+```bash
+./Lambda contrast "image-path" "destination" true
 ```
 
 To try columns segmentation, use this command line

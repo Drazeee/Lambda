@@ -390,7 +390,7 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 	}
-	else if (strcmp(argv[1], "filters") == 0)
+	else if (strcmp(argv[1], "contrast") == 0)
 	{
 		if (argc == 4 || argc == 5) {
 			SDL_Surface *imgDefault;
@@ -411,7 +411,7 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		else {
-			printf("Lambda: Filters take 1 or 2 paramaters but was called with %i parameter(s)\n", argc - 2);
+			printf("Lambda: Contrast take 2 or 3 paramaters but was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
