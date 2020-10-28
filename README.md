@@ -55,17 +55,43 @@ Use our filters on your image by using this command line
 ./Lambda filters "image-path" "destination"
 ```
 
-To finish, try our segmentation algorithm with this command line
+To try columns segmentation, use this command line
 
 ```bash
-./Lambda segmentation "image-path"
+./Lambda column exampleColumn.bmp
+```
+
+To try paragraphs segmentation, use this command line
+
+```bash
+./Lambda paragraph exampleParagraph.bmp
+```
+
+To try lines segmentation, use this command line
+
+```bash
+./Lambda line exampleLine.bmp
+```
+
+To try words segmentation, use this command line
+
+```bash
+./Lambda word exampleWord.bmp
+```
+
+To try characters segmentation, use this command line
+
+```bash
+./Lambda characters exampleChar.bmp
+```
+
+To finish, try our segmentation algorithm with this command line. Watch out, this is still no completely working on each machine (segmentation fault on EPITA's Archlinux).
+
+```bash
+./Lambda segmentation exampleColumn.bmp
 ```
 
 Specification: if your image doesn't contains multi-columns please use this command
-
-```bash
-./Lambda characters "image-path"
-```
 
 # <a name="features"></a> Features
 

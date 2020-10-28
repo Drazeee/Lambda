@@ -27,3 +27,4 @@ clean:
 	rm -rf lines*
 	rm -rf chars
 	rm -rf exampleChars
+	rm -rf results/*

@@ -590,8 +590,8 @@ void convertColumns(SDL_Surface *img, char *directory)
         }
 
         mkdir(directory, 0777);
-        char path[22];
-        snprintf(path, 22, "%s/%d.bmp", directory, i/2);
+        char path[100];
+        snprintf(path, 100, "%s/%d.bmp", directory, i/2);
         SDL_SaveBMP(newImage, path);
     }
     

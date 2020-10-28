@@ -333,46 +333,46 @@ int main(int argc, char **argv) {
 
 	// Grayscale command
 
-        if (strcmp(argv[1], "column") == 0) {
-            SDL_Surface *imgDefault;
-	    imgDefault = SDL_LoadBMP(argv[2]);
-            if (!imgDefault) {
-                printf("Error: unable to find bmp file at %s\n", argv[2]);
+	if (strcmp(argv[1], "column") == 0) {
+		SDL_Surface *imgDefault;
+		imgDefault = SDL_LoadBMP(argv[2]);
+		if (!imgDefault) {
+			printf("Error: unable to find bmp file at %s\n", argv[2]);
+			return 1;
+		}
+		imgDefault = cutColumn(imgDefault);
+		convertColumns(imgDefault, "results/resultColumn");
+	}
+	else if (strcmp(argv[1], "paragraph") == 0) {
+		SDL_Surface *imgDefault;
+		imgDefault = SDL_LoadBMP(argv[2]);
+		if (!imgDefault) {
+			printf("Error: unable to find bmp file at %s\n", argv[2]);
+			return 1;
+		}
+		imgDefault = cutLine(imgDefault, 1);
+		removeLines(imgDefault, "results/resultParagraph");
+	}
+	else if (strcmp(argv[1], "line") == 0) {
+		SDL_Surface *imgDefault;
+		imgDefault = SDL_LoadBMP(argv[2]);
+		if (!imgDefault) {
+			printf("Error: unable to find bmp file at %s\n", argv[2]);
 		return 1;
-	    }
-	    imgDefault = cutColumn(imgDefault);
-            convertColumns(imgDefault, "resultColumn");
-        }
-        else if (strcmp(argv[1], "paragraph") == 0) {
-            SDL_Surface *imgDefault;
-	    imgDefault = SDL_LoadBMP(argv[2]);
-            if (!imgDefault) {
-                printf("Error: unable to find bmp file at %s\n", argv[2]);
-		return 1;
-	    }
-	    imgDefault = cutLine(imgDefault, 1);
-            removeLines(imgDefault, "resultParagraph");
-        }
-        else if (strcmp(argv[1], "line") == 0) {
-            SDL_Surface *imgDefault;
-	    imgDefault = SDL_LoadBMP(argv[2]);
-            if (!imgDefault) {
-                printf("Error: unable to find bmp file at %s\n", argv[2]);
-		return 1;
-	    }
-	    imgDefault = cutLine(imgDefault, 0);
-            removeLines(imgDefault, "resultLine");
-        }
-        else if (strcmp(argv[1], "word") == 0) {
-            SDL_Surface *imgDefault;
-	    imgDefault = SDL_LoadBMP(argv[2]);
-            if (!imgDefault) {
-                printf("Error: unable to find bmp file at %s\n", argv[2]);
-		return 1;
-	    }
-	    imgDefault = cutWord(imgDefault);
-            removeLinesForWords(imgDefault, "resultWord");
-        }
+		}	
+		imgDefault = cutLine(imgDefault, 0);
+		removeLines(imgDefault, "results/resultLine");
+	}
+	else if (strcmp(argv[1], "word") == 0) {
+		SDL_Surface *imgDefault;
+		imgDefault = SDL_LoadBMP(argv[2]);
+		if (!imgDefault) {
+			printf("Error: unable to find bmp file at %s\n", argv[2]);
+			return 1;
+		}
+		imgDefault = cutWord(imgDefault);
+		removeLinesForWords(imgDefault, "results/resultWord");
+	}
 	else if (strcmp(argv[1], "grayscale") == 0) {
 		if (argc == 4) {
 			SDL_Surface *imgDefault;
@@ -435,12 +435,12 @@ int main(int argc, char **argv) {
 		if (argc == 3) {
 			SDL_Surface *img;
 			img = SDL_LoadBMP(argv[2]);
-			img = cutCharacters(img, "exampleChars/");
+			img = cutCharacters(img, "results/resultChars/");
 			if (!img) {
 				printf("Lambda: Error during segmentation execution\n");
 				return 1;
 			}
-			removeLinesForCharacters(img, "chars/");
+			removeLinesForCharacters(img, "results/resultChars");
 			printf("Lambda: Segmentation ended successfully\n");
 			return 0;
 		}
