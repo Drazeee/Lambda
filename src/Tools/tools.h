@@ -15,4 +15,8 @@ unsigned char fullWhiteHeight(SDL_Surface *img, int width_index);
 
 unsigned char fullWhiteWidth(SDL_Surface *img, int height_index);
 
+unsigned char fullWhiteHeightChar(SDL_Surface *img, int width_index);
+
+unsigned char fullWhiteWidthChar(SDL_Surface *img, int height_index);
+
 # endif

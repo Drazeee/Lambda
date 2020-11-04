@@ -8,6 +8,6 @@
 #include <sys/types.h> 
 #include <sys/stat.h> 
 
-SDL_Surface *cutCharacters(SDL_Surface *img, char *directory);
+int *cutCharacters(SDL_Surface *img, char *directory);
 
 # endif

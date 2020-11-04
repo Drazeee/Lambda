@@ -176,16 +176,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
             int ii = i;
             do
             {
-                for (int j = 0; j < img -> h; j++)
-                {
-                    Uint32 pixel = getpixel(img, ii, j);
-                    SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-                    if (r < 250 || g < 250 || b < 250)
-                    {
-                        fullWhite = 0;
-                        break;
-                    }
-                }
+                fullWhite = fullWhiteHeight(img, ii);
                 ii++;
             } while (fullWhite);
             if (ii - endText >= 0.03 * img -> w || ii >= img -> w) {
@@ -334,51 +325,72 @@ void removeLines(SDL_Surface *img, char *directory) {
  *      - directory : the directory name to store the different parts cut
  */
 
-void removeLinesForCharacters(SDL_Surface *img, char *directory) {
+void removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
     Uint8 b;
-    int start = -1;
-    int stop = -1;
-    int positions[300];
-    int pos = 0;
+    int currentIndex = 0;
 
-    for (int j = 0; j < img -> w; j++)
-    {
-        pixel = getpixel(img, j, 0);
-        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+    // Define size
+    float averageCharLength = (img -> h)*0.5;
+    unsigned int size = (int) ((img->w/averageCharLength) * 2); // Stores the estimated number of characters to create a good size array
 
-        if (start == -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
-            start = j;
-        }
+    printf("------------------------------\n");
+    printf("Remove lines size:%u\n", size);
 
-        else if (start != -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
-            stop = j;
-            positions[pos] = start;
-            positions[pos + 1] = stop;
-            pos += 2;
-            start = -1;
-            stop = -1;
-            if (r == 255){
-                j--;
-            }
-        }
-    }
+    // for (size_t w = 0; w < size; w++)
+    // {
+    //     printf("%i\n", allPos[w]);
+    // }
     
-    for (int i = 0; i < pos; i+=2) {
-        int width = positions[i + 1] - positions[i] - 1;
+
+    // int start = -1;
+    // int stop = -1;
+    // int positions[300];
+    // int pos = 0;
+
+    // for (int j = 0; j < img -> w; j++)
+    // {
+    //     pixel = getpixel(img, j, 0);
+    //     SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+
+    //     if (start == -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
+    //         start = j;
+    //     }
+
+    //     else if (start != -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
+    //         stop = j;
+    //         positions[pos] = start;
+    //         positions[pos + 1] = stop;
+    //         pos += 2;
+    //         start = -1;
+    //         stop = -1;
+    //         if (r == 255){
+    //             j--;
+    //         }
+    //     }
+    // }
+    
+    for (size_t i = 0; i < size && allPos[i] != -42; i+=2) {
+        int width = 0;
+        if (allPos[i+1] == img->w-1) { // Corner case: last pixel is not full white, we need to keep it
+            width = allPos[i + 1] - allPos[i];
+        }
+        else {
+            width = allPos[i + 1] - allPos[i] - 1;  // -1 corner case is ok
+        }
+
         SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
         0, 0, 0, 0);
 
-        // Parcours le character dans l'image initial (encore entre deux barres bleues) pour le copier dans une image seule
+        // Parcours le character dans l'image initiale (encore entre deux barres bleues) pour le copier dans une image seule
         for (int y = 0; y < img -> h; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                putpixel(newImage, x, y , getpixel(img, positions[i] + x + 1, y));
+                putpixel(newImage, x, y , getpixel(img, allPos[i] + x + 1, y));
             }
-            
         }
 
         // Parcours de l'image seule pour enlever les pixels blancs en haut et en bas de l'image
@@ -393,7 +405,7 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
             {
                 pixel = getpixel(newImage, w, h);
                 SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
-                fullwhite = r > 249 && g > 249 && b > 249;
+                fullwhite = r > 100 && g > 100 && b > 100;
             }
 
             // Coupe l'image en haut
@@ -404,6 +416,7 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
                 break;
             }
         }
+        printf("Cut top: %u\n", cut_top);
 
         // De bas en haut (cut_bottom)
         for (int h = (newImage -> h) - 1; h >= 0; h--)
@@ -472,6 +485,7 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory) {
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
     }
+    free(allPos);
 }
 
 

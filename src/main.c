@@ -271,7 +271,7 @@ int fullSegmentation(char *imagePath) {
 										snprintf(path2, 70, "%.35s/%.24s", path1, dir2->d_name);
 										img = SDL_LoadBMP(path2);
 										snprintf(path2, 70, "%.35s/%.6s%i", path1, "words", indexWords);
-										img = cutCharacters(img, path2);
+										int *pos = cutCharacters(img, path2);	// Changed return assignation
 
 										// Words segmentation | Directory: linesI/sublinesJ/words/*.bmp
 										char path3[85];
@@ -290,7 +290,7 @@ int fullSegmentation(char *imagePath) {
 													snprintf(path4, 110, "%.60s/%.39s", path2, dir3->d_name);
 													img = SDL_LoadBMP(path4);
 													snprintf(path4, 110, "%.60s/%.11s%i", path2, "characters", indexCharacters);
-													removeLinesForCharacters(img, path4);
+													removeLinesForCharacters(img, path4, pos);
 													indexCharacters++;
 												}
 											}
@@ -435,12 +435,12 @@ int main(int argc, char **argv) {
 		if (argc == 3) {
 			SDL_Surface *img;
 			img = SDL_LoadBMP(argv[2]);
-			img = cutCharacters(img, "results/resultChars/");
+			int *pos = cutCharacters(img, "results/resultChars/");
 			if (!img) {
 				printf("Lambda: Error during segmentation execution\n");
 				return 1;
 			}
-			removeLinesForCharacters(img, "results/resultChars");
+			removeLinesForCharacters(img, "results/resultChars", pos);
 			printf("Lambda: Segmentation ended successfully\n");
 			return 0;
 		}

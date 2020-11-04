@@ -110,3 +110,33 @@ unsigned char fullWhiteWidth(SDL_Surface *img, int height_index) {
     }
     return fullWhite;
 }
+
+unsigned char fullWhiteHeightChar(SDL_Surface *img, int width_index) {
+    unsigned char fullWhite = 1;
+    for (int j = 0; j < img -> h; j++)
+    {
+        Uint32 pixel = getpixel(img, width_index, j);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        if (r < 100 || g < 100 || b < 100)
+        {
+            fullWhite = 0;
+            break;
+        }
+    }
+    return fullWhite;
+}
+
+unsigned char fullWhiteWidthChar(SDL_Surface *img, int height_index) {
+    unsigned char fullWhite = 1;
+    for (int j = 0; j < img -> w; j++)
+    {
+        Uint32 pixel = getpixel(img, j, height_index);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        if (r < 100 || g < 100 || b < 100)
+        {
+            fullWhite = 0;
+            break;
+        }
+    }
+    return fullWhite;
+}
