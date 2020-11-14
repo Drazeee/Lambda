@@ -1,4 +1,5 @@
 # include "segmentation.h"
+#include <stdio.h>
 
 /* insert red line after and before lines */
 // Use removeLines after to save each line/paragraph
@@ -325,19 +326,18 @@ void removeLines(SDL_Surface *img, char *directory) {
  *      - directory : the directory name to store the different parts cut
  */
 
-void removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
+char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
     Uint8 b;
     int currentIndex = 0;
+    MMNetwork network = LoadNetwork("/home/draze/Desktop/IAC");
+    char *result = malloc(40 * sizeof(char));
 
     // Define size
     float averageCharLength = (img -> h)*0.5;
     unsigned int size = (int) ((img->w/averageCharLength) * 2); // Stores the estimated number of characters to create a good size array
-
-    printf("------------------------------\n");
-    printf("Remove lines size:%u\n", size);
 
     // for (size_t w = 0; w < size; w++)
     // {
@@ -416,7 +416,6 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
                 break;
             }
         }
-        printf("Cut top: %u\n", cut_top);
 
         // De bas en haut (cut_bottom)
         for (int h = (newImage -> h) - 1; h >= 0; h--)
@@ -484,8 +483,13 @@ void removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
         snprintf(path, 130, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
+        MMImage mmimg = LoadImage(path);
+        char ch = recognition(mmimg, network);
+        result[paragraphsCount] = ch;
     }
+    paragraphsCount = 0;
     free(allPos);
+    return result;
 }
 
 

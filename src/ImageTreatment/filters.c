@@ -103,7 +103,7 @@ SDL_Surface *convolute(SDL_Surface *img, float mask[], int num_rows, int num_col
 
 
 // Grayscale image
-SDL_Surface *contrast(SDL_Surface *img) {
+SDL_Surface *contrastImage(SDL_Surface *img) {
     unsigned long nbPixels = img->w * img->h;
     SDL_Surface *imgCopy = copy_image(img);
 

@@ -199,7 +199,7 @@ int wordSegmentation(char *path, char *destination, int print)
 	return 0;
 }
 
-int characterSegmentation(char *path, char *destination, int print)
+char *characterSegmentation(char *path, char *destination, int print)
 {
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
@@ -210,16 +210,16 @@ int characterSegmentation(char *path, char *destination, int print)
 			printf("Error: unable to find bmp file at %s\n", path);
 			printf("\033[0m");
 		}
-		return 1;
+		return NULL;
 	}
-	imgDefault = cutCharacters(imgDefault, destination);
-	removeLinesForCharacters(imgDefault, destination);
+	int * allPos = cutCharacters(imgDefault, destination);
+	char *result = removeLinesForCharacters(imgDefault, destination, allPos);
 	if (print)
 	{
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	return 0;
+	return result;
 }
 
 int fullSegementation1(char *path)
@@ -265,7 +265,8 @@ int fullSegementation1(char *path)
 int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	if (argc < 2) {
-		printf("Lambda: Error during parsing command\n");
+		interface();
+		//printf("Lambda: Error during parsing command\n");
 		return 1;
 	}
 	if (strcmp(argv[1], "column") == 0) {
@@ -281,7 +282,7 @@ int main(int argc, char **argv) {
 		return wordSegmentation(argv[2], "results/resultWord", 1);
 	}
 	else if (strcmp(argv[1], "character") == 0) {
-		return characterSegmentation(argv[2], "results/resultChar", 1);
+		return characterSegmentation(argv[2], "results/resultChar", 1) != NULL;
 	}
 	else if (strcmp(argv[1], "grayscale") == 0) {
 		if (argc == 4) {
@@ -311,11 +312,11 @@ int main(int argc, char **argv) {
 			}
 			if (argc == 5 && strcmp(argv[4], "true") == 0)
 			{
-				imgDefault = contrast(imgDefault);
+				imgDefault = noiseReduction(imgDefault);
 				printf("Lambda: Noise reduction ended successfully\n");
 			}
 			
-			imgDefault = contrast(imgDefault);
+			imgDefault = contrastImage(imgDefault);
 			printf("Lambda: Contrast ended successfully\n");
 			SDL_SaveBMP(imgDefault, argv[3]);
 			return 0;
@@ -341,7 +342,8 @@ int main(int argc, char **argv) {
 		}
 	}
 	else {
-		printf("Lambda: Error during parsing command\n");
+		//printf("Lambda: Error during parsing command\n");
+		interface();
 		return 1;
 	}
 	SDL_Quit();
