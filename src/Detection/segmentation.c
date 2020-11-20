@@ -334,7 +334,6 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
     int currentIndex = 0;
     MMNetwork network = LoadNetwork("/home/draze/Desktop/IAC");
     char *result = malloc(40 * sizeof(char));
-
     // Define size
     float averageCharLength = (img -> h)*0.5;
     unsigned int size = (int) ((img->w/averageCharLength) * 2); // Stores the estimated number of characters to create a good size array
@@ -479,13 +478,13 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
         
         // Enregistre l'image finale dans le dossier directory
         mkdir(directory, 0777);
-        char path[130];
-        snprintf(path, 130, "%s/%d.bmp", directory, paragraphsCount);
+        char path[300];
+        snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
         MMImage mmimg = LoadImage(path);
         char ch = recognition(mmimg, network);
-        result[paragraphsCount] = ch;
+        result[paragraphsCount - 1] = ch;
     }
     paragraphsCount = 0;
     free(allPos);

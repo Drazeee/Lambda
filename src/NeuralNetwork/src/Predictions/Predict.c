@@ -120,5 +120,6 @@ double* PredictRaw(MMNetwork network, double* inputs) {
 		outputLayer[j] = Sigmoid(activation);
 	}
 	
+	
 	return outputLayer;
 }

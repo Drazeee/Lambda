@@ -25,5 +25,6 @@ void shuffle(int *array, size_t n);
 void CopyArray(double* in, double* out, size_t len);
 char* concat(const char *s1, const char *s2);
 short MatchCharNoCase(char c1, char c2);
+char* GetCharacters(void);
 
 #endif /* Functions_h */

@@ -171,3 +171,8 @@ short MatchCharNoCase(char c1, char c2) {
 	}
 	return 0;
 }
+
+
+char* GetCharacters() {
+	return ORDER;
+}

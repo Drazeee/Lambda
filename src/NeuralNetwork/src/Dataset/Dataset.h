@@ -19,8 +19,6 @@ MMImage*	LoadDataset(
 					const int imagesPerDigit
 				);
 
-MMImage TrainingData(int noInputs, double* inputs, int noOutputs, double* expectedOutput);
-
 MMImage MakeFakeData(int noInputs, double* inputs, int noOutputs, double* outputs);
 #endif /* Dataset_h */
 

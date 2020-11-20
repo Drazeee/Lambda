@@ -9,20 +9,18 @@
 #include "Train.h"
 
 #define LOGS 0 // Show every test output
-#define LEARNING_RATE 0.3
 
 
-MMTrainingStats Train(MMNetwork network, int* trainingSetOrder, int numTrainingSets, MMImage* dataSet, double* hiddenLayer, double* outputLayer) {
-	
+MMTrainingStats Train(MMNetwork network, MMImage* dataset, MMTrainingEnvironment env) {
 	int fails = 0;
 	int success = 0;
 	
-	shuffle(trainingSetOrder,numTrainingSets);
+	shuffle(env.trainingSetOrder,env.trainingSetSize);
 	
 	
 	
-	for (int x = 0; x < numTrainingSets; x++) {
-		int i = trainingSetOrder[x];
+	for (int x = 0; x < env.trainingSetSize; x++) {
+		int i = env.trainingSetOrder[x];
 		
 		/* Forward pass */
 		
@@ -31,24 +29,24 @@ MMTrainingStats Train(MMNetwork network, int* trainingSetOrder, int numTrainingS
 			
 			for (int k=0; k < network.numInputs; k++) {
 				
-				activation += dataSet[i].pixelsTable[k].pixelValue * network.hiddenWeights[j].weights[k];
+				activation += dataset[i].pixelsTable[k].pixelValue * network.hiddenWeights[j].weights[k];
 			}
-			hiddenLayer[j] = Sigmoid(activation);
+			env.hiddenLayer[j] = Sigmoid(activation);
 		}
 		
 		for (int j=0; j < network.numOutputs; j++) {
 			double activation = network.outputLayerBias[j];
 			for (int k=0; k < network.numHiddenNodes; k++) {
-				activation += hiddenLayer[k] * network.outputWeights[k].weights[j];
+				activation += env.hiddenLayer[k] * network.outputWeights[k].weights[j];
 			}
-			outputLayer[j] = Sigmoid(activation);
+			env.outputLayer[j] = Sigmoid(activation);
 		}
 		
 		
 		//MARK: Tests & stats
-		char detectedAs = OutputChar(outputLayer);
+		char detectedAs = OutputChar(env.outputLayer);
 		
-		if (detectedAs != dataSet[i].character) {
+		if (detectedAs != dataset[i].character) {
 			fails ++;
 		} else {
 			success ++;
@@ -63,14 +61,14 @@ MMTrainingStats Train(MMNetwork network, int* trainingSetOrder, int numTrainingS
 		
 		//printf("Detected as a %c (r=%.2f), was %c\n\n", detectedAs, max, dataSet[i].character);
 #endif
-			
+		
 		
 		/* Backprop */
 		
 		double deltaOutput[network.numOutputs];
 		for (int j = 0; j < network.numOutputs; j++) {
-			double errorOutput = (dataSet[i].expectedOutput[j] - outputLayer[j]);
-			deltaOutput[j] = errorOutput * dSigmoid(outputLayer[j]);
+			double errorOutput = (dataset[i].expectedOutput[j] - env.outputLayer[j]);
+			deltaOutput[j] = errorOutput * dSigmoid(env.outputLayer[j]);
 		}
 		
 		double deltaHidden[network.numHiddenNodes];
@@ -79,22 +77,22 @@ MMTrainingStats Train(MMNetwork network, int* trainingSetOrder, int numTrainingS
 			for (int k=0; k < network.numOutputs; k++) {
 				errorHidden += deltaOutput[k] * network.outputWeights[j].weights[k];
 			}
-			deltaHidden[j] = errorHidden * dSigmoid(hiddenLayer[j]);
+			deltaHidden[j] = errorHidden * dSigmoid(env.hiddenLayer[j]);
 			
 		}
 		
 		for (int j = 0; j < network.numOutputs; j++) {
-			network.outputLayerBias[j] += deltaOutput[j] * LEARNING_RATE;
+			network.outputLayerBias[j] += deltaOutput[j] * env.learningRate;
 			for (int k = 0; k < network.numHiddenNodes; k++) {
-				network.outputWeights[k].weights[j] += hiddenLayer[k] * deltaOutput[j] * LEARNING_RATE;
+				network.outputWeights[k].weights[j] += env.hiddenLayer[k] * deltaOutput[j] *  env.learningRate;
 			}
 		}
 		
 		for (int j = 0; j < network.numHiddenNodes; j++) {
 			
-			network.hiddenLayerBias[j] += deltaHidden[j] * LEARNING_RATE;
+			network.hiddenLayerBias[j] += deltaHidden[j] *  env.learningRate;
 			for (int k = 0; k < network.numInputs; k++) {
-				network.hiddenWeights[j].weights[k] += dataSet[i].pixelsTable[k].pixelValue * deltaHidden[j] * LEARNING_RATE;
+				network.hiddenWeights[j].weights[k] += dataset[i].pixelsTable[k].pixelValue * deltaHidden[j] *  env.learningRate;
 			}
 		}
 	}
@@ -110,7 +108,6 @@ MMTrainingStats Train(MMNetwork network, int* trainingSetOrder, int numTrainingS
 	stats.success = success;
 	stats.rate = rate;
 	stats.total = total;
-		
+	
 	return stats;
-
 }

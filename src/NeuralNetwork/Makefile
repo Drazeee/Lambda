@@ -11,7 +11,7 @@ HEADERS= -Isrc -Isrc/Dataset -Isrc/Globals -Isrc/Network -Isrc/Predictions -Isrc
 SDLFLAGS = `sdl2-config --libs --cflags`
 
 
-lib: src/Globals/Functions.c src/Dataset/Dataset.c src/Network/Network.c src/Network/IONetwork.c src/Predictions/Predict.c
+lib: src/Globals/Functions.c src/Dataset/Dataset.c src/Network/Network.c src/Network/IONetwork.c src/Predictions/Predict.c src/Training/Environment.c
 	mkdir -p bin include lib
 	${CC} -c -o lib/globals.o ${HEADERS} src/Globals/Functions.c ${CFLAGS}
 	${CC} -c -o lib/dataset.o ${HEADERS} src/Dataset/Dataset.c ${CFLAGS}
@@ -19,9 +19,13 @@ lib: src/Globals/Functions.c src/Dataset/Dataset.c src/Network/Network.c src/Net
 	${CC} -c -o lib/ionetwork.o ${HEADERS} src/Network/IONetwork.c ${CFLAGS}
 	${CC} -c -o lib/predict.o ${HEADERS} src/Predictions/Predict.c ${CFLAGS}
 	${CC} -c -o lib/train.o ${HEADERS} src/Training/Train.c ${CFLAGS}
-	${LD} -r -o lib/LambdaNeuralNetwork.o lib/globals.o lib/dataset.o lib/network.o lib/ionetwork.o lib/predict.o lib/train.o
+	${CC} -c -o lib/environment.o ${HEADERS} src/Training/Environment.c ${CFLAGS}
+	${LD} -r -o lib/LambdaNeuralNetwork.o lib/globals.o lib/dataset.o lib/network.o lib/ionetwork.o lib/predict.o lib/train.o lib/environment.o
 	cp src/*/*.h include/
 	cp src/*.h include/
+	
+shared: lib
+	${CC} -o lib/LambdaNeuralNetwork.so lib/LambdaNeuralNetwork.o ${SDLFLAGS} ${CFLAGS} -fPIC -shared
 
 
 analyze: lib src/Executables/Analyze.c
@@ -33,7 +37,7 @@ learning: lib src/Executables/Learning.c
 xor: lib src/Executables/XOR.c
 	${CC} -o bin/xor ${HEADERS} lib/LambdaNeuralNetwork.o src/Executables/XOR.c ${SDLFLAGS} ${CFLAGS}
 
-all: analyze learning xor
+all: shared analyze learning xor
 
 
 clean:

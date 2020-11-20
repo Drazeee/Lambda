@@ -7,7 +7,7 @@ NAME = Lambda
 all: main
 
 main: main.o segmentation.o tools.o detect_char.o filters.o recognition.o interface.o
-	gcc -o ${NAME} *.o src/NeuralNetwork/lib/LambdaNeuralNetwork.o -Wall -Wextra -Werror -std=c99 `pkg-config --cflags --libs gtk+-3.0` -lSDL2 -lm
+	gcc -o ${NAME} *.o src/NeuralNetwork/lib/LambdaNeuralNetwork.o -Wall -Wextra -Werror -std=c99 `pkg-config --cflags --libs gtk+-3.0` -lSDL2 -lm -rdynamic
 	#gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.o filters.o -o Lambda -lSDL2 -lm
 
 main.o: src/main.c segmentation.o tools.o detect_char.o filters.o recognition.o
@@ -15,7 +15,7 @@ main.o: src/main.c segmentation.o tools.o detect_char.o filters.o recognition.o
 	#gcc -c src/main.c
 
 interface.o: src/Interface/interface.c
-	gcc -c src/Interface/interface.c `pkg-config --cflags --libs gtk+-3.0`
+	gcc -c src/Interface/interface.c `pkg-config --cflags --libs gtk+-3.0` -rdynamic
 
 recognition.o: src/Recognition/recognition.c
 	gcc -c src/Recognition/recognition.c

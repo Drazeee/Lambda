@@ -8,6 +8,9 @@
 #include <sys/types.h> 
 #include <sys/stat.h>
 #include "../Recognition/recognition.h"
+#include <unistd.h>
+#include <stdio.h>
+#include <limits.h>
 
 SDL_Surface *cutLine(SDL_Surface *img, int first);
 void linesToSurface(SDL_Surface *img);

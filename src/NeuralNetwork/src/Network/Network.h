@@ -11,6 +11,7 @@
 #include "../Macros.h"
 #include "MMNetwork Structs.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 
 // Alloc functions

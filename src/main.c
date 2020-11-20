@@ -219,6 +219,7 @@ char *characterSegmentation(char *path, char *destination, int print)
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
+	printf("%s\n", result);
 	return result;
 }
 

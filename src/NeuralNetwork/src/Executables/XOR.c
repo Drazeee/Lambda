@@ -45,14 +45,12 @@ int main() {
 	
 	
 	// Train
-	int order[4] = {0, 1, 2, 3};
+	MMTrainingEnvironment env = TrainingEnvironment(network, 4, LEARNING_RATE);
 	
-	double* hiddenLayer = HiddenLayer(network);
-	double* outputLayer = OutputLayer(network);
 	
 	printf("Training...\n");
 	for (int training = 0; training < NO_GENS; training ++) {
-		Train(network, order, 4, trainingData, hiddenLayer, outputLayer);
+		Train(network, trainingData, env);
 	}
 	printf("Trained!\n\n");
 	

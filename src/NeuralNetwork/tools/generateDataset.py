@@ -4,9 +4,9 @@
 global outputDir, noImagesPerChar, fonts_basepath, fonts, chars, imgSize, tolerence # Bouhh des globals cépabo
 
 
-outputDir = "/Users/maxime/datasetlight" # Dossier de sortie du dataset (ne doit pas déjà exister)
+outputDir = "/Users/maxime/datasetWC" # Dossier de sortie du dataset (ne doit pas déjà exister)
 
-noImagesPerChar = 100 # Combien d'images par caractères
+noImagesPerChar = 2000 # Combien d'images par caractères
 
 fonts_basepath = "/System/Library/Fonts/" # Chemin ou sont les fonts sur l'ordi (par défaut pour macOS)
 
@@ -36,7 +36,9 @@ except ModuleNotFoundError:
 	
 # Ne pas changer les paramètres qui suivent
 
-chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?-%()&$\":;/+=@#" # Characters list and order (no lowercased)
+chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabdefghijklmnqrt0123456789.!?-%()&$\":;/+*=@#€àâäéèêëîïôöùüûÀÂÄÉÈÊËÎÏÔÖÙÜÛçÇ" # Characters list and order (no lowercased)
+merged = "COPSUVWXYZ" # Characters that look too similar between upper & lower
+
 imgSize = 32 # Image width & height
 tolerence = 200 # Tolerence of pixel detection when moving text to 0,0
 
@@ -47,7 +49,7 @@ class ImgGeneratorThread(multiprocessing.Process): # Generator thread
 		multiprocessing.Process.__init__(self)
 		self.char = char
 		self.idx = idx
-		
+		self.isMerged = char in merged
 		
 	def run(self):
 		for j in range(noImagesPerChar): # Generate specific image
@@ -64,8 +66,10 @@ class ImgGeneratorThread(multiprocessing.Process): # Generator thread
 			size = random.randint(10,30)
 			font = random.choice(fonts)
 			
-
-
+			t = self.char
+			if self.isMerged:
+				if random.randint(0,1):
+					t = self.char.lower()
 			
 			img = Image.new("RGB", size = (imgSize, imgSize), color="white")
 			draw = ImageDraw.Draw(img)
