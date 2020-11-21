@@ -334,7 +334,7 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
     Uint8 g;
     Uint8 b;
     int currentIndex = 0;
-    MMNetwork network = LoadNetwork("/home/draze/Desktop/IAC");
+    MMNetwork network = LoadNetwork("src/NeuralNetwork/src/IA/IAC");
     char *result = malloc(40 * sizeof(char));
     // Define size
     float averageCharLength = (img -> h)*0.5;
