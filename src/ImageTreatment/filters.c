@@ -1,11 +1,11 @@
 #include "filters.h"
 
-SDL_Surface *blackAndWhite(SDL_Surface *img) {
+SDL_Surface *blackAndWhite(SDL_Surface *img, char save, char *path) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
     Uint8 b;
-
+    SDL_Surface *img_copy = copy_image(img);
 
     for (int i = 0; i < img -> w; i++)
     {
@@ -17,17 +17,19 @@ SDL_Surface *blackAndWhite(SDL_Surface *img) {
             if ((r + g + b)/3 > 190)
             {
                 pixel = SDL_MapRGB(img -> format, 255, 255, 255);
-                putpixel(img, i, j, pixel);
+                putpixel(img_copy, i, j, pixel);
             }
             else {
                 pixel = SDL_MapRGB(img -> format, 0, 0, 0);
-                putpixel(img, i, j, pixel);
+                putpixel(img_copy, i, j, pixel);
             }
         }
         
     }
-    
-    return img;
+    if (save) {
+        SDL_SaveBMP(img_copy, path);
+    }
+    return img_copy;
 }
 
 

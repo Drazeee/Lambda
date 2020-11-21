@@ -10,7 +10,7 @@ int fullSegmentation(char *imagePath) {
 
 	// Filters
 	img = grayscale(img, 0, "");
-	img = blackAndWhite(img);
+	img = blackAndWhite(img, 0, "");
 	img = cutColumn(img);
 
 
@@ -212,7 +212,7 @@ char *characterSegmentation(char *path, char *destination, int print)
 		}
 		return NULL;
 	}
-	int * allPos = cutCharacters(imgDefault, destination);
+	int *allPos = cutCharacters(imgDefault, destination);
 	char *result = removeLinesForCharacters(imgDefault, destination, allPos);
 	if (print)
 	{
@@ -269,7 +269,35 @@ int main(int argc, char **argv) {
 		interface();
 		//printf("Lambda: Error during parsing command\n");
 		return 1;
+	} 
+
+
+	// ITALIC TEST
+	if (strcmp(argv[1], "italic") == 0){
+		SDL_Surface *imgDefault;
+		char *destination = "results/resultItalic";
+		imgDefault = SDL_LoadBMP(argv[2]);
+		if (!imgDefault) {
+			if (1) 
+			{
+				printf("\033[0;31m"); 
+				printf("Error: unable to find bmp file at %s\n", argv[2]);
+				printf("\033[0m");
+			}
+			return 1;
+		}
+		int *allPos = cutCharactersItalic(imgDefault, destination);
+		//char *result = removeLinesForItalicChars(imgDefault, destination, allPos);
+		if (1)
+		{
+			printf("\33[0;32mLambda: segmentation ended successfully.\n");
+			printf("The result is here: \"%s\"\033[0m\n\n", destination);
+		}
+		//printf("%s\n", result);
+		return 0;
 	}
+
+
 	if (strcmp(argv[1], "column") == 0) {
 		return columnSegmentation(argv[2], "results/resultColumn", 1);
 	}
@@ -324,6 +352,23 @@ int main(int argc, char **argv) {
 		}
 		else {
 			printf("Lambda: Contrast take 2 or 3 paramaters but was called with %i parameter(s)\n", argc - 2);
+			return 1;
+		}
+	}
+	else if (strcmp(argv[1], "blackwhite") == 0) {
+		if (argc == 4) {
+			SDL_Surface *imgDefault;
+			imgDefault = SDL_LoadBMP(argv[2]);
+			if (!imgDefault) {
+				printf("Error: unable to find bmp file at %s\n", argv[2]);
+				return 1;
+			}
+			imgDefault = blackAndWhite(imgDefault, 1, argv[3]);
+			printf("Lambda: Black and White ended successfully\n");
+			return 0;
+		}
+		else {
+			printf("Lambda: Black and White take exactly 2 paramaters but was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
