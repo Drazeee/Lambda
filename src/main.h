@@ -17,5 +17,6 @@
 int fullSegmentation(char *imagePath);
 int main(int argc, char **argv);
 char *characterSegmentation(char *path, char *destination, int print);
+void array_print(int *begin);
 
 #endif

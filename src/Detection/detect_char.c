@@ -201,11 +201,10 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
                     }
                     if (k == times) {
                         allPositions[currentIndex] = j;
-                        currentIndex++;
                     }
                     else {
-                        allPositions[currentIndex] = jj + 1;
-                        allPositions[currentIndex+1] = jj + 1;
+                        allPositions[currentIndex] = jj + 2;
+                        allPositions[currentIndex+1] = jj + 2;
                         currentIndex+=2;
                     }
                 }

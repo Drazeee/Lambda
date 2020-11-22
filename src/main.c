@@ -262,6 +262,23 @@ int fullSegementation1(char *path)
 	return 1;
 }
 
+void array_print(int *begin)
+{
+    int *i = begin;
+    for (int line = 0; *i != -42; ++i)
+    {
+        if (line > 72)
+        {
+            printf("|`|\n");
+            line = 0;
+        }
+
+        line += printf("| %4d ", *i);
+    }
+
+    printf("|\n");
+}
+
 int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	if (argc < 2) {
@@ -286,7 +303,8 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 		int *allPos = cutCharactersItalic(imgDefault, destination);
-		//char *result = removeLinesForItalicChars(imgDefault, destination, allPos);
+		array_print(allPos);
+		removeLinesForItalicChars(imgDefault, destination, allPos);
 		if (1)
 		{
 			printf("\33[0;32mLambda: segmentation ended successfully.\n");
