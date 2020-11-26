@@ -200,7 +200,7 @@ SDL_Surface *cutWord(SDL_Surface *img) {
     int firstCut = 1;
     int endText = -1; //Gets the first pixel (height wise) with full white width
     int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    float spaceAverage = img -> h * 0.25; //Average width of a space character, const
+    float spaceAverage = img -> h * 0.3; //Average width of a space character, const
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -270,7 +270,7 @@ int paragraphsCount = 0;
  *      - directory : the directory name to store the different parts cut
  */
 
-void removeLines(SDL_Surface *img, char *directory) {
+char *removeLines(SDL_Surface *img, char *directory) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -299,6 +299,9 @@ void removeLines(SDL_Surface *img, char *directory) {
         }
     }
     
+    char *allLines = "Salut";
+    int currentLine = 0;
+    
     for (int i = 0; i < pos; i+=2) {
         int height = positions[i + 1] - positions[i] - 1;
         SDL_Surface *newImage = SDL_CreateRGBSurface(0, img -> w, height, 32,
@@ -314,10 +317,19 @@ void removeLines(SDL_Surface *img, char *directory) {
         }
         mkdir(directory, 0777);
         char path[40];
-        snprintf(path, 40, "%s/%d.bmp", directory, paragraphsCount);
-        paragraphsCount++;
+        snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
+        char line[150];
+        printf("avant crash");
+        characterSegmentationWithoutLoad(newImage, "results/temp", 0);
+        //snprintf(line, 150, "%s\n", characterSegmentationWithoutLoad(newImage, "results/temp", 0));
+        printf("apres crash");
+        //strcat(line, "\n");
+        //strcat(allLines, line);
+        currentLine++;
     }
+    
+    return allLines;
 }
 
 /*
@@ -335,44 +347,9 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     Uint8 g;
     Uint8 b;
     int currentIndex = 0;
-    MMNetwork network = LoadNetwork("src/NeuralNetwork/src/IA/IAC");
-    char *result = malloc(40 * sizeof(char));
     // Define size
     float averageCharLength = (img -> h)*0.5;
     unsigned int size = (int) ((img->w/averageCharLength) * 2); // Stores the estimated number of characters to create a good size array
-
-    // for (size_t w = 0; w < size; w++)
-    // {
-    //     printf("%i\n", allPos[w]);
-    // }
-    
-
-    // int start = -1;
-    // int stop = -1;
-    // int positions[300];
-    // int pos = 0;
-
-    // for (int j = 0; j < img -> w; j++)
-    // {
-    //     pixel = getpixel(img, j, 0);
-    //     SDL_GetRGB(pixel, img -> format, &r, &g, &b);
-
-    //     if (start == -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
-    //         start = j;
-    //     }
-
-    //     else if (start != -1 && ((r < 200 && g < 200 && b == 255) || (r == 255 && g < 200 && b < 200))) {
-    //         stop = j;
-    //         positions[pos] = start;
-    //         positions[pos + 1] = stop;
-    //         pos += 2;
-    //         start = -1;
-    //         stop = -1;
-    //         if (r == 255){
-    //             j--;
-    //         }
-    //     }
-    // }
     
     for (size_t i = 0; i < size && allPos[i] != -42; i+=2) {
         int width = 0;
@@ -486,13 +463,13 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
-        MMImage mmimg = LoadImage(path);
-        printf("%s", path);
-        char ch = recognition(mmimg, network);
-        result[paragraphsCount - 1] = ch;
     }
+    char *result;
+    int *wordPos;
+    wordPos = wordPositions(img);
+    result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
+    printf("segmentation: %s\n", result);
     paragraphsCount = 0;
-    free(allPos);
     return result;
 }
 
@@ -718,6 +695,65 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
         paragraphsCount++;
         SDL_SaveBMP(newImage, path);
     }
+}
+
+
+int *wordPositions(SDL_Surface *img){
+	int fullWhite = 1;
+    int firstCut = 1;
+    int endText = -1; //Gets the first pixel (height wise) with full white width
+    int beginingText = -1; //Gets the first pixel without full white width after several full white 
+    float spaceAverage = img -> h * 0.3; //Average width of a space character, const
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int *positions;
+    positions = malloc(150 * sizeof(int));
+    
+    int numberOfCharacters = 0;
+    int current = 0;
+
+    for (int i = 0; i < img -> w; i++) 
+    {
+        //Returns whether img's height is full of white pixels or not
+        fullWhite = fullWhiteHeight(img, i);
+
+        if (!fullWhite && firstCut)
+        {   
+            beginingText = i;
+            int begininTextIndex = beginingText > 0 ? beginingText -1 : 0;
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) {
+            endText = i;
+
+            // Ends paragraphs
+            int ii = i;
+            do
+            {
+                for (int j = 0; j < img -> h; j++)
+                {
+                    Uint32 pixel = getpixel(img, ii, j);
+                    SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+                    if (r < 250 || g < 250 || b < 250)
+                    {
+                        fullWhite = 0;
+                        break;
+                    }
+                }
+                ii++;
+            } while (fullWhite);
+            if (ii - endText >= spaceAverage || ii >= img -> w) { // Word ending
+                firstCut = 1;
+                *(positions + current) = endText;
+                current++;
+            }
+        }
+    }
+    *(positions + current) = -42;
+    return positions;
 }
 
 /*

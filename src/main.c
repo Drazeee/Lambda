@@ -153,7 +153,7 @@ int paragraphSegmentation(char *path, char *destination, int print)
 	return 0;
 }
 
-int lineSegmentation(char *path, char *destination, int print)
+char *lineSegmentation(char *path, char *destination, int print)
 {
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
@@ -164,16 +164,17 @@ int lineSegmentation(char *path, char *destination, int print)
 			printf("Error: unable to find bmp file at %s\n", path);
 			printf("\033[0m");
 		}
-		return 1;
+		return NULL;
 	}
 	imgDefault = cutLine(imgDefault, 0);
-	removeLines(imgDefault, destination);
+	char *allLines = removeLines(imgDefault, destination);
 	if (print)
 	{
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	return 0;
+	printf("%s", allLines);
+	return allLines;
 }
 
 int wordSegmentation(char *path, char *destination, int print)
@@ -201,6 +202,7 @@ int wordSegmentation(char *path, char *destination, int print)
 
 char *characterSegmentation(char *path, char *destination, int print)
 {
+	remove_directory(destination);
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
 	if (!imgDefault) {
@@ -213,7 +215,26 @@ char *characterSegmentation(char *path, char *destination, int print)
 		return NULL;
 	}
 	int *allPos = cutCharacters(imgDefault, destination);
-	char *result = removeLinesForCharacters(imgDefault, destination, allPos);
+	char *result;
+	result = removeLinesForCharacters(imgDefault, destination, allPos);
+	printf("main: %s\n", result);
+	if (print)
+	{
+		printf("\33[0;32mLambda: segmentation ended successfully.\n");
+		printf("The result is here: \"%s\"\033[0m\n\n", destination);
+	}
+	free(allPos);
+	return result;
+}
+
+char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print)
+{
+	remove_directory(destination);
+	int *allPos;
+	allPos = cutCharacters(imgDefault, destination);
+	char *result;
+	result = removeLinesForCharacters(imgDefault, destination, allPos);
+	printf("main: %s\n", result);
 	if (print)
 	{
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
@@ -279,6 +300,51 @@ void array_print(int *begin)
     printf("|\n");
 }
 
+
+int remove_directory(const char *path) {
+   DIR *d = opendir(path);
+   size_t path_len = strlen(path);
+   int r = -1;
+
+   if (d) {
+      struct dirent *p;
+
+      r = 0;
+      while (!r && (p=readdir(d))) {
+          int r2 = -1;
+          char *buf;
+          size_t len;
+
+          /* Skip the names "." and ".." as we don't want to recurse on them. */
+          if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
+             continue;
+
+          len = path_len + strlen(p->d_name) + 2; 
+          buf = malloc(len);
+
+          if (buf) {
+             struct stat statbuf;
+
+             snprintf(buf, len, "%s/%s", path, p->d_name);
+             if (!stat(buf, &statbuf)) {
+                if (S_ISDIR(statbuf.st_mode))
+                   r2 = remove_directory(buf);
+                else
+                   r2 = unlink(buf);
+             }
+             free(buf);
+          }
+          r = r2;
+      }
+      closedir(d);
+   }
+
+   if (!r)
+      r = rmdir(path);
+
+   return r;
+}
+
 int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	if (argc < 2) {
@@ -313,8 +379,7 @@ int main(int argc, char **argv) {
 		//printf("%s\n", result);
 		return 0;
 	}
-
-
+	
 	if (strcmp(argv[1], "column") == 0) {
 		return columnSegmentation(argv[2], "results/resultColumn", 1);
 	}
@@ -322,7 +387,8 @@ int main(int argc, char **argv) {
 		return paragraphSegmentation(argv[2], "results/resultParagraph", 1);
 	}
 	else if (strcmp(argv[1], "line") == 0) {
-		return lineSegmentation(argv[2], "results/resultLine", 1);
+		lineSegmentation(argv[2], "results/resultLine", 1);
+		return 0;
 	}
 	else if (strcmp(argv[1], "word") == 0) {
 		return wordSegmentation(argv[2], "results/resultWord", 1);

@@ -38,11 +38,11 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
             // Drawing lines
             int put_j = j != 0 ? j - 1 : 0; // Change: evaluates j to draw line 1 pixel before (better in theory but misses some characters)
             beginingCharPixel = j;
-            for (int k = 0; k < img -> h; k++)
-            {
-                pixel = SDL_MapRGB(img_copy -> format, 0, 0, 255);
-                putpixel(img_copy, put_j, k, pixel);
-            }
+            //for (int k = 0; k < img -> h; k++)
+            //{
+            //    pixel = SDL_MapRGB(img_copy -> format, 0, 0, 255);
+            //    putpixel(img_copy, put_j, k, pixel);
+            //}
             firstCut = 0;
         }
         
@@ -54,11 +54,11 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
             // Drawing lines
             endingCharPixel = j - 1;
             int actualCharLength = abs(endingCharPixel - beginingCharPixel + 1); // Added + 1
-            for (int i = 0; i < img -> h; i++)
-            {
-                pixel = SDL_MapRGB(img_copy -> format, 0, 0, 255);
-                putpixel(img_copy, j, i, pixel);
-            }
+            //for (int i = 0; i < img -> h; i++)
+            //{
+            //    pixel = SDL_MapRGB(img_copy -> format, 0, 0, 255);
+            //    putpixel(img_copy, j, i, pixel);
+            //}
             firstCut = 1;
 
             // When the char is too long
@@ -68,11 +68,11 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
                 int middle = actualCharLength/2 + beginingCharPixel;
                 if (middle < img -> w)
                 {
-                    for (int i = 0; i < img -> h; i++)
-                    {
-                        pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                        putpixel(img_copy, middle, i, pixel);
-                    }
+                    //for (int i = 0; i < img -> h; i++)
+                    //{
+                    //    pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
+                    //    putpixel(img_copy, middle, i, pixel);
+                    //}
 
                     allPositions[currentIndex] = middle + 1;
                     allPositions[currentIndex+1] = middle;

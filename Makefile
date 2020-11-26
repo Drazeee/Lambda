@@ -21,7 +21,7 @@ recognition.o: src/Recognition/recognition.c
 	gcc -c src/Recognition/recognition.c
 
 segmentation.o: src/Detection/segmentation.c
-	gcc -c src/Detection/segmentation.c
+	gcc -c src/Detection/segmentation.c `pkg-config --cflags --libs gtk+-3.0`
 
 tools.o: src/Tools/tools.c
 	gcc -c src/Tools/tools.c 
