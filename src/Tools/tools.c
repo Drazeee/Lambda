@@ -140,3 +140,23 @@ unsigned char fullWhiteWidthChar(SDL_Surface *img, int height_index) {
     }
     return fullWhite;
 }
+
+unsigned char fullWhiteItalic(SDL_Surface *img, int width_index, unsigned int mod) {
+    unsigned char fullWhite = 1;
+    for (int i = 0; i < img -> h && width_index > -1; i++)
+    {
+        Uint32 pixel = getpixel(img, width_index, i);
+        SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        if (r < 100 || g < 100 || b < 100)
+        {
+            fullWhite = 0;
+            break;
+        }
+
+        //Updating indexes
+        if (i % mod == mod-1){
+            width_index--;
+        }
+    }
+	return fullWhite;
+}
