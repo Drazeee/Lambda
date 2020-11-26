@@ -483,6 +483,7 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos) {
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
         MMImage mmimg = LoadImage(path);
+        printf("%s", path);
         char ch = recognition(mmimg, network);
         result[paragraphsCount - 1] = ch;
     }

@@ -22,12 +22,13 @@
  */
 
 char OutputChar(double* outputLayer) {
+
 	int detectedAs;
 	
 	detectedAs = 0;
 	double max = outputLayer[0];
 	
-	for (int i = 0; i < NO_CHARACTERS; i++)
+	for (int i = 1; i < NO_CHARACTERS; i++)
 	{
 		if (outputLayer[i] > max)
 		{
@@ -35,7 +36,7 @@ char OutputChar(double* outputLayer) {
 			detectedAs = i;
 		}
 	}
-		
+		printf("DEBUG intermediate: %g -> %d\n", max, detectedAs);
 	return ORDER[detectedAs];
 }
 
@@ -90,7 +91,7 @@ double* Predict(MMNetwork network, const MMImage* image) {
 	
 	// Get all pixels in a single array
 	for (int i = 0; i < network.numInputs; i++) {
-		int c = image -> pixelsTable[i].pixelValue;
+		double c = image -> pixelsTable[i].pixelValue;
 		test_input[i] = c;
 	}
 	
@@ -98,7 +99,8 @@ double* Predict(MMNetwork network, const MMImage* image) {
 }
 
 double* PredictRaw(MMNetwork network, double* inputs) {
-	double hiddenLayer[network.numHiddenNodes]; // TODO: Calloc ?
+	double* hiddenLayer;
+	hiddenLayer = calloc(network.numHiddenNodes, sizeof(double));
 	double* outputLayer;
 	outputLayer = calloc(network.numOutputs, sizeof(double));
 	
@@ -119,7 +121,7 @@ double* PredictRaw(MMNetwork network, double* inputs) {
 		}
 		outputLayer[j] = Sigmoid(activation);
 	}
-	
+	free(hiddenLayer);
 	
 	return outputLayer;
 }
