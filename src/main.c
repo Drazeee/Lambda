@@ -1,112 +1,5 @@
 #include "main.h"
 
-int fullSegmentation(char *imagePath) {
-	SDL_Surface *img;
-	img = SDL_LoadBMP(imagePath);
-
-	if (!img) {
-		return 0;
-	}
-
-	// Filters
-	img = grayscale(img, 0, "");
-	img = blackAndWhite(img, 0, "");
-	img = cutColumn(img);
-
-
-	// Multi columns
-	convertColumns(img, "columns");
-
-
-	// Open columns directory
-	DIR *d;
-	struct dirent *dir;
-	d = opendir("columns");
-
-	// Variables declaration
-	int indexLines = 0;
-	int indexSublines = 0;
-	int indexWords = 0;
-	int indexCharacters = 0;
-	// Conditions on read files
-	if (d)
-    {
-        while ((dir = readdir(d)) != NULL)
-        {
-			// End
-			if (dir->d_name[0] != '.') {
-
-				// Paragraphs segmentation | Directory: linesI/*.bmp
-				char path[30];
-        		snprintf(path, 30, "%.8s/%.11s", "columns", dir->d_name);
-				img = SDL_LoadBMP(path);
-				img = cutLine(img, 1);
-        		snprintf(path, 30, "%.6s%i", "lines", indexLines);
-				removeLines(img, path);
-				DIR *d1 = opendir(path);
-				struct dirent *dir1;
-				if (d1) {
-					while ((dir1 = readdir(d1)) != NULL) {
-						if (dir1->d_name[0] != '.') {
-
-							// Lines segmentation | Directory: linesI/sublinesJ/*.bmp
-							char path1[45];
-							snprintf(path1, 45, "%.20s/%.14s", path, dir1->d_name);
-							img = SDL_LoadBMP(path1);
-							img = cutLine(img, 0);
-							snprintf(path1, 45, "%.20s/%.9s%i", path, "sublines", indexSublines);
-							removeLines(img, path1);
-							DIR *d2 = opendir(path1);
-							struct dirent *dir2;
-							if (d2) {
-								while ((dir2 = readdir(d2)) != NULL) {
-									if (dir2->d_name[0] != '.') {
-
-										// Characters pre-segmentation | Directory: linesI/sublinesJ/words/line.bmp
-										char path2[60];
-										snprintf(path2, 70, "%.35s/%.24s", path1, dir2->d_name);
-										img = SDL_LoadBMP(path2);
-										snprintf(path2, 70, "%.35s/%.6s%i", path1, "words", indexWords);
-										int *pos = cutCharacters(img, path2);	// Changed return assignation
-
-										// Words segmentation | Directory: linesI/sublinesJ/words/*.bmp
-										char path3[85];
-										snprintf(path3, 85, "%.60s/line.bmp", path2);
-										img = SDL_LoadBMP(path3);
-										img = cutWord(img);
-										removeLinesForWords(img, path2);
-										DIR *d3 = opendir(path2);
-										struct dirent *dir3;
-										if (d3) {
-											while ((dir3 = readdir(d3)) != NULL) {
-												if (dir3->d_name[0] != '.' && strcmp(dir3->d_name, "line.bmp") != 0) {
-
-													// Characters segmentation | Directory: linesI/sublinesJ/words/characters/*.bmp
-													char path4[110];
-													snprintf(path4, 110, "%.60s/%.39s", path2, dir3->d_name);
-													img = SDL_LoadBMP(path4);
-													snprintf(path4, 110, "%.60s/%.11s%i", path2, "characters", indexCharacters);
-													removeLinesForCharacters(img, path4, pos);
-													indexCharacters++;
-												}
-											}
-										}
-										indexWords++;
-									}
-								}	
-							}
-							indexSublines++;
-						}
-					}
-				}
-				indexLines++;
-			}
-        }
-        closedir(d);
-    }
-	return 1;
-}
-
 int columnSegmentation(char *path, char *destination, int print)
 {
 	SDL_Surface *imgDefault;
@@ -130,8 +23,9 @@ int columnSegmentation(char *path, char *destination, int print)
 	return 0;
 }
 
-int paragraphSegmentation(char *path, char *destination, int print)
+char *paragraphSegmentation(char *path, char *destination, int print)
 {
+	remove_directory(destination);
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
 	if (!imgDefault) {
@@ -141,20 +35,22 @@ int paragraphSegmentation(char *path, char *destination, int print)
 			printf("Error: unable to find bmp file at %s\n", path);
 			printf("\033[0m");
 		}
-		return 1;
+		return "";
 	}
 	imgDefault = cutLine(imgDefault, 1);
-	removeLines(imgDefault, destination);
+	char *result = removeLines(imgDefault, destination, 0);
 	if (print)
 	{
+		printf("%s\n", result);
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	return 0;
+	return result;
 }
 
 char *lineSegmentation(char *path, char *destination, int print)
 {
+	remove_directory(destination);
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
 	if (!imgDefault) {
@@ -167,15 +63,31 @@ char *lineSegmentation(char *path, char *destination, int print)
 		return NULL;
 	}
 	imgDefault = cutLine(imgDefault, 0);
-	char *allLines = removeLines(imgDefault, destination);
+	char *allLines = removeLines(imgDefault, destination, 1);
 	if (print)
 	{
+		printf("result: %s\n", allLines);
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	printf("%s", allLines);
 	return allLines;
 }
+
+
+char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print)
+{
+	remove_directory(destination);
+	imgDefault = cutLine(imgDefault, 0);
+	char *allLines = removeLines(imgDefault, destination, 1);
+	if (print)
+	{
+		printf("result: %s\n", allLines);
+		printf("\33[0;32mLambda: segmentation ended successfully.\n");
+		printf("The result is here: \"%s\"\033[0m\n\n", destination);
+	}
+	return allLines;
+}
+
 
 int wordSegmentation(char *path, char *destination, int print)
 {
@@ -217,7 +129,6 @@ char *characterSegmentation(char *path, char *destination, int print)
 	int *allPos = cutCharacters(imgDefault, destination);
 	char *result;
 	result = removeLinesForCharacters(imgDefault, destination, allPos);
-	printf("main: %s\n", result);
 	if (print)
 	{
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
@@ -234,7 +145,6 @@ char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destinatio
 	allPos = cutCharacters(imgDefault, destination);
 	char *result;
 	result = removeLinesForCharacters(imgDefault, destination, allPos);
-	printf("main: %s\n", result);
 	if (print)
 	{
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
@@ -384,7 +294,8 @@ int main(int argc, char **argv) {
 		return columnSegmentation(argv[2], "results/resultColumn", 1);
 	}
 	else if (strcmp(argv[1], "paragraph") == 0) {
-		return paragraphSegmentation(argv[2], "results/resultParagraph", 1);
+		paragraphSegmentation(argv[2], "results/resultParagraph", 1);
+		return 0;
 	}
 	else if (strcmp(argv[1], "line") == 0) {
 		lineSegmentation(argv[2], "results/resultLine", 1);
@@ -458,7 +369,7 @@ int main(int argc, char **argv) {
 
 	else if (strcmp(argv[1], "segmentation") == 0) {
 		if (argc == 3) {
-			if (!fullSegmentation(argv[2])) {
+			if (!fullSegementation1(argv[2])) {
 				printf("Lambda: Error during segmentation execution\n");
 				return 1;
 			}

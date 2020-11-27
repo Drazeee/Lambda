@@ -79,9 +79,7 @@ void toggleCorrection()
 void launchRecognition()
 {
     if (img) {
-        char *result;
-        result = characterSegmentation(filename, "results/test", 0);
-        printf("interface: %s\n", result);
+        char *result = paragraphSegmentation(filename, "results/test", 1);
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, result, -1);
     }

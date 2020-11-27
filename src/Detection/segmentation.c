@@ -268,9 +268,10 @@ int paragraphsCount = 0;
  * Param:
  *      - img : image to compute
  *      - directory : the directory name to store the different parts cut
+ * 		- isLineSegmentation : true if we are on a line
  */
 
-char *removeLines(SDL_Surface *img, char *directory) {
+char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -320,14 +321,24 @@ char *removeLines(SDL_Surface *img, char *directory) {
         char path[40];
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
-        char *line = characterSegmentationWithoutLoad(newImage, "results/temp", 0);
-        strcat(line, "\n");
+        if (isLineSegmentation) {
+			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
+			strcat(line, "\n");
 
-        char *result = malloc(strlen(allLines) + strlen(line) + 1);
-        strcpy(result, allLines);
-        strcat(result, line);
-        allLines = result;
-
+			char *result = malloc(strlen(allLines) + strlen(line) + 1);
+			strcpy(result, allLines);
+			strcat(result, line);
+			allLines = result;
+		}
+		else {
+			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
+			strcat(line, "\n\n");
+			
+			char *result = malloc(strlen(allLines) + strlen(line) + 1);
+			strcpy(result, allLines);
+			strcat(result, line);
+			allLines = result;
+		}
         currentLine++;
     }
     
@@ -470,7 +481,6 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     int *wordPos;
     wordPos = wordPositions(img);
     result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
-    printf("segmentation: %s\n", result);
     paragraphsCount = 0;
     return result;
 }

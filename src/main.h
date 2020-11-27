@@ -14,10 +14,12 @@
 #include "Interface/interface.h"
 
 
-int fullSegmentation(char *imagePath);
+
 int main(int argc, char **argv);
 char *characterSegmentation(char *path, char *destination, int print);
 char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print);
+char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print);
+char *paragraphSegmentation(char *path, char *destination, int print);
 void array_print(int *begin);
 int remove_directory(const char *path);
 

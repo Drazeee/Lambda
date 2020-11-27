@@ -1,9 +1,60 @@
 #include "recognition.h"
 
+char filterChar(char c) {
+	if (c > -1) {
+		return c;
+	}
+	switch(c){
+		case -120:
+		case -119:
+		case -112:
+			return 'e';
+		case -113:
+		case -114:
+		case -111:
+		case -84:
+			return 'a';
+		case -108:
+		case -107:
+			return 'i';
+		case -103:
+		case -102:
+			return 'o';
+		case -99:
+		case -98:
+		case -97:
+			return 'u';
+		case -53:
+		case -27:
+		case -128:
+			return 'E';
+		case -125:
+		case -23:
+		case -26:
+		case -24:
+			return 'A';
+		case -20:
+		case -21:
+			return 'I';
+		case -17:
+		case -123:
+			return 'O';
+		case -12:
+		case -122:
+		case -13:
+			return 'U';
+		case -15:
+		case -126:
+			return 'C';
+		default:
+			return '_';
+	}
+}
+
+
 char recognition(MMImage img, MMNetwork n) {
     double *output = Predict(n, &img);
     char character = OutputChar(output);
-    printf("%d\n", character);
     return character;
 }
 
@@ -13,7 +64,7 @@ char *lineRecognition(char *directory, int size, int *allPos, int *wordsPosition
 	DIR *d;
 	struct dirent *dir;
 	d = opendir(directory);
-	char *result = malloc((size + 5) * (sizeof(char)));
+	char *result = malloc(150 * (sizeof(char)));
 	int charactersNumber = 0; // total number of chars in the DIR
 	int len = strlen(directory);
 	MMNetwork network = LoadNetwork("src/NeuralNetwork/src/IA/IAC");
@@ -25,13 +76,13 @@ char *lineRecognition(char *directory, int size, int *allPos, int *wordsPosition
 				charactersNumber++;
 			}
 		}
+
 	}
 	
 	int wordIndex = 0;
 	for (int i = 0; i < charactersNumber; i++) {
 		char path[len + 40];
 		snprintf(path, len + 40, "%s/%i.bmp", directory, i);
-		printf("%s\n", path);
 		MMImage mmimg = LoadImage(path);
 		char ch = recognition(mmimg, network);
 		if (allPos[i * 2] > wordsPositions[wordIndex] 
@@ -39,18 +90,9 @@ char *lineRecognition(char *directory, int size, int *allPos, int *wordsPosition
 			result[i + wordIndex] = ' ';
 			wordIndex++;
 		}
-		//if (ch == 'Q') {
-		//	ch = 'e';
-		//}
-		//if (ch == '8') {
-		//	ch = 'a';
-		//}
-		//if (ch == 'D') {
-		//	ch = 'p';
-		//}
+		ch = filterChar(ch);
 		result[i + wordIndex] = ch;
 	}
 	result[charactersNumber + wordIndex] = 0;
-	printf("recognition: %s\n", result);
 	return result;
 }

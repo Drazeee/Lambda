@@ -36,7 +36,6 @@ char OutputChar(double* outputLayer) {
 			detectedAs = i;
 		}
 	}
-		printf("DEBUG intermediate: %g -> %d\n", max, detectedAs);
 	return ORDER[detectedAs];
 }
 
