@@ -299,8 +299,9 @@ char *removeLines(SDL_Surface *img, char *directory) {
         }
     }
     
-    char *allLines = "Salut";
+    char *allLines = "";
     int currentLine = 0;
+
     
     for (int i = 0; i < pos; i+=2) {
         int height = positions[i + 1] - positions[i] - 1;
@@ -319,13 +320,14 @@ char *removeLines(SDL_Surface *img, char *directory) {
         char path[40];
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
-        char line[150];
-        printf("avant crash");
-        characterSegmentationWithoutLoad(newImage, "results/temp", 0);
-        //snprintf(line, 150, "%s\n", characterSegmentationWithoutLoad(newImage, "results/temp", 0));
-        printf("apres crash");
-        //strcat(line, "\n");
-        //strcat(allLines, line);
+        char *line = characterSegmentationWithoutLoad(newImage, "results/temp", 0);
+        strcat(line, "\n");
+
+        char *result = malloc(strlen(allLines) + strlen(line) + 1);
+        strcpy(result, allLines);
+        strcat(result, line);
+        allLines = result;
+
         currentLine++;
     }
     
