@@ -32,7 +32,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
 
             // Begins paragraphs
             if (!first) {
-                if (endText == -1 || (lastLineHeight * 0.2 <= abs(endText - beginingText) && lastLineHeight > 3)){
+                if ((endText == -1 || (lastLineHeight * 0.2 <= abs(endText - beginingText) && lastLineHeight > 3))){
                     for (int k = 0; k < img -> w; k++)
                     {
                         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -41,7 +41,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 }
             }
             else {
-                if (endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3)){
+                if ((endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3))){
                     for (int k = 0; k < img -> w; k++)
                     {
                         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -62,13 +62,13 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
             firstCut = 0;
         }
 
-        if (i == img -> h - 1 && !firstCut) {
-            for (int k = 0; k < img -> w; k++)
-            {
-                pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
-                putpixel(img_copy, k, i, pixel);
-            }
-        }
+        // if (i == img -> h - 1 && !firstCut) {
+        //     for (int k = 0; k < img -> w; k++)
+        //     {
+        //         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
+        //         putpixel(img_copy, k, i, pixel);
+        //     }
+        // }
         
         if(fullWhite && !firstCut) {
             endText = i-1;
@@ -91,7 +91,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 ii++;
             } while (fullWhite);
             if (!first) {
-                if ((ii - endText >= lastLineHeight * 0.2 && ii - endText > 3) || ii >= img -> h) {
+                if (ii - endText >= lastLineHeight && ii - endText > 3) {
                 //Draw line
                     for (int k = 0; k < img -> w; k++)
                     {
@@ -110,7 +110,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 firstCut = 1;
             }
             else {
-                if ((ii - endText >= lastLineHeight && ii - endText > 3) || ii >= img -> h) {
+                if (ii - endText >= lastLineHeight * 0.8 && ii - endText > 3) {
                 //Draw line
                     for (int k = 0; k < img -> w; k++)
                     {
@@ -133,6 +133,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
         
     }
     //removeLines(img_copy, "lines");
+    SDL_SaveBMP(img_copy, "resultPar.bmp");
     return img_copy;
 }
 
@@ -142,7 +143,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
     int firstCut = 1;
     int endText = -1; //Gets the first pixel (height wise) with full white width
     int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    int lastLineHeight = -1; //Stores the number of pixels from the last text line
+    int lastLineHeight = 0.03 * img -> w;; //Stores the number of pixels from the last text line
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -159,7 +160,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
             beginingText = i;
 
             // Begins paragraphs
-            if (endText == -1 || lastLineHeight <= abs(endText - beginingText)){
+            if ((endText == -1 || lastLineHeight <= abs(endText - beginingText)) && i != 0){
                 for (int k = 0; k < img -> h; k++)
                 {
                     pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -171,7 +172,6 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
         
         if(fullWhite && !firstCut) {
             endText = i-1;
-            lastLineHeight = 0.03 * img -> w;
 
             // Ends paragraphs
             int ii = i;
@@ -180,7 +180,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
                 fullWhite = fullWhiteHeight(img, ii);
                 ii++;
             } while (fullWhite);
-            if (ii - endText >= 0.03 * img -> w || ii >= img -> w) {
+            if (ii - endText >= 0.03 * img -> w) {
                 //Draw line
                 for (int k = 0; k < img -> h; k++)
                 {
@@ -276,7 +276,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
     Uint8 r;
     Uint8 g;
     Uint8 b;
-    int start = -1;
+    int start = -42;
     int stop = -1;
     int positions[40];
     int pos = 0;
@@ -285,17 +285,31 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
     {
         pixel = getpixel(img, 0, i);
         SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        unsigned char isGreenLine = r < 250 && g == 255 && b < 250;
 
-        if (start == -1 && (r < 250 && g == 255 && b < 250)) {
+        if (start == -42 && isGreenLine) {
             start = i;
         }
+        else if (i == 0 && !fullWhiteWidth(img, i) && start == -42) {
+            // Corner case for no beginning green line
+            start = -1;
+        }
 
-        else if (start != -1 && (r < 250 && g == 255 && b < 250)) {
+        else if (start != -42 && isGreenLine) {
             stop = i;
             positions[pos] = start;
             positions[pos + 1] = stop;
             pos += 2;
-            start = -1;
+            start = -42;
+            stop = -1;
+        }
+        else if (start != -42 && i == img->h-1 && !isGreenLine) {
+            // Corner case for no ending green line
+            stop = i+1;
+            positions[pos] = start;
+            positions[pos + 1] = stop;
+            pos += 2;
+            start = -42;
             stop = -1;
         }
     }
@@ -317,31 +331,31 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
             }
             
         }
+
         mkdir(directory, 0777);
         char path[40];
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
-        if (isLineSegmentation) {
-			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
-			strcat(line, "\n");
+        // if (isLineSegmentation) {
+		// 	char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
+		// 	strcat(line, "\n");
 
-			char *result = malloc(strlen(allLines) + strlen(line) + 1);
-			strcpy(result, allLines);
-			strcat(result, line);
-			allLines = result;
-		}
-		else {
-			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
-			strcat(line, "\n\n");
+		// 	char *result = malloc(strlen(allLines) + strlen(line) + 1);
+		// 	strcpy(result, allLines);
+		// 	strcat(result, line);
+		// 	allLines = result;
+		// }
+		// else {
+		// 	char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
+		// 	strcat(line, "\n\n");
 			
-			char *result = malloc(strlen(allLines) + strlen(line) + 1);
-			strcpy(result, allLines);
-			strcat(result, line);
-			allLines = result;
-		}
+		// 	char *result = malloc(strlen(allLines) + strlen(line) + 1);
+		// 	strcpy(result, allLines);
+		// 	strcat(result, line);
+		// 	allLines = result;
+		// }
         currentLine++;
     }
-    
     return allLines;
 }
 
@@ -772,6 +786,7 @@ int *wordPositions(SDL_Surface *img){
  * Removes green separating lines between columns and calls removeLines for each column
  * Param:
  *      - img : image to compute
+ *      - directory : directory's name for where to store the output
  */
 
 void convertColumns(SDL_Surface *img, char *directory)
@@ -780,7 +795,7 @@ void convertColumns(SDL_Surface *img, char *directory)
     Uint8 r;
     Uint8 g;
     Uint8 b;
-    int start = -1;
+    int start = -42;
     int stop = -1;
     int positions[40];
     int pos = 0;
@@ -789,17 +804,33 @@ void convertColumns(SDL_Surface *img, char *directory)
     {
         pixel = getpixel(img, i, 0);
         SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+        unsigned char isGreenLine = r < 250 && g == 255 && b < 250;
 
-        if (start == -1 && (r < 250 && g == 255 && b < 250)) {
+        // Beginning index
+        if (start == -42 && isGreenLine) {
             start = i;
         }
+        else if (i == 0 && !fullWhiteHeight(img, i) && start == -42) {
+            // Corner case for no beginning green line
+            start = -1;
+        }
 
-        else if (start != -1 && (r < 250 && g == 255 && b < 250)) {
+        // Ending index
+        else if (start != -42 && isGreenLine) {
             stop = i;
             positions[pos] = start;
             positions[pos + 1] = stop;
             pos += 2;
-            start = -1;
+            start = -42;
+            stop = -1;
+        }
+        else if (start != -42 && i == img->w-1 && !isGreenLine) {
+            // Corner case for no ending green line
+            stop = i+1;
+            positions[pos] = start;
+            positions[pos + 1] = stop;
+            pos += 2;
+            start = -42;
             stop = -1;
         }
     }
