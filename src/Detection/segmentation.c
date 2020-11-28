@@ -32,7 +32,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
 
             // Begins paragraphs
             if (!first) {
-                if ((endText == -1 || (lastLineHeight * 0.2 <= abs(endText - beginingText) && lastLineHeight > 3))){
+                if ((endText == -1 || (lastLineHeight * 0.2 <= abs(endText - beginingText) && lastLineHeight > 3)) && i != 0){
                     for (int k = 0; k < img -> w; k++)
                     {
                         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -41,7 +41,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 }
             }
             else {
-                if ((endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3))){
+                if ((endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3)) && i != 0){
                     for (int k = 0; k < img -> w; k++)
                     {
                         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -91,7 +91,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 ii++;
             } while (fullWhite);
             if (!first) {
-                if (ii - endText >= lastLineHeight && ii - endText > 3) {
+                if (ii - endText >= lastLineHeight * 0.2 && ii - endText > 3) {
                 //Draw line
                     for (int k = 0; k < img -> w; k++)
                     {
@@ -110,7 +110,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 firstCut = 1;
             }
             else {
-                if (ii - endText >= lastLineHeight * 0.8 && ii - endText > 3) {
+                if (ii - endText >= lastLineHeight && ii - endText > 3) {
                 //Draw line
                     for (int k = 0; k < img -> w; k++)
                     {
@@ -133,7 +133,6 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
         
     }
     //removeLines(img_copy, "lines");
-    SDL_SaveBMP(img_copy, "resultPar.bmp");
     return img_copy;
 }
 
@@ -336,24 +335,24 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
         char path[40];
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
-        // if (isLineSegmentation) {
-		// 	char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
-		// 	strcat(line, "\n");
+        if (isLineSegmentation) {
+			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
+			strcat(line, "\n");
 
-		// 	char *result = malloc(strlen(allLines) + strlen(line) + 1);
-		// 	strcpy(result, allLines);
-		// 	strcat(result, line);
-		// 	allLines = result;
-		// }
-		// else {
-		// 	char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
-		// 	strcat(line, "\n\n");
+			char *result = malloc(strlen(allLines) + strlen(line) + 1);
+			strcpy(result, allLines);
+			strcat(result, line);
+			allLines = result;
+		}
+		else {
+			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
+			strcat(line, "\n\n");
 			
-		// 	char *result = malloc(strlen(allLines) + strlen(line) + 1);
-		// 	strcpy(result, allLines);
-		// 	strcat(result, line);
-		// 	allLines = result;
-		// }
+			char *result = malloc(strlen(allLines) + strlen(line) + 1);
+			strcpy(result, allLines);
+			strcat(result, line);
+			allLines = result;
+		}
         currentLine++;
     }
     return allLines;
