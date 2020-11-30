@@ -560,109 +560,132 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
         {
             for (int x = 0; x < width/2; x++)
             {
-                if (x == 0 && y == 0) {
-                    printf("%i\n",allPos[i] + x + offset);
-                }
-                if (allPos[i] + x + offset < img->w && width/2 + offset + x > -1){
+                if (allPos[i] + x + offset < img->w && width/2 + offset + x > -1 && 
+                allPos[i] + x + offset > -1){
                     putpixel(newImage, width/2 + offset + x, y , getpixel(img, allPos[i] + x + offset, y));
                 }
             }
-            if (i % mod == mod-1){
+            if (y % mod == mod-1){
                 offset--;
             }
         }
         // // Parcours de l'image seule pour enlever les pixels blancs en haut et en bas de l'image
-        // unsigned int cut_top = 0;
-        // unsigned int cut_bottom = 0;
+        unsigned int cut_top = 0;
+        unsigned int cut_bottom = 0;
 
-        // // De haut en bas (cut_top)
-        // for (unsigned int h = 0; h < newImage -> h; h++)
-        // {
-        //     unsigned char fullwhite = 1;
-        //     for (unsigned int w = 0; w < newImage -> w && fullwhite; w++)
-        //     {
-        //         pixel = getpixel(newImage, w, h);
-        //         SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
-        //         fullwhite = r > 100 && g > 100 && b > 100;
-        //     }
+        // De haut en bas (cut_top)
+        for (unsigned int h = 0; h < newImage -> h; h++)
+        {
+            unsigned char fullwhite = 1;
+            for (unsigned int w = 0; w < newImage -> w && fullwhite; w++)
+            {
+                pixel = getpixel(newImage, w, h);
+                SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
+                fullwhite = r > 100 && g > 100 && b > 100;
+            }
 
-        //     // Coupe l'image en haut
-        //     if (!fullwhite) {
+            // Coupe l'image en haut
+            if (!fullwhite) {
 
-        //         // Coupe 1 index plus haut et 0 sinon
-        //         cut_top = h;
-        //         break;
-        //     }
-        // }
+                // Coupe 1 index plus haut et 0 sinon
+                cut_top = h;
+                break;
+            }
+        }
 
-        // // De bas en haut (cut_bottom)
-        // for (int h = (newImage -> h) - 1; h >= 0; h--)
-        // {
-        //     unsigned char fullwhite = 1;
-        //     for (unsigned int w = 0; w < newImage -> w && fullwhite; w++)
-        //     {
-        //         pixel = getpixel(newImage, w, h);
-        //         SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
-        //         fullwhite = r > 249 && g > 249 && b > 249;
-        //     }
+        // De bas en haut (cut_bottom)
+        for (int h = (newImage -> h) - 1; h >= 0; h--)
+        {
+            unsigned char fullwhite = 1;
+            for (unsigned int w = 0; w < newImage -> w && fullwhite; w++)
+            {
+                pixel = getpixel(newImage, w, h);
+                SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
+                fullwhite = r > 249 && g > 249 && b > 249;
+            }
 
-        //     // Coupe l'image en bas
-        //     if (!fullwhite) {
+            // Coupe l'image en bas
+            if (!fullwhite) {
 
-        //         // Coupe 1 index plus bas et newImage->h-1 sinon
-        //         cut_bottom = h;
-        //         break;
-        //     }
-        // }
+                // Coupe 1 index plus bas et newImage->h-1 sinon
+                cut_bottom = h;
+                break;
+            }
+        }
 
-        // // Nouvelle image du caractère sans le haut et bas
-        // SDL_Surface *newImageSmall;
-        // newImageSmall = SDL_CreateRGBSurface(0, newImage -> w,
-        // cut_bottom - cut_top + 1, 32, 0, 0, 0, 0);
-        // for (int y = cut_top; y < cut_bottom + 1; y++)
-        // {
-        //     for (int x = 0; x < newImage -> w; x++)
-        //     {
-        //         putpixel(newImageSmall, x, y - cut_top,
-        //         getpixel(newImage, x, y));
-        //     }
-        // }
+        // inclusive value for left starting index
+        int leftStart = 0;
+        for (int w = 0; w < newImage->w; w++) {
+            unsigned char fullwhite = 1;
+            for (int h = 0; h < newImage->h && fullwhite; h++) {
+                pixel = getpixel(newImage, w, h);
+                SDL_GetRGB(pixel, newImage -> format, &r, &g, &b);
+                fullwhite = r > 100 && g > 100 && b > 100;
+            }
+
+            if (!fullwhite) {
+                leftStart = w;
+                break;
+            }
+        }
+
+        // Nouvelle image du caractère sans le haut et bas
+        SDL_Surface *newImageSmall;
+        newImageSmall = SDL_CreateRGBSurface(0, newImage -> w - leftStart,
+        cut_bottom - cut_top + 1, 32, 0, 0, 0, 0);
+        for (int y = cut_top; y < cut_bottom + 1; y++)
+        {
+            for (int x = leftStart; x < newImage -> w; x++)
+            {
+                putpixel(newImageSmall, x - leftStart, y - cut_top,
+                getpixel(newImage, x, y));
+            }
+        }
 
 
+        if (newImageSmall->w > 32 && newImageSmall->w >= newImageSmall->h) {
+			newImageSmall = resize(newImageSmall, 32, 
+			(int)(((double)32 * (double)newImageSmall->h)/(double)newImageSmall->w));
+		}
+		else if (newImageSmall->h > 32) {
+			newImageSmall = resize(newImageSmall, 
+			(int)(((double)32 * (double)newImageSmall->w)/(double)newImageSmall->h), 32);
+		}
 
-        // // Ajoute l'image sur une un fond blanc de 32x32
-        // // TODO: Redimensionner si plus grand que 32x32
 
-        // SDL_Surface *lastImage = SDL_CreateRGBSurface(0, 32, 32, 32,
-        // 0, 0, 0, 0);
-
-        // pixel = SDL_MapRGB(newImageSmall -> format, 255, 255, 255);
-
-        // for (int i = 0; i < 32; i++)
-        // {
-        //     for (int j = 0; j < 32; j++)
-        //     {
-        //         putpixel(lastImage, i, j, pixel);
-        //     }
-            
-        // }
+        // Ajoute l'image sur une un fond blanc de 32x32
         
 
-        // for (int y = 0; y < newImageSmall -> h; y++)
-        // {
-        //     for (int x = 0; x < newImageSmall -> w; x++)
-        //     {
-        //         putpixel(lastImage, x, y, getpixel(newImageSmall, x, y));
-        //     }
-        // }
-        printf("         ====           \n");
+        SDL_Surface *lastImage = SDL_CreateRGBSurface(0, 32, 32, 32,
+        0, 0, 0, 0);
+
+        pixel = SDL_MapRGB(newImageSmall -> format, 255, 255, 255);
+
+        for (int i = 0; i < 32; i++)
+        {
+            for (int j = 0; j < 32; j++)
+            {
+                putpixel(lastImage, i, j, pixel);
+            }
+            
+        }
+        
+
+        for (int y = 0; y < newImageSmall -> h; y++)
+        {
+            for (int x = 0; x < newImageSmall -> w; x++)
+            {
+                putpixel(lastImage, x, y, getpixel(newImageSmall, x, y));
+            }
+        }
+        printf("%ix%i | %i\n======\n", newImageSmall->w, newImageSmall->h, leftStart);
 
         // Enregistre l'image finale dans le dossier directory
         mkdir(directory, 0777);
         char path[300];
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
-        SDL_SaveBMP(newImage, path);
+        SDL_SaveBMP(lastImage, path);
     }
     paragraphsCount = 0;
     free(allPos);

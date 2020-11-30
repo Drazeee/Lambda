@@ -162,7 +162,7 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
         if(fullWhite && !firstCut) 
         {
             // Saving ending index (exclusive position: where we will need to cut)
-            allPositions[currentIndex] = j;
+            allPositions[currentIndex] = j + 1;
 
             // Drawing lines
             endingCharPixel = j - 1;
@@ -200,7 +200,7 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
                         }
                     }
                     if (k == times) {
-                        allPositions[currentIndex] = j;
+                        allPositions[currentIndex] = j + 1;
                     }
                     else {
                         allPositions[currentIndex] = jj + 2;
