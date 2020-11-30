@@ -12,6 +12,8 @@
 #include <sys/types.h>
 #include "Network.h"
 #include "Functions.h"
+#include <string.h>
+#include <locale.h>
 
 
 /*
@@ -67,6 +69,15 @@ void PrintNetwork(const MMNetwork n) {
  */
 void SaveNetwork(const MMNetwork n, const char *path) {
 	
+	// Save locale
+	char *old_locale, *saved_locale;
+	old_locale = setlocale (LC_NUMERIC, NULL);
+	saved_locale = strdup (old_locale);
+	
+	setlocale(LC_NUMERIC, "en_US"); // We use . instead ,
+	
+	
+	
 	mkdir(path, 0700);
 	
 	// Open files
@@ -114,6 +125,8 @@ void SaveNetwork(const MMNetwork n, const char *path) {
 	fclose(hbfile);
 	fclose(obfile);
 	fclose(paramsFile);
+	
+	setlocale(LC_NUMERIC, saved_locale); // Restore locale
 }
 
 /*
@@ -123,6 +136,14 @@ void SaveNetwork(const MMNetwork n, const char *path) {
  *	char* : Path of network files directory (not ending with a /!)
  */
 MMNetwork LoadNetwork(const char* path) {
+	
+	// Save locale
+	char *old_locale, *saved_locale;
+	old_locale = setlocale (LC_NUMERIC, NULL);
+	saved_locale = strdup (old_locale);
+	
+	setlocale(LC_NUMERIC, "en_US"); // We use . instead ,
+	
 	
 	// Load network parameters
 	FILE* paramsFile = fopen(concat(path, "/params"), "r+");
@@ -242,7 +263,7 @@ MMNetwork LoadNetwork(const char* path) {
 	
 	fclose(obfile);
 	
-	
+	setlocale(LC_NUMERIC, saved_locale); // Restore locale
 	
 	
 	return network;
