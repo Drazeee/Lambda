@@ -339,15 +339,19 @@ void launchRecognition()
 {
     if (img) {
 		grayscale(img, 1, "results/temp.bmp");
+		if (noise)
+			img = noiseReduction(img);
+		if (contrast)
+			img = contrastImage(img);
 		img = blackAndWhite(img, 1, "results/temp.bmp");
-        paragraphSegmentation(filename, "results/test", 1);
+        paragraphSegmentation("results/temp.bmp", "results/test", 1);
         char *result = "bite";
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, result, -1);
     }
     else {
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
-        gtk_text_buffer_set_text (buffer, "Not good", -1);
+        gtk_text_buffer_set_text (buffer, "Invalid image", -1);
     }
 }
 
