@@ -454,11 +454,21 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
                 getpixel(newImage, x, y));
             }
         }
+        
+        
+        // Resize image if width or height is higher than 32
+        if (newImageSmall->w > 32 && newImageSmall->w >= newImageSmall->h) {
+			newImageSmall = resize(newImageSmall, 32, 
+			(int)(((double)32 * (double)newImageSmall->h)/(double)newImageSmall->w));
+		}
+		else if (newImageSmall->h > 32) {
+			newImageSmall = resize(newImageSmall, 
+			(int)(((double)32 * (double)newImageSmall->w)/(double)newImageSmall->h), 32);
+		}
 
 
 
         // Ajoute l'image sur une un fond blanc de 32x32
-        // TODO: Redimensionner si plus grand que 32x32
 
         SDL_Surface *lastImage = SDL_CreateRGBSurface(0, 32, 32, 32,
         0, 0, 0, 0);

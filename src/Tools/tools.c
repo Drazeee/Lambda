@@ -7,6 +7,26 @@ Uint8 g;
 Uint8 b;
 
 
+SDL_Surface *resize(SDL_Surface *img, int x, int y) {
+
+	SDL_Surface *imgCopy = SDL_CreateRGBSurface(0, x, y, 32,
+        0, 0, 0, 0);
+	int width = img->w;
+	int height = img->h;
+	for (int i = 0; i < x; i++) {
+		for (int j = 0; j < y; j++) {
+			double coordX = (double)i * ((double)width/(double)x);
+			double coordY = (double)j * ((double)height/(double)y);
+			if (coordX < img->w-1 && coordY < img->h-1){
+				putpixel(imgCopy, i, j, getpixel(img, (int)coordX, (int)coordY));
+			}
+		}
+	}
+	return imgCopy;
+}
+
+
+
 /* Classic tools */
 static inline Uint8* pixelref(SDL_Surface *surf, unsigned x, unsigned y)
 {

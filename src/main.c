@@ -431,6 +431,29 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 	}
+	else if (strcmp(argv[1], "resize") == 0) {
+		if (argc == 5) {
+			SDL_Surface *imgDefault;
+			imgDefault = SDL_LoadBMP(argv[2]);
+			if (!imgDefault) {
+				printf("Error: unable to find bmp file at %s\n", argv[2]);
+				return 1;
+			}
+			if (atoi(argv[3]) && atoi(argv[4])) {
+				SDL_SaveBMP(resize(imgDefault, atoi(argv[3]), atoi(argv[4])), "results/resize.bmp");
+				printf("Lambda: Resize ended successfully\n");
+				return 0;
+			}
+			else {
+				printf("Lambda: Grayscale can't cast arg 2 and 3 to int\n");
+				return 1;
+			}
+		}
+		else {
+			printf("Lambda: Grayscale take exactly 3 paramaters but was called with %i parameter(s)\n", argc - 2);
+			return 1;
+		}
+	}
 	else if (strcmp(argv[1], "contrast") == 0)
 	{
 		if (argc == 4 || argc == 5) {
