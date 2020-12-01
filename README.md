@@ -61,18 +61,6 @@ If you want to apply noise reduction before applying the contrast filter, precis
 ./Lambda contrast "image-path" "destination" true
 ```
 
-To try columns segmentation, use this command line
-
-```bash
-./Lambda column exampleColumn.bmp
-```
-
-To try paragraphs segmentation, use this command line
-
-```bash
-./Lambda paragraph exampleParagraph.bmp
-```
-
 To try lines segmentation, use this command line
 
 ```bash
@@ -91,10 +79,16 @@ To try characters segmentation, use this command line
 ./Lambda characters exampleChar.bmp
 ```
 
-To finish, try our segmentation algorithm with this command line. Watch out, this is still no completely working on each machine (segmentation fault on EPITA's Archlinux).
+To finish, try our segmentation algorithm with this command line, only if you image has 1 column
 
 ```bash
-./Lambda segmentation exampleColumn.bmp
+./Lambda paragraph exampleParagraph.bmp
+```
+
+But if you image has more than 1 column, use this command
+
+```bash
+./Lambda column exampleColumn2.bmp
 ```
 
 Specification: if your image doesn't contains multi-columns please use this command
@@ -108,8 +102,8 @@ Specification: if your image doesn't contains multi-columns please use this comm
 * [X] Saving and loading of neural network weights
 * [X] Dataset for learning
 * [X] Manipulation of files for saving results
-* [ ] Complete neural network for recognizing characters
-* [ ] Text reconstruction and saving
-* [ ] User interface
+* [X] Complete neural network for recognizing characters
+* [X] Text reconstruction and saving
+* [X] User interface
 * [ ] Spell checker
-* [ ] Multi column, layout and images in text management
+* [X] Multi column
