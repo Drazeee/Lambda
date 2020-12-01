@@ -43,7 +43,7 @@ gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.
 
 # <a name="execution"></a>Execution
 
-For instance, our project only got 3 commands. If you want to use our grayscale filter just execute the command line below (provided example image is "exampleGrayscale.bmp")
+For instance, our project got many commands. If you want to use our grayscale filter just execute the command line below (provided example image is "exampleGrayscale.bmp")
 
 ```bash
 ./Lambda grayscale "image-path" "destination"
@@ -90,8 +90,6 @@ But if you image has more than 1 column, use this command
 ```bash
 ./Lambda column exampleColumn2.bmp
 ```
-
-Specification: if your image doesn't contains multi-columns please use this command
 
 # <a name="features"></a> Features
 
