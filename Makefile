@@ -1,22 +1,24 @@
-CFLAGS= -Wall -Wextra -std=c99 -lm
+CFLAGS= -Wall -Wextra -std=c99 -lm -lSDL2 -rdynamic
 CC=gcc
 SDLFLAGS = -lSDL2
 GTKFLAGS = `pkg-config --cflags --libs gtk+-3.0`
+NNFLAGS = -Isrc/NeuralNetwork/include -Isrc/NeuralNetwork/src
 NAME = Lambda
 
 all: main
 
 main: main.o segmentation.o tools.o detect_char.o filters.o recognition.o
-	gcc -o ${NAME} *.o src/NeuralNetwork/lib/LambdaNeuralNetwork.o -Wall -Wextra -Werror -std=c99 `pkg-config --cflags --libs gtk+-3.0` -lSDL2 -lm -rdynamic
+	$(MAKE) -C src/NeuralNetwork lib
+	gcc -o ${NAME} *.o src/NeuralNetwork/lib/LambdaNeuralNetwork.o $(CFLAGS) -Werror $(GTKFLAGS) $(NNFLAGS)
 
 main.o: src/main.c segmentation.o tools.o detect_char.o filters.o recognition.o
-	gcc -c src/main.c `pkg-config --cflags --libs gtk+-3.0`
+	gcc -c src/main.c $(NNFLAGS) $(GTKFLAGS)
 
 recognition.o: src/Recognition/recognition.c
-	gcc -c src/Recognition/recognition.c
+	gcc -c src/Recognition/recognition.c $(NNFLAGS)
 
 segmentation.o: src/Detection/segmentation.c
-	gcc -c src/Detection/segmentation.c `pkg-config --cflags --libs gtk+-3.0`
+	gcc -c src/Detection/segmentation.c $(NNFLAGS) $(GTKFLAGS)
 
 tools.o: src/Tools/tools.c
 	gcc -c src/Tools/tools.c 
@@ -28,6 +30,7 @@ filters.o: src/ImageTreatment/filters.c
 	gcc -c src/ImageTreatment/filters.c
 
 clean:
+	$(MAKE) -C src/NeuralNetwork clean
 	rm -f ${NAME}
 	rm -f *.o
 	rm -rf columns

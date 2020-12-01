@@ -277,6 +277,8 @@ app_widgets        *widgets;
 
 void interface()
 {
+    gtk_disable_setlocale();
+    setlocale(LC_NUMERIC, "en_US"); // We use . instead ,
     widgets = g_slice_new(app_widgets);
     gtk_init(NULL, NULL);
     GtkBuilder *builder = gtk_builder_new();

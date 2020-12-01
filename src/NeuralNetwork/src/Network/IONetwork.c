@@ -67,16 +67,7 @@ void PrintNetwork(const MMNetwork n) {
  * Params:
  *	MMNetwork : The network to save
  */
-void SaveNetwork(const MMNetwork n, const char *path) {
-	
-	// Save locale
-	char *old_locale, *saved_locale;
-	old_locale = setlocale (LC_NUMERIC, NULL);
-	saved_locale = strdup (old_locale);
-	
-	setlocale(LC_NUMERIC, "en_US"); // We use . instead ,
-	
-	
+void SaveNetwork(const MMNetwork n, const char *path) {	
 	
 	mkdir(path, 0700);
 	
@@ -125,8 +116,6 @@ void SaveNetwork(const MMNetwork n, const char *path) {
 	fclose(hbfile);
 	fclose(obfile);
 	fclose(paramsFile);
-	
-	setlocale(LC_NUMERIC, saved_locale); // Restore locale
 }
 
 /*
@@ -136,14 +125,6 @@ void SaveNetwork(const MMNetwork n, const char *path) {
  *	char* : Path of network files directory (not ending with a /!)
  */
 MMNetwork LoadNetwork(const char* path) {
-	
-	// Save locale
-	char *old_locale, *saved_locale;
-	old_locale = setlocale (LC_NUMERIC, NULL);
-	saved_locale = strdup (old_locale);
-	
-	setlocale(LC_NUMERIC, "en_US"); // We use . instead ,
-	
 	
 	// Load network parameters
 	FILE* paramsFile = fopen(concat(path, "/params"), "r+");
@@ -261,10 +242,7 @@ MMNetwork LoadNetwork(const char* path) {
 		network.outputLayerBias[j] = value4;
 	}
 	
-	fclose(obfile);
-	
-	setlocale(LC_NUMERIC, saved_locale); // Restore locale
-	
+	fclose(obfile);	
 	
 	return network;
 }

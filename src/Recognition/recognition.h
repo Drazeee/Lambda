@@ -2,7 +2,7 @@
 #define RECOGNITION_H_
 
 #include <stdio.h>
-#include "../NeuralNetwork/src/LambdaNeuralNetwork.h"
+#include "LambdaNeuralNetwork.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>

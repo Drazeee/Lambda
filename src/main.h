@@ -11,6 +11,7 @@
 #include <dirent.h>
 #include <gtk-3.0/gtk/gtk.h>
 #include "ImageTreatment/filters.h"
+#include <locale.h>
 
 
 
