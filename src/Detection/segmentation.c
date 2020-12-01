@@ -338,10 +338,8 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
         if (isLineSegmentation) {
 			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
 			strcat(line, "\n");
-			
-			printf("Characters\n");
+
 			char *result = malloc(strlen(allLines) + strlen(line) + 1);
-			printf("end Characters\n");
 			strcpy(result, allLines);
 			strcat(result, line);
 			allLines = result;
@@ -350,9 +348,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
 			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
 			strcat(line, "\n\n");
 			
-			printf("Line\n");
 			char *result = malloc(strlen(allLines) + strlen(line) + 1);
-			printf("Line\n");
 			strcpy(result, allLines);
 			strcat(result, line);
 			allLines = result;
@@ -819,13 +815,13 @@ int *wordPositions(SDL_Surface *img){
 }
 
 /*
- * Removes green separating lines between columns
+ * Removes green separating lines between columns and calls removeLines for each column
  * Param:
  *      - img : image to compute
  *      - directory : directory's name for where to store the output
  */
 
-char *convertColumns(SDL_Surface *img, char *directory)
+void convertColumns(SDL_Surface *img, char *directory)
 {
     Uint32 pixel;
     Uint8 r;
@@ -835,8 +831,6 @@ char *convertColumns(SDL_Surface *img, char *directory)
     int stop = -1;
     int positions[40];
     int pos = 0;
-    
-    char *allColumns = "";
 
     for (int i = 0; i < img -> w; i++)
     {
@@ -893,16 +887,6 @@ char *convertColumns(SDL_Surface *img, char *directory)
         char path[100];
         snprintf(path, 100, "%s/%d.bmp", directory, i/2);
         SDL_SaveBMP(newImage, path);
-        char *column = paragraphSegmentationWithoutLoad(newImage, "results/tempPar", 0);
-		strcat(column, "\n==========\n");
-		
-		printf("Paragraph\n");
-		char *result = malloc(strlen(allColumns) + strlen(column) + 1);
-		printf("Paragraph end\n");
-		strcpy(result, allColumns);
-		strcat(result, column);
-		allColumns = result;
     }
     
-    return allColumns;
 }

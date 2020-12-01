@@ -16,7 +16,6 @@
 
 
 int main(int argc, char **argv);
-char *paragraphSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print);
 char *characterSegmentation(char *path, char *destination, int print);
 char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print);
 char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print);
