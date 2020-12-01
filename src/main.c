@@ -1,4 +1,5 @@
 #include "main.h"
+#include "Interface/MacOSDarkMode.h"
 
 int columnSegmentation(char *path, char *destination, int print)
 {
@@ -286,7 +287,12 @@ void interface()
     GtkWidget       *window= GTK_WIDGET(gtk_builder_get_object(builder, "main"));
     widgets->errorImageLabel  = GTK_WIDGET(gtk_builder_get_object(builder, "errorImage"));
     widgets->resultLabel  = GTK_WIDGET(gtk_builder_get_object(builder, "resultOutput"));
-    
+	
+	if (macOSDarkMode()) { // Of course!
+		AddCSS("src/Interface/MacOSDarkMode.css");
+	}
+
+	
     gtk_builder_connect_signals(builder, widgets);
 
     gtk_widget_show(window);

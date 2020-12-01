@@ -11,8 +11,8 @@ main: main.o segmentation.o tools.o detect_char.o filters.o recognition.o
 	$(MAKE) -C src/NeuralNetwork lib
 	gcc -o ${NAME} *.o src/NeuralNetwork/lib/LambdaNeuralNetwork.o $(CFLAGS) -Werror $(GTKFLAGS) $(NNFLAGS)
 
-main.o: src/main.c segmentation.o tools.o detect_char.o filters.o recognition.o
-	gcc -c src/main.c $(NNFLAGS) $(GTKFLAGS)
+main.o: src/Interface/MacOSDarkMode.c src/main.c segmentation.o tools.o detect_char.o filters.o recognition.o
+	gcc -c src/main.c src/Interface/MacOSDarkMode.c $(NNFLAGS) $(GTKFLAGS)
 
 recognition.o: src/Recognition/recognition.c
 	gcc -c src/Recognition/recognition.c $(NNFLAGS)
