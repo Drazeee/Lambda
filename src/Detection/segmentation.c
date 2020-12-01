@@ -271,6 +271,7 @@ int paragraphsCount = 0;
  */
 
 char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
+	printf("Starting removeLines %i\n", isLineSegmentation);
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -348,6 +349,8 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
 			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
 			strcat(line, "\n\n");
 			
+			printf("\n%i, %i\n", strlen(allLines) + strlen(line) + 1, (strlen(allLines) + strlen(line) + 1) * sizeof(char));
+			
 			char *result = malloc(strlen(allLines) + strlen(line) + 1);
 			strcpy(result, allLines);
 			strcat(result, line);
@@ -355,6 +358,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
 		}
         currentLine++;
     }
+    printf("Ending removeLines %i\n", isLineSegmentation);
     return allLines;
 }
 
@@ -368,6 +372,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
  */
 
 char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
+	printf("  Starting removeLinesForCharacters\n");
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -505,6 +510,7 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     wordPos = wordPositions(img);
     result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
     paragraphsCount = 0;
+    printf("  Ending removeLinesForCharacters\n");
     return result;
 }
 
@@ -757,6 +763,7 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
 
 
 int *wordPositions(SDL_Surface *img){
+	printf("   Starting wordPositions\n");
 	int fullWhite = 1;
     int firstCut = 1;
     int endText = -1; //Gets the first pixel (height wise) with full white width
@@ -811,6 +818,7 @@ int *wordPositions(SDL_Surface *img){
         }
     }
     *(positions + current) = -42;
+    printf("   Ending wordPositions\n");
     return positions;
 }
 

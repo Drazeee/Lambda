@@ -41,7 +41,7 @@ all: shared analyze learning xor
 
 
 clean:
-	rm -r lib bin include
+	rm -rf lib bin include
 
 # END
 

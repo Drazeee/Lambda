@@ -1,6 +1,40 @@
 #include "main.h"
 #include "Interface/MacOSDarkMode.h"
 
+char *columnRecognition(char *directory)
+{
+	DIR *d;
+	struct dirent *dir;
+	d = opendir(directory);
+	char *resultColumns = "";
+	int columnsNumber = 0; // total number of columns in the DIR
+	int len = strlen(directory);
+	if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+			if (dir->d_name[0] != '.' && dir->d_name[0] != 'l') {
+				columnsNumber++;
+			}
+		}
+
+	}
+	
+	int columnIndex = 0;
+	for (int i = 0; i < columnsNumber; i++) {
+		char path[len + 40];
+		snprintf(path, len + 40, "%s/%i.bmp", directory, i);
+		char *temp = paragraphSegmentation(path, "results/tempParagraphs", 0);
+		strcat(temp, "\n===========\n");
+
+		char *result = malloc(strlen(resultColumns) + strlen(temp) + 1);
+		strcpy(result, resultColumns);
+		strcat(result, temp);
+		resultColumns = result;
+	}
+	return resultColumns;
+}
+
 int columnSegmentation(char *path, char *destination, int print)
 {
 	SDL_Surface *imgDefault;
@@ -16,13 +50,18 @@ int columnSegmentation(char *path, char *destination, int print)
 	}
 	imgDefault = cutColumn(imgDefault);
 	convertColumns(imgDefault, destination);
+	char *test = columnRecognition(destination);
 	if (print)
 	{
+		printf("%s", test);
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
+	free(test);
 	return 0;
 }
+
+
 
 char *paragraphSegmentation(char *path, char *destination, int print)
 {
@@ -141,6 +180,7 @@ char *characterSegmentation(char *path, char *destination, int print)
 
 char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print)
 {
+	printf(" Starting characterSegmentation\n");
 	remove_directory(destination);
 	int *allPos;
 	allPos = cutCharacters(imgDefault, destination);
@@ -151,47 +191,8 @@ char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destinatio
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
+	printf(" Ending characterSegmentation\n");
 	return result;
-}
-
-int fullSegementation1(char *path)
-{
-	SDL_Surface *imgDefault;
-	imgDefault = SDL_LoadBMP(path);
-	if (!imgDefault)
-	{
-		printf("\033[0;31m"); 
-		printf("Error: unable to find bmp file at %s\n", path);
-		printf("\033[0m");
-		return 1;
-	}
-	mkdir("results/segmentation", 0777);
-
-	// Multi columns
-	grayscale(imgDefault, 1, path);
-	columnSegmentation(path, "results/segmentation/columns", 1);
-
-	int nbColumns = 0;
-	DIR *d;
-	struct dirent *dir;
-	d = opendir("results/segmentation/columns");
-	if (d)
-    {
-		mkdir("results/segmentation/paragraphs", 0777);
-        while ((dir = readdir(d)) != NULL)
-        {
-			if (dir->d_name[0] != '.')
-			{
-				char pathForParagraph[40];
-				snprintf(pathForParagraph, 40, "results/segmentation/paragraphs/para%i", nbColumns);
-				char currentColumn[36];
-				snprintf(currentColumn, 36, "results/segmentation/columns/%s", dir->d_name);
-				nbColumns++;
-				paragraphSegmentation(currentColumn, pathForParagraph, 1);
-			}
-		}
-	}
-	return 1;
 }
 
 void array_print(int *begin)
@@ -352,8 +353,7 @@ void launchRecognition()
 		if (contrast)
 			img = contrastImage(img);
 		img = blackAndWhite(img, 1, "results/temp.bmp");
-        paragraphSegmentation("results/temp.bmp", "results/test", 1);
-        char *result = "bite";
+        char *result = paragraphSegmentation("results/temp.bmp", "results/test", 1);
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, result, -1);
     }
@@ -501,21 +501,6 @@ int main(int argc, char **argv) {
 		}
 		else {
 			printf("Lambda: Black and White take exactly 2 paramaters but was called with %i parameter(s)\n", argc - 2);
-			return 1;
-		}
-	}
-
-	else if (strcmp(argv[1], "segmentation") == 0) {
-		if (argc == 3) {
-			if (!fullSegementation1(argv[2])) {
-				printf("Lambda: Error during segmentation execution\n");
-				return 1;
-			}
-			printf("Lambda: Segmentation ended successfully\n");
-			return 0;
-		}
-		else {
-			printf("Lambda: Segmentation take exactly 1 paramater but was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
