@@ -43,7 +43,7 @@ gcc -W -Wall -Wextra -Werror -std=c99 main.o segmentation.o tools.o detect_char.
 
 # <a name="execution"></a>Execution
 
-For instance, our project got many commands. If you want to use our grayscale filter just execute the command line below (provided example image is "exampleGrayscale.bmp")
+Our project got many commands. If you want to use our grayscale filter just execute the command line below (provided example image is "exampleGrayscale.bmp")
 
 ```bash
 ./Lambda grayscale "image-path" "destination"
