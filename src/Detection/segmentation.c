@@ -344,6 +344,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
 			strcpy(result, allLines);
 			strcat(result, line);
 			allLines = result;
+			free(line);
 		}
 		else {
 			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
@@ -355,6 +356,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
 			strcpy(result, allLines);
 			strcat(result, line);
 			allLines = result;
+			free(line);
 		}
         currentLine++;
     }

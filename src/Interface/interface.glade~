@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <!-- interface-css-provider-path test.css -->
   <object class="GtkWindow" id="main">
-    <property name="can-focus">False</property>
+    <property name="can_focus">False</property>
     <property name="title" translatable="yes">Lambda | OCR made by Bitarrays</property>
     <property name="resizable">False</property>
-    <property name="default-width">1024</property>
-    <property name="default-height">768</property>
+    <property name="default_width">1024</property>
+    <property name="default_height">768</property>
     <property name="icon">LogoBitarrays (copy).png</property>
     <signal name="destroy" handler="on_destroy" swapped="no"/>
     <child>
       <object class="GtkFixed">
         <property name="visible">True</property>
-        <property name="can-focus">False</property>
+        <property name="can_focus">False</property>
         <child>
           <object class="GtkFileChooserButton">
-            <property name="width-request">205</property>
-            <property name="height-request">51</property>
+            <property name="width_request">205</property>
+            <property name="height_request">51</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="title" translatable="yes"/>
             <signal name="file-set" handler="file_set" swapped="no"/>
@@ -31,94 +31,68 @@
           </packing>
         </child>
         <child>
-          <!-- n-columns=3 n-rows=4 -->
           <object class="GtkGrid">
-            <property name="width-request">195</property>
-            <property name="height-request">100</property>
+            <property name="width_request">195</property>
+            <property name="height_request">100</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkCheckButton">
                 <property name="label" translatable="yes">Multi columns ?</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
                 <property name="active">True</property>
-                <property name="draw-indicator">True</property>
+                <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="toggleColumns" swapped="no"/>
               </object>
               <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
               </packing>
             </child>
             <child>
               <object class="GtkCheckButton">
                 <property name="label" translatable="yes">Increased contrasts ?</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="toggleContrast" swapped="no"/>
               </object>
               <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkCheckButton">
                 <property name="label" translatable="yes">Noise in the image?</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="active">True</property>
-                <property name="draw-indicator">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="toggleNoise" swapped="no"/>
               </object>
               <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
               </packing>
             </child>
             <child>
               <object class="GtkCheckButton">
                 <property name="label" translatable="yes">Spelling correction?</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
                 <property name="active">True</property>
-                <property name="draw-indicator">True</property>
+                <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="toggleCorrection" swapped="no"/>
               </object>
               <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
           <packing>
@@ -128,26 +102,26 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">768</property>
+            <property name="width_request">100</property>
+            <property name="height_request">768</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">left.png</property>
           </object>
         </child>
         <child>
           <object class="GtkLinkButton">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
             <property name="relief">none</property>
             <property name="uri">https://bitarrays.fr</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="pixbuf">world-wide-web.png</property>
               </object>
             </child>
@@ -155,17 +129,17 @@
         </child>
         <child>
           <object class="GtkLinkButton">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
             <property name="relief">none</property>
             <property name="uri">https://instagram.com/bitarrays</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="pixbuf">instagram.png</property>
               </object>
             </child>
@@ -176,17 +150,17 @@
         </child>
         <child>
           <object class="GtkLinkButton">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
             <property name="relief">none</property>
             <property name="uri">https://twitter.com/bitarrays</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="pixbuf">twitter.png</property>
               </object>
             </child>
@@ -197,17 +171,17 @@
         </child>
         <child>
           <object class="GtkLinkButton">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
             <property name="relief">none</property>
             <property name="uri">https://bitarrays.fr/projects/kubeking</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <property name="pixbuf">kk.png</property>
               </object>
             </child>
@@ -218,10 +192,10 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">90</property>
+            <property name="width_request">100</property>
+            <property name="height_request">90</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">right-arrow.png</property>
           </object>
           <packing>
@@ -231,10 +205,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">181</property>
-            <property name="height-request">80</property>
+            <property name="width_request">181</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">CONFIGURE</property>
             <property name="justify">center</property>
@@ -252,10 +226,10 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">circle.png</property>
           </object>
           <packing>
@@ -265,10 +239,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">40</property>
-            <property name="height-request">39</property>
+            <property name="width_request">40</property>
+            <property name="height_request">39</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">1</property>
             <property name="justify">center</property>
@@ -286,19 +260,19 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">circle.png</property>
           </object>
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">circle.png</property>
           </object>
           <packing>
@@ -308,10 +282,10 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">right-arrow.png</property>
           </object>
           <packing>
@@ -321,10 +295,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">2</property>
             <property name="justify">center</property>
@@ -342,10 +316,10 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">circle.png</property>
           </object>
           <packing>
@@ -355,10 +329,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">3</property>
             <property name="justify">center</property>
@@ -376,10 +350,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">121</property>
-            <property name="height-request">80</property>
+            <property name="width_request">121</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">START</property>
             <property name="justify">center</property>
@@ -397,10 +371,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">292</property>
-            <property name="height-request">80</property>
+            <property name="width_request">292</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">OUTPUT WILL APPEAR HERE</property>
             <property name="justify">center</property>
@@ -419,13 +393,13 @@
         <child>
           <object class="GtkButton">
             <property name="label">gtk-media-play</property>
-            <property name="width-request">201</property>
-            <property name="height-request">60</property>
+            <property name="width_request">201</property>
+            <property name="height_request">60</property>
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="use-stock">True</property>
-            <property name="always-show-image">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="use_stock">True</property>
+            <property name="always_show_image">True</property>
             <signal name="clicked" handler="launchRecognition" swapped="no"/>
           </object>
           <packing>
@@ -435,10 +409,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">181</property>
-            <property name="height-request">80</property>
+            <property name="width_request">181</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">SELECT AN IMAGE</property>
             <property name="justify">center</property>
@@ -456,10 +430,10 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">1014</property>
-            <property name="height-request">80</property>
+            <property name="width_request">1014</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">bg.png</property>
           </object>
           <packing>
@@ -468,10 +442,10 @@
         </child>
         <child>
           <object class="GtkImage">
-            <property name="width-request">100</property>
-            <property name="height-request">80</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="pixbuf">LogoBitarrays (another copy).png</property>
           </object>
           <packing>
@@ -480,10 +454,10 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="width-request">583</property>
-            <property name="height-request">80</property>
+            <property name="width_request">583</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="label" translatable="yes">THIS PROJECT WAS MADE BY BITARRAYS DURING OUR COURSE IN IT SCHOOL</property>
             <attributes>
@@ -500,10 +474,10 @@
         </child>
         <child>
           <object class="GtkLabel" id="errorImage">
-            <property name="width-request">248</property>
-            <property name="height-request">80</property>
+            <property name="width_request">248</property>
+            <property name="height_request">80</property>
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="wrap">True</property>
             <attributes>
@@ -520,23 +494,23 @@
         </child>
         <child>
           <object class="GtkScrolledWindow">
-            <property name="width-request">850</property>
-            <property name="height-request">360</property>
+            <property name="width_request">850</property>
+            <property name="height_request">360</property>
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="shadow-type">in</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
             <child>
               <object class="GtkViewport">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
+                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkTextView" id="resultOutput">
-                    <property name="width-request">844</property>
-                    <property name="height-request">355</property>
+                    <property name="width_request">844</property>
+                    <property name="height_request">355</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="can_focus">True</property>
                     <property name="editable">False</property>
-                    <property name="wrap-mode">char</property>
+                    <property name="wrap_mode">char</property>
                   </object>
                 </child>
               </object>
@@ -549,8 +523,11 @@
         </child>
       </object>
     </child>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <style>
-      <class name="fixed"/>
+      <class name="windowInstance"/>
     </style>
   </object>
 </interface>

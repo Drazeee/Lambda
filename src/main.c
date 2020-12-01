@@ -35,7 +35,7 @@ char *columnRecognition(char *directory)
 	return resultColumns;
 }
 
-int columnSegmentation(char *path, char *destination, int print)
+char *columnSegmentation(char *path, char *destination, int print)
 {
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
@@ -46,19 +46,18 @@ int columnSegmentation(char *path, char *destination, int print)
 			printf("Error: unable to find bmp file at %s\n", path);
 			printf("\033[0m");
 		}
-		return 1;
+		return "";
 	}
 	imgDefault = cutColumn(imgDefault);
 	convertColumns(imgDefault, destination);
-	char *test = columnRecognition(destination);
+	char *result = columnRecognition(destination);
 	if (print)
 	{
-		printf("%s", test);
+		printf("%s", result);
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	free(test);
-	return 0;
+	return result;
 }
 
 
@@ -263,7 +262,7 @@ int remove_directory(const char *path) {
 
 int columns = 1;
 int contrast = 0;
-int noise = 1;
+int noise = 0;
 int correction = 1;
 
 GtkBuilder *builder;
@@ -344,7 +343,7 @@ void toggleCorrection()
 }
 
 
-void launchRecognition()
+void startRecognition()
 {
     if (img) {
 		grayscale(img, 1, "results/temp.bmp");
@@ -353,9 +352,16 @@ void launchRecognition()
 		if (contrast)
 			img = contrastImage(img);
 		img = blackAndWhite(img, 1, "results/temp.bmp");
-        char *result = paragraphSegmentation("results/temp.bmp", "results/test", 1);
+		char *result;
+		if (columns) {
+			result = columnSegmentation("results/temp.bmp", "results/test", 1);
+		}
+		else {
+			result = paragraphSegmentation("results/temp.bmp", "results/test", 1);
+		}
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, result, -1);
+        free(result);
     }
     else {
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
@@ -406,7 +412,8 @@ int main(int argc, char **argv) {
 	}
 	
 	if (strcmp(argv[1], "column") == 0) {
-		return columnSegmentation(argv[2], "results/resultColumn", 1);
+		columnSegmentation(argv[2], "results/resultColumn", 1);
+		return 0;
 	}
 	else if (strcmp(argv[1], "paragraph") == 0) {
 		paragraphSegmentation(argv[2], "results/resultParagraph", 1);
