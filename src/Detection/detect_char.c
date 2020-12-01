@@ -2,7 +2,6 @@
 
 
 int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
-
     //Variables
     SDL_Surface *img_copy = copy_image(img);
     Uint32 pixel;
@@ -21,7 +20,7 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
     // Initialisazing characters' positions array 
     unsigned int estimatedCharNumber = 0; // Stores the estimated number of characters to create a good size array
     estimatedCharNumber = (int) (img->w/averageCharLength);
-    int *allPositions = calloc(estimatedCharNumber*2, sizeof(int));
+    int *allPositions = calloc(estimatedCharNumber, sizeof(int));
     int currentIndex = 0; // Current index position of 'allPositions' array
 
     // Using line drawing system
@@ -103,7 +102,7 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
     char path[100];
     snprintf(path, 100, "%s/%s.bmp", directory, "line");
     SDL_SaveBMP(img_copy, path);
-
+   
     return allPositions;
 }
 

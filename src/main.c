@@ -1,7 +1,7 @@
 #include "main.h"
 #include "Interface/MacOSDarkMode.h"
 
-int columnSegmentation(char *path, char *destination, int print)
+char *columnSegmentation(char *path, char *destination, int print)
 {
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
@@ -12,16 +12,17 @@ int columnSegmentation(char *path, char *destination, int print)
 			printf("Error: unable to find bmp file at %s\n", path);
 			printf("\033[0m");
 		}
-		return 1;
+		return NULL;
 	}
 	imgDefault = cutColumn(imgDefault);
-	convertColumns(imgDefault, destination);
+	char * result = convertColumns(imgDefault, destination);
 	if (print)
 	{
+		printf("%s", result);
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	return 0;
+	return result;
 }
 
 char *paragraphSegmentation(char *path, char *destination, int print)
@@ -38,6 +39,21 @@ char *paragraphSegmentation(char *path, char *destination, int print)
 		}
 		return "";
 	}
+	imgDefault = cutLine(imgDefault, 1);
+	char *result = removeLines(imgDefault, destination, 0);
+	if (print)
+	{
+		printf("%s\n", result);
+		printf("\33[0;32mLambda: segmentation ended successfully.\n");
+		printf("The result is here: \"%s\"\033[0m\n\n", destination);
+	}
+	return result;
+}
+
+
+char *paragraphSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print)
+{
+	remove_directory(destination);
 	imgDefault = cutLine(imgDefault, 1);
 	char *result = removeLines(imgDefault, destination, 0);
 	if (print)
@@ -342,19 +358,45 @@ void toggleCorrection()
     correction = !correction;
 }
 
+int event = 0;
+int numberOfDots = 2;
+
+char *dots1 = ".";
+char *dots2 = "..";
+char *dots3 = "...";
+
+gboolean waitForResult(gpointer user_data) {
+	GtkTextBuffer *buffer = user_data;
+	switch (numberOfDots) {
+		case 2:
+			gtk_text_buffer_set_text (buffer, dots3, -1);
+			break;
+		case 1:
+			gtk_text_buffer_set_text (buffer, dots2, -1);
+			break;
+		case 0:
+			gtk_text_buffer_set_text (buffer, dots1, -1);
+			break;
+		default:
+			gtk_text_buffer_set_text (buffer, dots3, -1);
+			break;
+	}
+	
+	numberOfDots = (numberOfDots + 1) % 3;
+	return TRUE;
+}
 
 void launchRecognition()
 {
-    if (img) {
+    if (img && !event) {
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
 		grayscale(img, 1, "results/temp.bmp");
 		if (noise)
 			img = noiseReduction(img);
 		if (contrast)
 			img = contrastImage(img);
 		img = blackAndWhite(img, 1, "results/temp.bmp");
-        paragraphSegmentation("results/temp.bmp", "results/test", 1);
-        char *result = "bite";
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
+        char *result = paragraphSegmentation("results/temp.bmp", "results/test", 1);
         gtk_text_buffer_set_text (buffer, result, -1);
     }
     else {
@@ -362,7 +404,6 @@ void launchRecognition()
         gtk_text_buffer_set_text (buffer, "Invalid image", -1);
     }
 }
-
 
 
 // END INTERFACE
@@ -406,7 +447,8 @@ int main(int argc, char **argv) {
 	}
 	
 	if (strcmp(argv[1], "column") == 0) {
-		return columnSegmentation(argv[2], "results/resultColumn", 1);
+		columnSegmentation(argv[2], "results/resultColumn", 1);
+		return 0;
 	}
 	else if (strcmp(argv[1], "paragraph") == 0) {
 		paragraphSegmentation(argv[2], "results/resultParagraph", 1);

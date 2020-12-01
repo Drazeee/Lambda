@@ -17,7 +17,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first);
 void linesToSurface(SDL_Surface *img);
 SDL_Surface *cutColumn(SDL_Surface *img);
 SDL_Surface *cutWord(SDL_Surface *img);
-void convertColumns(SDL_Surface *img, char *directory);
+char *convertColumns(SDL_Surface *img, char *directory);
 char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation);
 char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos);
 void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos);
