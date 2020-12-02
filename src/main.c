@@ -1,7 +1,7 @@
 #include "main.h"
 #include "Interface/MacOSDarkMode.h"
 
-char *columnRecognition(char *directory)
+char *columnRecognition(char *directory, int isItalic)
 {
 	DIR *d;
 	struct dirent *dir;
@@ -24,7 +24,7 @@ char *columnRecognition(char *directory)
 	for (int i = 0; i < columnsNumber; i++) {
 		char path[len + 40];
 		snprintf(path, len + 40, "%s/%i.bmp", directory, i);
-		char *temp = paragraphSegmentation(path, "results/tempParagraphs", 0);
+		char *temp = paragraphSegmentation(path, "results/tempParagraphs", 0, isItalic);
 		strcat(temp, "\n===========\n");
 
 		char *result = malloc(strlen(resultColumns) + strlen(temp) + 1);
@@ -35,34 +35,7 @@ char *columnRecognition(char *directory)
 	return resultColumns;
 }
 
-char *columnSegmentation(char *path, char *destination, int print)
-{
-	SDL_Surface *imgDefault;
-	imgDefault = SDL_LoadBMP(path);
-	if (!imgDefault) {
-		if (print) 
-		{
-			printf("\033[0;31m"); 
-			printf("Error: unable to find bmp file at %s\n", path);
-			printf("\033[0m");
-		}
-		return "";
-	}
-	imgDefault = cutColumn(imgDefault);
-	convertColumns(imgDefault, destination);
-	char *result = columnRecognition(destination);
-	if (print)
-	{
-		printf("%s", result);
-		printf("\33[0;32mLambda: segmentation ended successfully.\n");
-		printf("The result is here: \"%s\"\033[0m\n\n", destination);
-	}
-	return result;
-}
-
-
-
-char *paragraphSegmentation(char *path, char *destination, int print)
+char *columnSegmentation(char *path, char *destination, int print, int isItalic)
 {
 	remove_directory(destination);
 	SDL_Surface *imgDefault;
@@ -76,8 +49,37 @@ char *paragraphSegmentation(char *path, char *destination, int print)
 		}
 		return "";
 	}
+	imgDefault = cutColumn(imgDefault);
+	convertColumns(imgDefault, destination);
+	char *result = columnRecognition(destination, isItalic);
+	if (print)
+	{
+		printf("%s", result);
+		printf("\33[0;32mLambda: segmentation ended successfully.\n");
+		printf("The result is here: \"%s\"\033[0m\n\n", destination);
+	}
+	return result;
+}
+
+
+
+char *paragraphSegmentation(char *path, char *destination, int print, int isItalic)
+{
+	printf("%i\n", isItalic);
+	remove_directory(destination);
+	SDL_Surface *imgDefault;
+	imgDefault = SDL_LoadBMP(path);
+	if (!imgDefault) {
+		if (print) 
+		{
+			printf("\033[0;31m"); 
+			printf("Error: unable to find bmp file at %s\n", path);
+			printf("\033[0m");
+		}
+		return "";
+	}
 	imgDefault = cutLine(imgDefault, 1);
-	char *result = removeLines(imgDefault, destination, 0);
+	char *result = removeLines(imgDefault, destination, 0, isItalic);
 	if (print)
 	{
 		printf("%s\n", result);
@@ -102,7 +104,7 @@ char *lineSegmentation(char *path, char *destination, int print)
 		return NULL;
 	}
 	imgDefault = cutLine(imgDefault, 0);
-	char *allLines = removeLines(imgDefault, destination, 1);
+	char *allLines = removeLines(imgDefault, destination, 1, 0);
 	if (print)
 	{
 		printf("result: %s\n", allLines);
@@ -113,11 +115,11 @@ char *lineSegmentation(char *path, char *destination, int print)
 }
 
 
-char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print)
+char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print, int isItalic)
 {
 	remove_directory(destination);
 	imgDefault = cutLine(imgDefault, 0);
-	char *allLines = removeLines(imgDefault, destination, 1);
+	char *allLines = removeLines(imgDefault, destination, 1, isItalic);
 	if (print)
 	{
 		printf("result: %s\n", allLines);
@@ -177,14 +179,20 @@ char *characterSegmentation(char *path, char *destination, int print)
 	return result;
 }
 
-char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print)
+char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print, int isItalic)
 {
 	printf(" Starting characterSegmentation\n");
 	remove_directory(destination);
 	int *allPos;
-	allPos = cutCharacters(imgDefault, destination);
 	char *result;
-	result = removeLinesForCharacters(imgDefault, destination, allPos);
+	if (!isItalic) {
+		allPos = cutCharacters(imgDefault, destination);
+		result = removeLinesForCharacters(imgDefault, destination, allPos);
+	}
+	else {
+		allPos = cutCharactersItalic(imgDefault, destination);
+		result = removeLinesForItalicChars(imgDefault, destination, allPos);
+	}
 	if (print)
 	{
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
@@ -264,6 +272,7 @@ int columns = 1;
 int contrast = 0;
 int noise = 0;
 int correction = 1;
+int italic = 0;
 
 GtkBuilder *builder;
 SDL_Surface *img;
@@ -342,6 +351,10 @@ void toggleCorrection()
     correction = !correction;
 }
 
+void toggleItalic()
+{
+	italic = !italic;
+}
 
 void startRecognition()
 {
@@ -354,10 +367,10 @@ void startRecognition()
 		img = blackAndWhite(img, 1, "results/temp.bmp");
 		char *result;
 		if (columns) {
-			result = columnSegmentation("results/temp.bmp", "results/test", 1);
+			result = columnSegmentation("results/temp.bmp", "results/test", 1, italic);
 		}
 		else {
-			result = paragraphSegmentation("results/temp.bmp", "results/test", 1);
+			result = paragraphSegmentation("results/temp.bmp", "results/test", 1, italic);
 		}
         GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, result, -1);
@@ -378,6 +391,12 @@ void startRecognition()
 
 int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_EVERYTHING);
+	remove_directory("results/resultColumn");
+	remove_directory("results/resultParagraph");
+	remove_directory("results/tempParagraphs");
+	remove_directory("results/temp.bmp");
+	remove_directory("results/tempChar");
+	remove_directory("results/test");
 	if (argc < 2) {
 		interface();
 		//printf("Lambda: Error during parsing command\n");
@@ -412,7 +431,12 @@ int main(int argc, char **argv) {
 	}
 	
 	if (strcmp(argv[1], "column") == 0) {
-		columnSegmentation(argv[2], "results/resultColumn", 1);
+		columnSegmentation(argv[2], "results/resultColumn", 1, italic);
+		return 0;
+	}
+	if (strcmp(argv[1], "wordpos") == 0) {
+		SDL_Surface *img  = SDL_LoadBMP("exampleItalic.bmp");
+		wordPositionsItalic(img);
 		return 0;
 	}
 	if (strcmp(argv[1], "rotate") == 0) {
@@ -430,7 +454,7 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 	else if (strcmp(argv[1], "paragraph") == 0) {
-		paragraphSegmentation(argv[2], "results/resultParagraph", 1);
+		paragraphSegmentation(argv[2], "results/resultParagraph", 1, italic);
 		return 0;
 	}
 	else if (strcmp(argv[1], "line") == 0) {

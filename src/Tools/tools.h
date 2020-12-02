@@ -1,6 +1,5 @@
 #ifndef TOOLS_H_
 #define TOOLS_H_
-#define M_PI   3.14159265358979323846264338327950288
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <err.h>

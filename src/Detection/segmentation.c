@@ -50,25 +50,8 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 }
             }
             
-
-            // Cuts lines
-            /*
-            for (int k = 0; k < img -> w; k++)
-            {
-                pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                putpixel(img_copy, k, i, pixel);
-            }
-            */
             firstCut = 0;
         }
-
-        // if (i == img -> h - 1 && !firstCut) {
-        //     for (int k = 0; k < img -> w; k++)
-        //     {
-        //         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
-        //         putpixel(img_copy, k, i, pixel);
-        //     }
-        // }
         
         if(fullWhite && !firstCut) {
             endText = i-1;
@@ -99,14 +82,6 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                         putpixel(img_copy, k, i, pixel);
                     }
                 }
-                
-                // Cuts lines
-                /*
-                for (int k = 0; k < img -> w; k++)
-                {
-                    pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                    putpixel(img_copy, k, i, pixel);
-                }*/
                 firstCut = 1;
             }
             else {
@@ -118,21 +93,13 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                         putpixel(img_copy, k, i, pixel);
                     }
                 }
-                
-                // Cuts lines
-                /*
-                for (int k = 0; k < img -> w; k++)
-                {
-                    pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                    putpixel(img_copy, k, i, pixel);
-                }*/
                 firstCut = 1;
             }
             
         }
         
     }
-    //removeLines(img_copy, "lines");
+    SDL_FreeSurface(img);
     return img_copy;
 }
 
@@ -191,6 +158,7 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
         }
         
     }
+    SDL_FreeSurface(img);
     return img_copy;
 }
 
@@ -257,6 +225,7 @@ SDL_Surface *cutWord(SDL_Surface *img) {
             }
         }
     }
+    SDL_FreeSurface(img);
     return img_copy;
 }
 
@@ -270,7 +239,7 @@ int paragraphsCount = 0;
  * 		- isLineSegmentation : true if we are on a line
  */
 
-char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
+char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation, int isItalic) {
 	printf("Starting removeLines %i\n", isLineSegmentation);
     Uint32 pixel;
     Uint8 r;
@@ -337,7 +306,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
         if (isLineSegmentation) {
-			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0);
+			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0, isItalic);
 			strcat(line, "\n");
 
 			char *result = malloc(strlen(allLines) + strlen(line) + 1);
@@ -347,7 +316,7 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation) {
 			free(line);
 		}
 		else {
-			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0);
+			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0, isItalic);
 			strcat(line, "\n\n");
 			
 			printf("\n%i, %i\n", strlen(allLines) + strlen(line) + 1, (strlen(allLines) + strlen(line) + 1) * sizeof(char));
@@ -506,13 +475,18 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
+        SDL_FreeSurface(newImageSmall);
+        SDL_FreeSurface(lastImage);
+        SDL_FreeSurface(newImage);
     }
     char *result;
     int *wordPos;
     wordPos = wordPositions(img);
     result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
     paragraphsCount = 0;
-    printf("  Ending removeLinesForCharacters\n");
+    free(allPos);
+    free(wordPos);
+    SDL_FreeSurface(img);
     return result;
 }
 
@@ -529,8 +503,6 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
 // TODO
 
 void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) {
-    printf("--------------\n");
-    printf("Entering removeLines\n");
     unsigned int mod = 5;
     Uint32 pixel;
     Uint8 r;
@@ -694,9 +666,19 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
+        SDL_FreeSurface(newImageSmall);
+		SDL_FreeSurface(lastImage);
+		SDL_FreeSurface(newImage);
     }
+    char *result;
+    int *wordPos;
+    wordPos = wordPositionsItalic(img);
+    result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
     paragraphsCount = 0;
     free(allPos);
+    free(wordPos);
+    SDL_FreeSurface(img);
+    return result;
 }
 
 /*
@@ -760,12 +742,13 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
         snprintf(path, 100, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(newImage, path);
+        SDL_FreeSurface(img);
+        SDL_FreeSurface(newImage);
     }
 }
 
 
 int *wordPositions(SDL_Surface *img){
-	printf("   Starting wordPositions\n");
 	int fullWhite = 1;
     int firstCut = 1;
     int endText = -1; //Gets the first pixel (height wise) with full white width
@@ -820,7 +803,80 @@ int *wordPositions(SDL_Surface *img){
         }
     }
     *(positions + current) = -42;
-    printf("   Ending wordPositions\n");
+    SDL_FreeSurface(img);
+    return positions;
+}
+
+int *wordPositionsItalic(SDL_Surface *img){
+	unsigned int mod = 5;
+	int fullWhite = 1;
+    int firstCut = 1;
+    int endText = -1; //Gets the first pixel (height wise) with full white width
+    int beginingText = -1; //Gets the first pixel without full white width after several full white 
+    float spaceAverage = img -> h * 0.3; //Average width of a space character, const
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int *positions;
+    positions = malloc(150 * sizeof(int));
+    
+    int numberOfCharacters = 0;
+    int current = 0;
+
+    for (int i = 0; i < img -> w; i++) 
+    {
+        //Returns whether img's height is full of white pixels or not
+        fullWhite = fullWhiteItalic(img, i, mod);
+
+        if (!fullWhite && firstCut)
+        {   
+            beginingText = i;
+            int begininTextIndex = beginingText > 0 ? beginingText -1 : 0;
+            // Drawing lines
+            int jj = i;
+            for (int j = 0; j < img -> h && jj > -1; j++)
+            {
+                pixel = SDL_MapRGB(img -> format, 0, 0, 255);
+                putpixel(img, jj, j, pixel);
+
+                //Updating indexes
+                if (j % mod == mod-1){
+                    jj--;
+                }
+            }
+            firstCut = 0;
+        }
+        
+        if(fullWhite && !firstCut) {
+            endText = i;
+
+            // Ends paragraphs
+            int ii = i;
+            while (fullWhiteItalic(img, ii, mod))
+            {
+                ii++;
+            }
+            if (ii - endText >= spaceAverage || ii >= img -> w) { // Word ending
+				int jj = i;
+				for (int j = 0; j < img -> h && jj > -1; j++)
+				{
+					pixel = SDL_MapRGB(img -> format, 0, 0, 255);
+					putpixel(img, jj, j, pixel);
+
+					//Updating indexes
+					if (j % mod == mod-1){
+						jj--;
+					}
+				}
+                firstCut = 1;
+                *(positions + current) = endText;
+                current++;
+            }
+        }
+    }
+    *(positions + current) = -42;
+    SDL_FreeSurface(img);
     return positions;
 }
 
