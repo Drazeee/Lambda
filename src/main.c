@@ -1,5 +1,4 @@
 #include "main.h"
-#include "Interface/MacOSDarkMode.h"
 
 char *columnRecognition(char *directory, int isItalic)
 {
@@ -24,7 +23,8 @@ char *columnRecognition(char *directory, int isItalic)
 	for (int i = 0; i < columnsNumber; i++) {
 		char path[len + 40];
 		snprintf(path, len + 40, "%s/%i.bmp", directory, i);
-		char *temp = paragraphSegmentation(path, "results/tempParagraphs", 0, isItalic);
+		char *temp = paragraphSegmentation(path, "results/tempParagraphs", 0, 
+			isItalic);
 		strcat(temp, "\n===========\n");
 
 		char *result = malloc(strlen(resultColumns) + strlen(temp) + 1);
@@ -63,9 +63,9 @@ char *columnSegmentation(char *path, char *destination, int print, int isItalic)
 
 
 
-char *paragraphSegmentation(char *path, char *destination, int print, int isItalic)
+char *paragraphSegmentation(char *path, char *destination, int print, 
+	int isItalic)
 {
-	printf("%i\n", isItalic);
 	remove_directory(destination);
 	SDL_Surface *imgDefault;
 	imgDefault = SDL_LoadBMP(path);
@@ -115,7 +115,8 @@ char *lineSegmentation(char *path, char *destination, int print)
 }
 
 
-char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print, int isItalic)
+char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, 
+	int print, int isItalic)
 {
 	remove_directory(destination);
 	imgDefault = cutLine(imgDefault, 0);
@@ -179,9 +180,9 @@ char *characterSegmentation(char *path, char *destination, int print)
 	return result;
 }
 
-char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print, int isItalic)
+char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault,
+	char *destination, int print, int isItalic)
 {
-	printf(" Starting characterSegmentation\n");
 	remove_directory(destination);
 	int *allPos;
 	char *result;
@@ -198,7 +199,6 @@ char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destinatio
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	printf(" Ending characterSegmentation\n");
 	return result;
 }
 
@@ -293,9 +293,12 @@ void interface()
     gtk_init(NULL, NULL);
     GtkBuilder *builder = gtk_builder_new();
     gtk_builder_add_from_file (builder, "src/Interface/interface.glade", NULL);
-    GtkWidget       *window= GTK_WIDGET(gtk_builder_get_object(builder, "main"));
-    widgets->errorImageLabel  = GTK_WIDGET(gtk_builder_get_object(builder, "errorImage"));
-    widgets->resultLabel  = GTK_WIDGET(gtk_builder_get_object(builder, "resultOutput"));
+    GtkWidget       *window;
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main"));
+    widgets->errorImageLabel  = GTK_WIDGET(gtk_builder_get_object(builder, 
+		"errorImage"));
+    widgets->resultLabel  = GTK_WIDGET(gtk_builder_get_object(builder, 
+		"resultOutput"));
 	
 	if (macOSDarkMode()) { // Of course!
 		AddCSS("src/Interface/MacOSDarkMode.css");
@@ -323,7 +326,8 @@ void file_set (GtkFileChooser *file_chooser, gpointer data)
     filename = gtk_file_chooser_get_preview_filename (file_chooser);
     img = SDL_LoadBMP(filename);
     if (!img) {
-        gtk_label_set_text(GTK_LABEL(widgets->errorImageLabel), "We cant't load your image. Please make sur that this is a .bmp extension");
+        gtk_label_set_text(GTK_LABEL(widgets->errorImageLabel),
+    "We cant't load your image. Please make sur that this is a .bmp extension");
     }
     else {
         gtk_label_set_text(GTK_LABEL(widgets->errorImageLabel), "");
@@ -358,6 +362,8 @@ void toggleItalic()
 
 void startRecognition()
 {
+	GtkTextBuffer *buffer;
+	buffer =gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
     if (img) {
 		grayscale(img, 1, "results/temp.bmp");
 		if (noise)
@@ -367,17 +373,17 @@ void startRecognition()
 		img = blackAndWhite(img, 1, "results/temp.bmp");
 		char *result;
 		if (columns) {
-			result = columnSegmentation("results/temp.bmp", "results/test", 1, italic);
+			result = columnSegmentation("results/temp.bmp", "results/test", 1,
+				italic);
 		}
 		else {
-			result = paragraphSegmentation("results/temp.bmp", "results/test", 1, italic);
+			result = paragraphSegmentation("results/temp.bmp", 
+				"results/test", 1, italic);
 		}
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, result, -1);
         free(result);
     }
     else {
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
         gtk_text_buffer_set_text (buffer, "Invalid image", -1);
     }
 }
@@ -480,7 +486,8 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		else {
-			printf("Lambda: Grayscale take exactly 2 paramaters but was called with %i parameter(s)\n", argc - 2);
+			printf("Lambda: Grayscale take exactly 2 paramaters but was ");
+			printf("called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
@@ -493,7 +500,8 @@ int main(int argc, char **argv) {
 				return 1;
 			}
 			if (atoi(argv[3]) && atoi(argv[4])) {
-				SDL_SaveBMP(resize(imgDefault, atoi(argv[3]), atoi(argv[4])), "results/resize.bmp");
+				SDL_SaveBMP(resize(imgDefault, atoi(argv[3]), atoi(argv[4])),
+					"results/resize.bmp");
 				printf("Lambda: Resize ended successfully\n");
 				return 0;
 			}
@@ -503,7 +511,8 @@ int main(int argc, char **argv) {
 			}
 		}
 		else {
-			printf("Lambda: Grayscale take exactly 3 paramaters but was called with %i parameter(s)\n", argc - 2);
+			printf("Lambda: Grayscale take exactly 3 paramaters but ");
+			printf("was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
@@ -528,7 +537,8 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		else {
-			printf("Lambda: Contrast take 2 or 3 paramaters but was called with %i parameter(s)\n", argc - 2);
+			printf("Lambda: Contrast take 2 or 3 paramaters but was ");
+			printf("called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
@@ -545,12 +555,12 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		else {
-			printf("Lambda: Black and White take exactly 2 paramaters but was called with %i parameter(s)\n", argc - 2);
+			printf("Lambda: Black and White take exactly 2 paramaters but");
+			printf(" was called with %i parameter(s)\n", argc - 2);
 			return 1;
 		}
 	}
 	else {
-		//printf("Lambda: Error during parsing command\n");
 		interface();
 		return 1;
 	}

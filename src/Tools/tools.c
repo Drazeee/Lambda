@@ -51,8 +51,10 @@ SDL_Surface *rotation(SDL_Surface *img, double teta, int x0, int y0) {
 
     for (int x = 0; x < img->w; x++) {
         for (int y = 0; y < img->h; y++) {
-            int x2 = round(cos(teta) * (double)(x - x0) + sin(teta) * (double)(y - y0));
-            int y2 = round(cos(teta) * (double)(y - y0) - sin(teta) * (double)(x - x0));
+            int x2 = round(cos(teta) * (double)(x - x0) + 
+				sin(teta) * (double)(y - y0));
+            int y2 = round(cos(teta) * (double)(y - y0) - 
+				sin(teta) * (double)(x - x0));
 
             // int new_x = img->w - 1 - x - original_center_w;
             // int new_y = img->w - 1 - x - original_center_h;
@@ -118,7 +120,8 @@ SDL_Surface *autoRotation(SDL_Surface *img) {
     }
     
 
-    double teta = atan((double)(rightpivot.y - leftpivot.y) / (double)(rightpivot.x - leftpivot.x));
+    double teta = atan((double)(rightpivot.y - leftpivot.y) / 
+		(double)(rightpivot.x - leftpivot.x));
     int original_center_w = round(((img->w + 1) / 2) - 1);
     int original_center_h = round(((img->h + 1) / 2) - 1);
 
@@ -126,7 +129,8 @@ SDL_Surface *autoRotation(SDL_Surface *img) {
 
     printf("%f, (%i, %i)\n", teta, original_center_w, original_center_h);
 
-    SDL_Surface *newImage = rotation(img, teta, original_center_w, original_center_h);
+    SDL_Surface *newImage = rotation(img, teta,
+		original_center_w, original_center_h);
 
     return newImage;
 }
@@ -142,7 +146,8 @@ SDL_Surface *resize(SDL_Surface *img, int x, int y) {
 			double coordX = (double)i * ((double)width/(double)x);
 			double coordY = (double)j * ((double)height/(double)y);
 			if (coordX < img->w-1 && coordY < img->h-1){
-				putpixel(imgCopy, i, j, getpixel(img, (int)coordX, (int)coordY));
+				putpixel(imgCopy, i, j, 
+					getpixel(img, (int)coordX, (int)coordY));
 			}
 		}
 	}
@@ -285,7 +290,9 @@ unsigned char fullWhiteWidthChar(SDL_Surface *img, int height_index) {
     return fullWhite;
 }
 
-unsigned char fullWhiteItalic(SDL_Surface *img, int width_index, unsigned int mod) {
+unsigned char fullWhiteItalic(SDL_Surface *img, int width_index, 
+	unsigned int mod) 
+{
     unsigned char fullWhite = 1;
     for (int i = 0; i < img -> h && width_index > -1; i++)
     {

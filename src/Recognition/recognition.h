@@ -9,6 +9,7 @@
 #include <dirent.h>
 
 char recognition(MMImage img, MMNetwork n);
-char *lineRecognition(char *directory, int size, int *allPos, int *wordsPositions);
+char *lineRecognition(char *directory, int size, 
+	int *allPos, int *wordsPositions);
 
 #endif

@@ -12,14 +12,18 @@
 #include <gtk-3.0/gtk/gtk.h>
 #include "ImageTreatment/filters.h"
 #include <locale.h>
+#include "Interface/MacOSDarkMode.h"
 
 
 
 int main(int argc, char **argv);
 char *characterSegmentation(char *path, char *destination, int print);
-char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print, int isItalic);
-char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination, int print, int isItalic);
-char *paragraphSegmentation(char *path, char *destination, int print, int isItalic);
+char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, 
+	char *destination, int print, int isItalic);
+char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, 
+	char *destination, int print, int isItalic);
+char *paragraphSegmentation(char *path, char *destination, 
+	int print, int isItalic);
 void array_print(int *begin);
 int remove_directory(const char *path);
 

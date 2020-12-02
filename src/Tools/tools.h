@@ -25,6 +25,7 @@ unsigned char fullWhiteHeightChar(SDL_Surface *img, int width_index);
 
 unsigned char fullWhiteWidthChar(SDL_Surface *img, int height_index);
 
-unsigned char fullWhiteItalic(SDL_Surface *img, int width_index, unsigned int mod);
+unsigned char fullWhiteItalic(SDL_Surface *img, int width_index, 
+	unsigned int mod);
 
 # endif

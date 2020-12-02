@@ -1,5 +1,5 @@
 # include "segmentation.h"
-#include <stdio.h>
+
 
 /* insert red line after and before lines */
 // Use removeLines after to save each line/paragraph
@@ -7,9 +7,12 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
     // Variables
     int fullWhite = 1;
     int firstCut = 1;
-    int endText = -1; //Gets the first pixel (height wise) with full white width
-    int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    int lastLineHeight = -1; //Stores the number of pixels from the last text line
+    //Gets the first pixel (height wise) with full white width
+    int endText = -1;
+    //Gets the first pixel without full white width after several full white 
+    int beginingText = -1;
+    //Stores the number of pixels from the last text line
+    int lastLineHeight = -1;
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -28,11 +31,15 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
         {   
             beginingText = i;
 
-            int beginingTextIndex = beginingText != 0 ? beginingText - 1 : beginingText;
+            int beginingTextIndex = beginingText != 0 ? 
+				beginingText - 1 : beginingText;
 
             // Begins paragraphs
             if (!first) {
-                if ((endText == -1 || (lastLineHeight * 0.2 <= abs(endText - beginingText) && lastLineHeight > 3)) && i != 0){
+                if ((endText == -1 || 
+					(lastLineHeight * 0.2 <= abs(endText - beginingText) && 
+					lastLineHeight > 3)) && i != 0)
+				{
                     for (int k = 0; k < img -> w; k++)
                     {
                         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -41,7 +48,10 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
                 }
             }
             else {
-                if ((endText == -1 || (lastLineHeight <= abs(endText - beginingText) && lastLineHeight > 3)) && i != 0){
+                if ((endText == -1 || 
+					(lastLineHeight <= abs(endText - beginingText) && 
+					lastLineHeight > 3)) && i != 0)
+				{
                     for (int k = 0; k < img -> w; k++)
                     {
                         pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -107,9 +117,12 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
 SDL_Surface *cutColumn(SDL_Surface *img) {
     int fullWhite = 1;
     int firstCut = 1;
-    int endText = -1; //Gets the first pixel (height wise) with full white width
-    int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    int lastLineHeight = 0.03 * img -> w;; //Stores the number of pixels from the last text line
+    //Gets the first pixel (height wise) with full white width
+    int endText = -1;
+    //Gets the first pixel without full white width after several full white
+    int beginingText = -1; 
+    //Stores the number of pixels from the last text line
+    int lastLineHeight = 0.03 * img -> w; 
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -126,7 +139,10 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
             beginingText = i;
 
             // Begins paragraphs
-            if ((endText == -1 || lastLineHeight <= abs(endText - beginingText)) && i != 0){
+            if ((endText == -1 || 
+				lastLineHeight <= abs(endText - beginingText)) && 
+				i != 0)
+			{
                 for (int k = 0; k < img -> h; k++)
                 {
                     pixel = SDL_MapRGB(img_copy -> format, 0, 255, 0);
@@ -165,9 +181,12 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
 SDL_Surface *cutWord(SDL_Surface *img) {
     int fullWhite = 1;
     int firstCut = 1;
-    int endText = -1; //Gets the first pixel (height wise) with full white width
-    int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    float spaceAverage = img -> h * 0.3; //Average width of a space character, const
+    //Gets the first pixel (height wise) with full white width
+    int endText = -1; 
+    //Gets the first pixel without full white width after several full white 
+    int beginingText = -1;
+    //Average width of a space character, const
+    float spaceAverage = img -> h * 0.3; 
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -232,15 +251,17 @@ SDL_Surface *cutWord(SDL_Surface *img) {
 int paragraphsCount = 0;
 
 /*
- * Removes green separating lines between paragraphs and lines and stores each of them in a folder
+ * Removes green separating lines between paragraphs and lines 
+ * and stores each of them in a folder
  * Param:
  *      - img : image to compute
  *      - directory : the directory name to store the different parts cut
  * 		- isLineSegmentation : true if we are on a line
  */
 
-char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation, int isItalic) {
-	printf("Starting removeLines %i\n", isLineSegmentation);
+char *removeLines(SDL_Surface *img, char *directory, 
+	int isLineSegmentation, int isItalic) 
+{
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -306,7 +327,8 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation, int
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
         if (isLineSegmentation) {
-			char *line = characterSegmentationWithoutLoad(newImage, "results/tempChar", 0, isItalic);
+			char *line = characterSegmentationWithoutLoad(newImage, 
+				"results/tempChar", 0, isItalic);
 			strcat(line, "\n");
 
 			char *result = malloc(strlen(allLines) + strlen(line) + 1);
@@ -316,10 +338,9 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation, int
 			free(line);
 		}
 		else {
-			char *line = lineSegmentationWithoutLoad(newImage, "result/tempLine", 0, isItalic);
+			char *line = lineSegmentationWithoutLoad(newImage, 
+				"result/tempLine", 0, isItalic);
 			strcat(line, "\n\n");
-			
-			printf("\n%i, %i\n", strlen(allLines) + strlen(line) + 1, (strlen(allLines) + strlen(line) + 1) * sizeof(char));
 			
 			char *result = malloc(strlen(allLines) + strlen(line) + 1);
 			strcpy(result, allLines);
@@ -329,13 +350,14 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation, int
 		}
         currentLine++;
     }
-    printf("Ending removeLines %i\n", isLineSegmentation);
     return allLines;
 }
 
 /*
- * Removes blue/red separating lines between characters and stores each of them in a folder (old method)
- * Uses begining and ending indexes from allPos array to separate characters and store them in a folder
+ * Removes blue/red separating lines between characters 
+ * and stores each of them in a folder (old method)
+ * Uses begining and ending indexes from allPos array 
+ * to separate characters and store them in a folder
  * Param:
  *      - img : image to compute
  *      - directory : the directory name to store the different parts cut
@@ -343,7 +365,6 @@ char *removeLines(SDL_Surface *img, char *directory, int isLineSegmentation, int
  */
 
 char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
-	printf("  Starting removeLinesForCharacters\n");
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -351,21 +372,23 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     int currentIndex = 0;
     // Define size
     float averageCharLength = (img -> h)*0.5;
-    unsigned int size = (int) ((img->w/averageCharLength) * 2); // Stores the estimated number of characters to create a good size array
+    // Stores the estimated number of characters to create a good size array
+    unsigned int size = (int) ((img->w/averageCharLength) * 2); 
     
     for (size_t i = 0; i < size && allPos[i] != -42; i+=2) {
         int width = 0;
-        if (allPos[i+1] == img->w-1) { // Corner case: last pixel is not full white, we need to keep it
+        // Corner case: last pixel is not full white, we need to keep it
+        if (allPos[i+1] == img->w-1) { 
             width = allPos[i + 1] - allPos[i];
         }
         else {
-            width = allPos[i + 1] - allPos[i] - 1;  // -1 corner case is ok
+			// -1 corner case is ok
+            width = allPos[i + 1] - allPos[i] - 1;  
         }
 
         SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
         0, 0, 0, 0);
-
-        // Parcours le character dans l'image initiale (encore entre deux barres bleues) pour le copier dans une image seule
+        
         for (int y = 0; y < img -> h; y++)
         {
             for (int x = 0; x < width; x++)
@@ -374,11 +397,11 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
             }
         }
 
-        // Parcours de l'image seule pour enlever les pixels blancs en haut et en bas de l'image
+        // Remove top and bottom white spaces
         unsigned int cut_top = 0;
         unsigned int cut_bottom = 0;
 
-        // De haut en bas (cut_top)
+        // Cut top
         for (unsigned int h = 0; h < newImage -> h; h++)
         {
             unsigned char fullwhite = 1;
@@ -389,16 +412,13 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
                 fullwhite = r > 100 && g > 100 && b > 100;
             }
 
-            // Coupe l'image en haut
             if (!fullwhite) {
-
-                // Coupe 1 index plus haut et 0 sinon
                 cut_top = h;
                 break;
             }
         }
 
-        // De bas en haut (cut_bottom)
+        // Cut bottom
         for (int h = (newImage -> h) - 1; h >= 0; h--)
         {
             unsigned char fullwhite = 1;
@@ -409,16 +429,13 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
                 fullwhite = r > 249 && g > 249 && b > 249;
             }
 
-            // Coupe l'image en bas
             if (!fullwhite) {
-
-                // Coupe 1 index plus bas et newImage->h-1 sinon
                 cut_bottom = h;
                 break;
             }
         }
 
-        // Nouvelle image du caractère sans le haut et bas
+        // New image without white spaces
         SDL_Surface *newImageSmall;
         newImageSmall = SDL_CreateRGBSurface(0, newImage -> w,
         cut_bottom - cut_top + 1, 32, 0, 0, 0, 0);
@@ -435,32 +452,30 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
         // Resize image if width or height is higher than 32
         if (newImageSmall->w > 32 && newImageSmall->w >= newImageSmall->h) {
 			newImageSmall = resize(newImageSmall, 32, 
-			(int)(((double)32 * (double)newImageSmall->h)/(double)newImageSmall->w));
+				(int)(((double)32 * 
+				(double)newImageSmall->h)/(double)newImageSmall->w));
 		}
 		else if (newImageSmall->h > 32) {
 			newImageSmall = resize(newImageSmall, 
-			(int)(((double)32 * (double)newImageSmall->w)/(double)newImageSmall->h), 32);
+				(int)(((double)32 * 
+				(double)newImageSmall->w)/(double)newImageSmall->h), 32);
 		}
 
 
 
-        // Ajoute l'image sur une un fond blanc de 32x32
-
+        // New full white 32x32 image
         SDL_Surface *lastImage = SDL_CreateRGBSurface(0, 32, 32, 32,
         0, 0, 0, 0);
-
         pixel = SDL_MapRGB(newImageSmall -> format, 255, 255, 255);
-
         for (int i = 0; i < 32; i++)
         {
             for (int j = 0; j < 32; j++)
             {
                 putpixel(lastImage, i, j, pixel);
             }
-            
         }
         
-
+        // Copy image with character on the new image
         for (int y = 0; y < newImageSmall -> h; y++)
         {
             for (int x = 0; x < newImageSmall -> w; x++)
@@ -469,7 +484,7 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
             }
         }
         
-        // Enregistre l'image finale dans le dossier directory
+        // Save final image into directory in param
         mkdir(directory, 0777);
         char path[300];
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
@@ -492,17 +507,18 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
 
 
 /*
- * Removes blue/red separating lines between characters and stores each of them in a folder (old method)
- * Uses begining and ending indexes from allPos array to separate characters and store them in a folder
+ * Removes blue/red separating lines between characters 
+ * and stores each of them in a folder (old method)
+ * Uses begining and ending indexes from allPos array 
+ * to separate characters and store them in a folder
  * Param:
  *      - img : image to compute
  *      - directory : the directory name to store the different parts cut
  *      - *allPos : the array containing every begining and ending indexes
  */
 
-// TODO
-
-void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) {
+void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos)
+{
     unsigned int mod = 5;
     Uint32 pixel;
     Uint8 r;
@@ -512,11 +528,13 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
 
     // Define size
     float averageCharLength = (img -> h)*0.5;
-    unsigned int size = (int) ((img->w/averageCharLength) * 2); // Stores the estimated number of characters to create a good size array
+    // Stores the estimated number of characters to create a good size array
+    unsigned int size = (int) ((img->w/averageCharLength) * 2); 
 
     for (size_t i = 0; i < size && allPos[i] != -42; i+=2) {
         int width = 0;
-        if (allPos[i+1] == img->w-1) { // Corner case: last pixel is not full white, we need to keep it
+        // Corner case: last pixel is not full white, we need to keep it
+        if (allPos[i+1] == img->w-1) { 
             width = allPos[i + 1] - allPos[i];
         }
         else {
@@ -526,34 +544,38 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
 
         SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
         0, 0, 0, 0);
-
-        for (int ii = 0; ii < newImage->h; ii++){   // Fills the new image with white pixels
+        
+        // Fills the new image with white pixels
+        for (int ii = 0; ii < newImage->h; ii++){   
             for (int kk = 0; kk < newImage->w; kk++) {
                 pixel = SDL_MapRGB(newImage -> format, 255, 255, 255);
                 putpixel(newImage, kk, ii, pixel);
             }
         }
 
-        // Parcours le character dans l'image initiale (encore entre deux barres bleues) pour le copier dans une image seule
         int offset = 0; // descreasing variable to be italic (to be negative)
         for (int y = 0; y < img -> h; y++)
         {
             for (int x = 0; x < width/2; x++)
             {
-                if (allPos[i] + x + offset < img->w && width/2 + offset + x > -1 && 
-                allPos[i] + x + offset > -1){
-                    putpixel(newImage, width/2 + offset + x, y , getpixel(img, allPos[i] + x + offset, y));
+                if (allPos[i] + x + offset < img->w && width/2 + offset + x > -1 
+					&& allPos[i] + x + offset > -1)
+                {
+                    putpixel(newImage, width/2 + offset + x, y , 
+						getpixel(img, allPos[i] + x + offset, y));
                 }
             }
             if (y % mod == mod-1){
                 offset--;
             }
         }
-        // // Parcours de l'image seule pour enlever les pixels blancs en haut et en bas de l'image
+        
+        
+        // Remove white spaces at top and bottom
         unsigned int cut_top = 0;
         unsigned int cut_bottom = 0;
 
-        // De haut en bas (cut_top)
+        // Cut top
         for (unsigned int h = 0; h < newImage -> h; h++)
         {
             unsigned char fullwhite = 1;
@@ -564,16 +586,13 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
                 fullwhite = r > 100 && g > 100 && b > 100;
             }
 
-            // Coupe l'image en haut
             if (!fullwhite) {
-
-                // Coupe 1 index plus haut et 0 sinon
                 cut_top = h;
                 break;
             }
         }
 
-        // De bas en haut (cut_bottom)
+        // Cut bottom
         for (int h = (newImage -> h) - 1; h >= 0; h--)
         {
             unsigned char fullwhite = 1;
@@ -584,10 +603,8 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
                 fullwhite = r > 249 && g > 249 && b > 249;
             }
 
-            // Coupe l'image en bas
-            if (!fullwhite) {
 
-                // Coupe 1 index plus bas et newImage->h-1 sinon
+            if (!fullwhite) {
                 cut_bottom = h;
                 break;
             }
@@ -625,17 +642,17 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
 
         if (newImageSmall->w > 32 && newImageSmall->w >= newImageSmall->h) {
 			newImageSmall = resize(newImageSmall, 32, 
-			(int)(((double)32 * (double)newImageSmall->h)/(double)newImageSmall->w));
+			(int)(((double)32 * 
+				(double)newImageSmall->h)/(double)newImageSmall->w));
 		}
 		else if (newImageSmall->h > 32) {
 			newImageSmall = resize(newImageSmall, 
-			(int)(((double)32 * (double)newImageSmall->w)/(double)newImageSmall->h), 32);
+			(int)(((double)32 * 
+				(double)newImageSmall->w)/(double)newImageSmall->h), 32);
 		}
 
 
-        // Ajoute l'image sur une un fond blanc de 32x32
-        
-
+        // New full white 32x32 image
         SDL_Surface *lastImage = SDL_CreateRGBSurface(0, 32, 32, 32,
         0, 0, 0, 0);
 
@@ -647,7 +664,6 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
             {
                 putpixel(lastImage, i, j, pixel);
             }
-            
         }
         
 
@@ -658,9 +674,8 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
                 putpixel(lastImage, x, y, getpixel(newImageSmall, x, y));
             }
         }
-        printf("%ix%i | %i\n======\n", newImageSmall->w, newImageSmall->h, leftStart);
 
-        // Enregistre l'image finale dans le dossier directory
+        // Save final image into directory
         mkdir(directory, 0777);
         char path[300];
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
@@ -682,7 +697,8 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos) 
 }
 
 /*
- * Removes green separating lines between words and stores each of them in a folder
+ * Removes green separating lines between words and stores each 
+ * of them in a folder
  * Param:
  *      - img : image to compute
  *      - directory : the directory name to store the different parts cut
@@ -725,18 +741,17 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
         SDL_Surface *newImage = SDL_CreateRGBSurface(0, width, img -> h, 32,
         0, 0, 0, 0);
 
-        // Parcours le mot dans l'image initiale (encore entre deux barres vertes) pour le copier dans une image seule
+        // Copy word in a new image
         for (int y = 0; y < img -> h; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                putpixel(newImage, x, y ,
-                getpixel(img, positions[i] + x + 1, y));
+                putpixel(newImage, x, y,
+					getpixel(img, positions[i] + x + 1, y));
             }
-            
         }
         
-        // Enregistre l'image finale dans le dossier directory
+        // Save final image into directory
         mkdir(directory, 0777);
         char path[100];
         snprintf(path, 100, "%s/%d.bmp", directory, paragraphsCount);
@@ -751,9 +766,12 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
 int *wordPositions(SDL_Surface *img){
 	int fullWhite = 1;
     int firstCut = 1;
-    int endText = -1; //Gets the first pixel (height wise) with full white width
-    int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    float spaceAverage = img -> h * 0.3; //Average width of a space character, const
+    //Gets the first pixel (height wise) with full white width
+    int endText = -1;
+    //Gets the first pixel without full white width after several full white 
+    int beginingText = -1;
+    //Average width of a space character, const
+    float spaceAverage = img -> h * 0.3; 
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -811,9 +829,12 @@ int *wordPositionsItalic(SDL_Surface *img){
 	unsigned int mod = 5;
 	int fullWhite = 1;
     int firstCut = 1;
-    int endText = -1; //Gets the first pixel (height wise) with full white width
-    int beginingText = -1; //Gets the first pixel without full white width after several full white 
-    float spaceAverage = img -> h * 0.3; //Average width of a space character, const
+    //Gets the first pixel (height wise) with full white width
+    int endText = -1;
+    //Gets the first pixel without full white width after several full white 
+    int beginingText = -1;
+    //Average width of a space character, const
+    float spaceAverage = img -> h * 0.3;
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -881,7 +902,8 @@ int *wordPositionsItalic(SDL_Surface *img){
 }
 
 /*
- * Removes green separating lines between columns and calls removeLines for each column
+ * Removes green separating lines between columns 
+ * and calls removeLines for each column
  * Param:
  *      - img : image to compute
  *      - directory : directory's name for where to store the output

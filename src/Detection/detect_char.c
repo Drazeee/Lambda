@@ -2,7 +2,6 @@
 
 
 int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
-	printf("    Starting cutCharacters\n");
     //Variables
     SDL_Surface *img_copy = copy_image(img);
     Uint32 pixel;
@@ -19,7 +18,8 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
     short nbChars = 1;
 
     // Initialisazing characters' positions array 
-    unsigned int estimatedCharNumber = 0; // Stores the estimated number of characters to create a good size array
+    // Stores the estimated number of characters to create a good size array
+    unsigned int estimatedCharNumber = 0; 
     estimatedCharNumber = (int) (img->w/averageCharLength);
     int *allPositions = calloc(estimatedCharNumber*2, sizeof(int));
     int currentIndex = 0; // Current index position of 'allPositions' array
@@ -31,34 +31,28 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
 
         if (!fullWhite && firstCut)
         {
-            // Saving beginning index (exclusive position: where we will need to cut)
+            // Saving beginning index 
+            // (exclusive position: where we will need to cut)
             allPositions[currentIndex] = j - 1;
             currentIndex ++;
 
             // Drawing lines
-            int put_j = j != 0 ? j - 1 : 0; // Change: evaluates j to draw line 1 pixel before (better in theory but misses some characters)
+            // Change: evaluates j to draw line 1 pixel before 
+            // (better in theory but misses some characters)
+            int put_j = j != 0 ? j - 1 : 0; 
             beginingCharPixel = j;
-            //for (int k = 0; k < img -> h; k++)
-            //{
-            //    pixel = SDL_MapRGB(img_copy -> format, 0, 0, 255);
-            //    putpixel(img_copy, put_j, k, pixel);
-            //}
             firstCut = 0;
         }
         
         if(fullWhite && !firstCut) 
         {
-            // Saving ending index (exclusive position: where we will need to cut)
+            // Saving ending index 
+            // (exclusive position: where we will need to cut)
             allPositions[currentIndex] = j;
 
             // Drawing lines
             endingCharPixel = j - 1;
-            int actualCharLength = abs(endingCharPixel - beginingCharPixel + 1); // Added + 1
-            //for (int i = 0; i < img -> h; i++)
-            //{
-            //    pixel = SDL_MapRGB(img_copy -> format, 0, 0, 255);
-            //    putpixel(img_copy, j, i, pixel);
-            //}
+            int actualCharLength = abs(endingCharPixel - beginingCharPixel + 1);
             firstCut = 1;
 
             // When the char is too long
@@ -68,31 +62,25 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
                 int middle = actualCharLength/2 + beginingCharPixel;
                 if (middle < img -> w)
                 {
-                    //for (int i = 0; i < img -> h; i++)
-                    //{
-                    //    pixel = SDL_MapRGB(img_copy -> format, 255, 0, 0);
-                    //    putpixel(img_copy, middle, i, pixel);
-                    //}
-
                     allPositions[currentIndex] = middle + 1;
                     allPositions[currentIndex+1] = middle;
                     allPositions[currentIndex+2] = j;
                     currentIndex += 2;
                 }
                 nbChars += 2;
-                averageCharLength = (averageCharLength*(nbChars-2) + actualCharLength)/nbChars;
+                averageCharLength = (averageCharLength*(nbChars-2) + 
+					actualCharLength)/nbChars;
             }
             else {
                 nbChars += 1;
-                averageCharLength = (averageCharLength*(nbChars-1) + actualCharLength)/nbChars;
+                averageCharLength = (averageCharLength*(nbChars-1) + 
+					actualCharLength)/nbChars;
             }
             currentIndex ++;
         }
         else if (!firstCut && j == img->w-1) {
             allPositions[currentIndex] = j;
             currentIndex ++;
-
-            // Could draw line but useless
         }
     }
 
@@ -103,13 +91,11 @@ int *cutCharacters(SDL_Surface *img, char *directory){  // Changed return type
     char path[100];
     snprintf(path, 100, "%s/%s.bmp", directory, "line");
     SDL_SaveBMP(img_copy, path);
-    printf("    Ending cutCharacters\n");
     return allPositions;
 }
 
 int *cutCharactersItalic(SDL_Surface *img, char *directory){
     unsigned int mod = 5;
-    printf("Entering char cutting\n");
     //Variables
     SDL_Surface *img_copy = copy_image(img);
     Uint32 pixel;
@@ -126,7 +112,8 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
     short nbChars = 1;
 
     // Initialisazing characters' positions array 
-    unsigned int estimatedCharNumber = 0; // Stores the estimated number of characters to create a good size array
+    // Stores the estimated number of characters to create a good size array
+    unsigned int estimatedCharNumber = 0; 
     estimatedCharNumber = (int) (img->w/averageCharLength);
     int *allPositions = calloc(estimatedCharNumber*2, sizeof(int));
     int currentIndex = 0; // Current index position of 'allPositions' array
@@ -138,12 +125,15 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
 
         if (!fullWhite && firstCut)
         {
-            // Saving beginning index (exclusive position: where we will need to cut)
+            // Saving beginning index 
+            // (exclusive position: where we will need to cut)
             allPositions[currentIndex] = j - 1;
             currentIndex ++;
 
             // Drawing lines
-            int put_j = j != 0 ? j - 1 : 0; // Change: evaluates j to draw line 1 pixel before (better in theory but misses some characters)
+            // Change: evaluates j to draw line 1 pixel before 
+            // (better in theory but misses some characters)
+            int put_j = j != 0 ? j - 1 : 0; 
             beginingCharPixel = j;
             int jj = j;
             for (int i = 0; i < img -> h && jj > -1; i++)
@@ -161,12 +151,13 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
         
         if(fullWhite && !firstCut) 
         {
-            // Saving ending index (exclusive position: where we will need to cut)
+            // Saving ending index
+            //  (exclusive position: where we will need to cut)
             allPositions[currentIndex] = j + 1;
 
             // Drawing lines
             endingCharPixel = j - 1;
-            int actualCharLength = abs(endingCharPixel - beginingCharPixel + 1); // Added + 1
+            int actualCharLength = abs(endingCharPixel - beginingCharPixel + 1);
             int jj = j;
             for (int i = 0; i < img -> h && jj > -1; i++)
             {
@@ -184,7 +175,8 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
             if (actualCharLength > 2*averageCharLength)
             {
                 // Middle segmentation
-                int times = (int)round((double)actualCharLength/averageCharLength);
+                int times = (int)round((double)actualCharLength/
+					averageCharLength);
                 for (char k = 1; k <= times; k++){
                     int jj = beginingCharPixel + k*actualCharLength/times;
                     if (jj < img->w) {
@@ -209,22 +201,21 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
                     }
                 }
                 nbChars += times;
-                averageCharLength = (averageCharLength*(nbChars-times) + actualCharLength)/nbChars;
+                averageCharLength = (averageCharLength*(nbChars-times) + 
+					actualCharLength)/nbChars;
             }
             else {
                 nbChars += 1;
-                averageCharLength = (averageCharLength*(nbChars-1) + actualCharLength)/nbChars;
+                averageCharLength = (averageCharLength*(nbChars-1) + 
+					actualCharLength)/nbChars;
             }
             currentIndex ++;
         }
         else if (!firstCut && j == img->w-1) {
             allPositions[currentIndex] = j;
             currentIndex ++;
-
-            // Could draw line but useless
         }
     }
-    printf("Ending char cutting loop\n");
 
     allPositions[currentIndex] = -42;
 
@@ -233,7 +224,5 @@ int *cutCharactersItalic(SDL_Surface *img, char *directory){
     char path[100];
     snprintf(path, 100, "%s/%s.bmp", directory, "line");
     SDL_SaveBMP(img_copy, path);
-
-    printf("Ending char cutting\n");
     return allPositions;
 }

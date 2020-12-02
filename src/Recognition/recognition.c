@@ -59,9 +59,9 @@ char recognition(MMImage img, MMNetwork n) {
 }
 
 
-char *lineRecognition(char *directory, int size, int *allPos, int *wordsPositions)
+char *lineRecognition(char *directory, int size, 
+	int *allPos, int *wordsPositions)
 {
-	printf("     Starting lineRecognition\n");
 	DIR *d;
 	struct dirent *dir;
 	d = opendir(directory);
@@ -95,6 +95,5 @@ char *lineRecognition(char *directory, int size, int *allPos, int *wordsPosition
 		result[i + wordIndex] = ch;
 	}
 	result[charactersNumber + wordIndex] = 0;
-	printf("     Ending lineRecognition\n");
 	return result;
 }

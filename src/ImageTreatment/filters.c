@@ -62,7 +62,9 @@ SDL_Surface *grayscale(SDL_Surface *img, char save, char *path) {
 }
 
 
-SDL_Surface *convolute(SDL_Surface *img, float mask[], int num_rows, int num_cols) {
+SDL_Surface *convolute(SDL_Surface *img, float mask[], int num_rows,
+	int num_cols) 
+{
     int width = img -> w;
     int height = img -> h;
     SDL_Surface *imgCopy = copy_image(img);
@@ -78,11 +80,16 @@ SDL_Surface *convolute(SDL_Surface *img, float mask[], int num_rows, int num_col
             {
                 for (int l = 0; l < num_cols; l++)
                 {
-                    if (i + k - num_rows / 2 > -1 && i + k - num_rows / 2 < width && j + l - num_rows / 2 > -1 && j + l - num_rows / 2 < height) {
+                    if (i + k - num_rows / 2 > -1 && 
+						i + k - num_rows / 2 < width && 
+						j + l - num_rows / 2 > -1 && 
+						j + l - num_rows / 2 < height) 
+					{
                         Uint8 r;
                         Uint8 g;
                         Uint8 b;
-                        pixel = getpixel(imgCopy, i + k - num_rows / 2, j + l - num_rows / 2);
+                        pixel = getpixel(imgCopy, i + k - num_rows / 2, 
+							j + l - num_rows / 2);
                         SDL_GetRGB(pixel, imgCopy->format, &r, &g, &b);
                         gradR += (float)r * mask[k * num_cols + l];
                         gradG += (float)g * mask[k * num_cols + l];
@@ -96,7 +103,8 @@ SDL_Surface *convolute(SDL_Surface *img, float mask[], int num_rows, int num_col
             gradB = gradB > -1 ? gradB : 0;
             gradR = gradR > -1 ? gradR : 0;
             gradG = gradG > -1 ? gradG : 0;
-            pixel = SDL_MapRGB(imgCopy->format, (int)gradR, (int)gradG, (int)gradB);
+            pixel = SDL_MapRGB(imgCopy->format, 
+				(int)gradR, (int)gradG, (int)gradB);
             putpixel(imgCopy, i, j, pixel);
         }
     }
@@ -133,7 +141,7 @@ SDL_Surface *contrastImage(SDL_Surface *img) {
         }
     }
     
-    // Apply formule to all pixels
+    // Apply formula to all pixels
     float normalizationConstant = 255.0/(float)nbPixels;
 
     for (int i = 0; i < img->w; i++)
@@ -148,7 +156,8 @@ SDL_Surface *contrastImage(SDL_Surface *img) {
                 newRGBValue += histogram[k];
             }
             newRGBValue = (int)(normalizationConstant * (float)newRGBValue);
-            pixel = SDL_MapRGB(img->format, newRGBValue, newRGBValue, newRGBValue);
+            pixel = SDL_MapRGB(img->format, newRGBValue, 
+				newRGBValue, newRGBValue);
             putpixel(imgCopy, i, j, pixel);
         }
     }
