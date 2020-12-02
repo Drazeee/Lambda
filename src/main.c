@@ -415,6 +415,20 @@ int main(int argc, char **argv) {
 		columnSegmentation(argv[2], "results/resultColumn", 1);
 		return 0;
 	}
+	if (strcmp(argv[1], "rotate") == 0) {
+		SDL_Surface *img = SDL_LoadBMP("exampleColumnRotate.bmp");
+		img = rotation(img, -14.706850, 353, 461);
+		SDL_SaveBMP(img, "rotation.bmp");
+		SDL_FreeSurface(img);
+		return 0;
+	}
+	if (strcmp(argv[1], "autorotate") == 0) {
+		SDL_Surface *img = SDL_LoadBMP("exampleColumnRotate.bmp");
+		img = autoRotation(img);
+		SDL_SaveBMP(img, "rotation.bmp");
+		SDL_FreeSurface(img);
+		return 0;
+	}
 	else if (strcmp(argv[1], "paragraph") == 0) {
 		paragraphSegmentation(argv[2], "results/resultParagraph", 1);
 		return 0;
@@ -484,7 +498,7 @@ int main(int argc, char **argv) {
 				printf("Lambda: Noise reduction ended successfully\n");
 			}
 			
-			imgDefault = contrastImage(imgDefault);
+			//imgDefault = contrastImage(imgDefault);
 			printf("Lambda: Contrast ended successfully\n");
 			SDL_SaveBMP(imgDefault, argv[3]);
 			return 0;

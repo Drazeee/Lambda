@@ -7,6 +7,130 @@ Uint8 g;
 Uint8 b;
 
 
+double toradians(double teta) {
+    return (teta * M_PI) / 180;
+}
+
+typedef struct coords {
+    int x;
+    int y;
+} coords;
+
+coords shear(double angle, int x, int y) {
+    double tangent = tan(angle/2);
+
+    double new_x = round(x-y * tangent);
+    double new_y = (double)y;
+
+    new_y = round(new_x * sin(angle) + new_y);
+
+    new_x = round(new_x - new_y * tangent);
+
+    coords result;
+    result.x = round(new_x);
+    result.y = round(new_y);
+    return result;
+}
+
+SDL_Surface *rotation(SDL_Surface *img, double teta, int x0, int y0) {
+    SDL_Surface *imgCopy = SDL_CreateRGBSurface(0, img->w, img->h, 32,
+        0, 0, 0, 0);
+    // Full white image
+    pixel = SDL_MapRGB(img->format, 255, 255, 255);
+    for (int i = 0; i < img->w; i++) {
+        for (int j = 0; j < img->h; j++) {
+            putpixel(imgCopy, i, j, pixel);
+        }
+    }
+
+    teta = toradians(teta);
+
+    int original_center_w = round(((img->w + 1) / 2) - 1);
+    int original_center_h = round(((img->h + 1) / 2) - 1);
+
+
+    for (int x = 0; x < img->w; x++) {
+        for (int y = 0; y < img->h; y++) {
+            int x2 = round(cos(teta) * (double)(x - x0) + sin(teta) * (double)(y - y0));
+            int y2 = round(cos(teta) * (double)(y - y0) - sin(teta) * (double)(x - x0));
+
+            // int new_x = img->w - 1 - x - original_center_w;
+            // int new_y = img->w - 1 - x - original_center_h;
+
+            // coords new_coords = shear(teta, new_x, new_y);
+
+            // int x2 = original_center_w - new_coords.x;
+            // int y2 = original_center_h - new_coords.y;
+
+            x2 += x0;
+            y2 += y0;
+
+            if (x2 > -1 && x2 < img->w && y2 > -1 && y2 < img->h ) {
+                putpixel(imgCopy, x2, y2, getpixel(img, x, y));
+            }
+        }
+    }
+
+    return imgCopy;
+}
+
+
+SDL_Surface *autoRotation(SDL_Surface *img) {
+    // Searching bottom left pivot point
+
+    coords leftpivot;
+    for (int i = img->h - 1; i > -1; i--)
+    {
+        unsigned char fullWhite = 1;
+        for (int j = 0; j < img -> w; j++)
+        {
+            Uint32 pixel = getpixel(img, j, i);
+            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+            if (r < 250 || g < 250 || b < 250)
+            {
+                fullWhite = 0;
+                leftpivot.x = j;
+                leftpivot.y = i;
+                break;
+            }
+        }
+    }
+    
+
+    // Searching upper right point
+
+    coords rightpivot;
+    for (int i = img->w - 1; i > -1; i--)
+    {
+        unsigned char fullWhite = 1;
+        for (int j = 0; j < img -> h; j++)
+        {
+            Uint32 pixel = getpixel(img, i, j);
+            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+            if (r < 250 || g < 250 || b < 250)
+            {
+                fullWhite = 0;
+                rightpivot.x = i;
+                rightpivot.y = j;
+                break;
+            }
+        }
+    }
+    
+
+    double teta = atan((double)(rightpivot.y - leftpivot.y) / (double)(rightpivot.x - leftpivot.x));
+    int original_center_w = round(((img->w + 1) / 2) - 1);
+    int original_center_h = round(((img->h + 1) / 2) - 1);
+
+    teta = round(teta * 180 / M_PI);
+
+    printf("%f, (%i, %i)\n", teta, original_center_w, original_center_h);
+
+    SDL_Surface *newImage = rotation(img, teta, original_center_w, original_center_h);
+
+    return newImage;
+}
+
 SDL_Surface *resize(SDL_Surface *img, int x, int y) {
 
 	SDL_Surface *imgCopy = SDL_CreateRGBSurface(0, x, y, 32,

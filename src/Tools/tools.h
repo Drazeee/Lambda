@@ -1,11 +1,16 @@
-# ifndef TOOLS_H_
-# define TOOLS_H_
-
-# include <stdlib.h>
-# include <SDL2/SDL.h>
-# include <err.h>
+#ifndef TOOLS_H_
+#define TOOLS_H_
+#define M_PI   3.14159265358979323846264338327950288
+#include <stdlib.h>
+#include <SDL2/SDL.h>
+#include <err.h>
+#include <math.h>
 
 SDL_Surface *resize(SDL_Surface *img, int x, int y);
+
+SDL_Surface *rotation(SDL_Surface *img, double teta, int x0, int y0);
+
+SDL_Surface *autoRotation(SDL_Surface *img);
 
 Uint32 getpixel(SDL_Surface *surface, unsigned x, unsigned y);
 
