@@ -244,7 +244,7 @@ SDL_Surface *cutWord(SDL_Surface *img) {
             }
         }
     }
-    SDL_FreeSurface(img);
+    //SDL_FreeSurface(img);
     return img_copy;
 }
 

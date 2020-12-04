@@ -381,7 +381,7 @@ void startRecognition()
 				"results/test", 1, italic);
 		}
         gtk_text_buffer_set_text (buffer, result, -1);
-        free(result);
+        //free(result);
     }
     else {
         gtk_text_buffer_set_text (buffer, "Invalid image", -1);
