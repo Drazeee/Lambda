@@ -188,7 +188,9 @@ char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault,
 	int *allPos;
 	char *result;
 	if (!isItalic) {
+		printf("Call cutCharacters\n");
 		allPos = cutCharacters(imgDefault, destination);
+		printf("Call removeLinesForCharacters\n");
 		result = removeLinesForCharacters(imgDefault, destination, allPos);
 	}
 	else {

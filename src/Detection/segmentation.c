@@ -358,6 +358,7 @@ char *removeLines(SDL_Surface *img, char *directory,
 		}
         currentLine++;
     }
+    printf("=========\n");
     return allLines;
 }
 
