@@ -21,6 +21,8 @@
 \usepackage{geometry}
 \usepackage{multirow}
 \usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{systeme}
 
 \usepackage{listings}
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -131,10 +133,10 @@ backgroundcolor=\color{whiteback},
 \vspace*{1cm}
 \vspace{0.4cm}
 	\paragraph{}
-    Voici le premier rapport de soutenance pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L''objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
+    Voici le premier rapport de soutenance pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L'objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
 	
 	\paragraph{}
-    Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et avons directement dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
+    Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et sommes directement entrés dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
 	
 	\paragraph{}
     Nous allons apprendre à communiquer et à s'adapter aux différents caractères des membres de notre groupe. Nous avons, par expérience, déjà compris qu'un projet de groupe est un réel défi au niveau humain mais ce projet s'annonce encore plus complexe.
@@ -214,7 +216,7 @@ backgroundcolor=\color{whiteback},
 
 \subsection{Binarisation}
 
-\paragraph{}Pour binariser l'image (c'est à dire ne laisser que des pixels blancs ou noirs), nous avons appliqué une condition simple sur chacun des pixels qui compose l'image. Nous faisons la moyenne des valeurs rouge, vert et bleu et vérifions sur cette dernière est supérieure ou non à 127. Si elle est supérieure, nous mettons un pixel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.
+\paragraph{}Pour binariser l'image (c'est à dire ne laisser que des pixels blancs ou noirs), nous avons appliqué une condition simple sur chacun des pixels qui composent l'image. Nous faisons la moyenne des valeurs rouge, vert et bleu et vérifions si cette dernière est supérieure ou non à 127. Si elle est supérieure, nous mettons un pixel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.xel blanc et un noir sinon. Il n'existe pas de commande pour appliquer ce filtre dans notre exécutable.
 \paragraph{} Ce n'est pas ici la fonction la plus compliquée de notre code mais ce sont des éléments essentiels pour la suite.
 
 \newpage
@@ -274,6 +276,59 @@ backgroundcolor=\color{whiteback},
     }
 \end{lstlisting}
 
+\section{Rotation de l'image}
+\subsection{Rotation manuelle}
+\paragraph{}
+Nous avons implémenté une rotation manuelle de l'image, c'est-à-dire qu'une rotation de l'image est effectuée pour un angle donné en paramètre. Ainsi, nous pourrions créer un input sur l'interface afin que l'utilisateur puisse dire lui-même de combien de degrés l'image doit être tournée pour être droite lors de la détection du texte. Cependant, nous avons choisi de ne pas implémenter ce fonctionnement directement, mais de créer une fonction qui détecte automatiquement l'angle de l'image. Nous reviendrons sur ce choix et cette fonction dans la partie suivante.
+
+\paragraph{}
+Pour ce qui est de la fonction qui retourne une image de façon manuelle, voici comment celle-ci fonctionne: \\
+
+\begin{lstlisting}
+
+	SDL_Surface *rotation(SDL_Surface *img, double teta, int x0, int y0) {
+        SDL_Surface *imgCopy = SDL_CreateRGBSurface(0, img->w, img->h, 32, 0, 0, 0, 0);
+        
+        // Full white image
+        pixel = SDL_MapRGB(img->format, 255, 255, 255);
+        for (int i = 0; i < img->w; i++) {
+            for (int j = 0; j < img->h; j++) {
+                putpixel(imgCopy, i, j, pixel);
+            }
+        }
+        
+        teta = toradians(teta);
+
+        for (int x = 0; x < img->w; x++) {
+            for (int y = 0; y < img->h; y++) {
+                int x2 = round(cos(teta) * (double)(x - x0) + sin(teta) * (double)(y - y0));
+                int y2 = round(cos(teta) * (double)(y - y0) - sin(teta) * (double)(x - x0));
+                
+                x2 += x0;
+                y2 += y0;
+                if (x2 > -1 && x2 < img->w && y2 > -1 && y2 < img->h ) {
+                    putpixel(imgCopy, x2, y2, getpixel(img, x, y));
+                }
+            }
+        }
+        return imgCopy;
+    }
+\end{lstlisting}
+
+\paragraph{}
+Cette fonction est plutôt simple dans sa manière de fonctionner. Tout d'abord, on créer une nouvelle image toute blanche de la même taille que l'image passée en paramètre. C'est le but de la première boucle de la fonction. Ensuite, on redéfini l'angle $\theta$ donné en paramètre en radian, ce qui permet ensuite d'utiliser les fonctions \textit{sin()} et \textit{cos()} de la librairie \textit{Math.h}. 
+\par Pour ce qui est de la rotation en elle-même de l'image, on parcours tous les pixels de l'image grâce aux deux boucles \textit{for} imbriquées. On calcule les nouvelles coordonnées du pixel grâce à la formule suivante: \\
+\[
+\systeme*{x_2 = cos(\theta)*(x - x_0) + sin(\theta)*(y - y_0), y_2 = cos(\theta)*(y - y_0) + sin(\theta)*(x - x_0)}
+\] \\
+Après avoir calculé les nouvelles coordonnées, on ajoute $x_0$ à $x_2$ et $y_0$ à $y_2$ pour centrer la rotation. Finalement, il suffit d'ajouter le pixel sur lequel on est placé aux nouvelles coordonnées sur la nouvelle image. Le résultat est le bon, mais on obtient des pixels manquant sur l'image:
+
+$Image_pixels_manquants$
+
+\paragraph{}
+Nous avons essayé plusieurs algorithmes pour corriger ce problème, mais nous n'avons pas eu de résultats concluant qui supprimaient totalement ce problème. C'est le défaut d'effectuer une rotation de l'image avant de traiter le texte.
+
+\subsection{Rotation automatique}
 
 \newpage
 \rhead{\textit{Segmentation de l'image}\vspace{0.25cm}}
@@ -298,7 +353,7 @@ backgroundcolor=\color{whiteback},
     \paragraph{}
     La détection des colonnes est un processus assez simple, qui tient compte de la "logique" d'organisation d'un texte. En effet, en tant qu'humains, nous distinguons deux colonnes comme des "colonnes" et non une suite de mots par l'espace situé entre les deux blocs qui est anormalement grand par rapport aux espaces présents entre les mots du texte.
     \par
-    Ainsi, j'ai implémenté la même logique pour la segmentation, qui détecte un espace rempli de pixels blancs anormalement grand entre deux parties ne contenant pas uniquement des pixels blancs. Voici un aperçu du code implémenté:
+    Ainsi, nous avons implémenté la même logique pour la segmentation, qui détecte un espace rempli de pixels blancs anormalement grand entre deux parties ne contenant pas uniquement des pixels blancs. Voici un aperçu du code implémenté:
     
     \begin{lstlisting}
     
@@ -374,7 +429,7 @@ backgroundcolor=\color{whiteback},
 	
 	\subsubsection{Découpage des paragraphes}
 	\paragraph{}
-	Cette partie est la suite logique du découpage des colonnes. En effet, en regardant l'image 1 précédemment affichée, chaque colonne contient plusieurs paragraphes nettement distinguables. Ainsi, un programme similaire est utilisé sur chaque colonne trouvée pour découper les différents paragraphes afin qu'ils soient traités plus tard.
+	Cette partie est la suite logique du découpage des colonnes. En effet, en regardant l'image précédemment affichée, chaque colonne contient plusieurs paragraphes nettement distinguables. Ainsi, un programme similaire est utilisé sur chaque colonne trouvée pour découper les différents paragraphes afin qu'ils soient traités plus tard.
 	\par
 	Ici, le changement est principalement basé sur le fait de regarder si la largeur de l'image est complètement blanche, contrairement à la hauteur pour les colonnes. De plus, on détermine ici si un paragraphe se termine en fonction de la "hauteur" de la dernière ligne/du dernier paragraphe trouvé. Voici le nouveau code pour ce type de segmentation: \\
 	
@@ -437,7 +492,7 @@ backgroundcolor=\color{whiteback},
 	\end{center}
 	
 	\paragraph{}
-	Les paragraphes sont parfaitement découpés et près à être traités par la suite du programme jusqu'à pouvoir arriver à détecter des caractères.
+	Les paragraphes sont parfaitement découpés et prêts à être traités par la suite du programme jusqu'à pouvoir arriver à détecter des caractères.
 	
 	\subsubsection{Découpage des lignes}
 	\paragraph{}
@@ -453,7 +508,8 @@ backgroundcolor=\color{whiteback},
 	\end{center}
 	
     \subsubsection{Découpage des mots et des caractères}
-    \textbf{Première Version:} \\
+    \\ 
+    \textbf{Première Version:}
 	\paragraph{}
 	Nous présenter le découpage des mots et des caractères ensemble car ils sont effectués plus ou moins en même temps. En effet, le découpage des caractères reste une étape très délicate à appréhender car elle nécessite de prévoir ou doivent être découpés les caractères.
 	
@@ -511,9 +567,10 @@ backgroundcolor=\color{whiteback},
 	\end{lstlisting}
 	
 	\paragraph{}
-    L'utilisation du dessin sur l'image de ligne de couleurs n'était au final pas le solution la plus précise, car il était possible que des lignes empiètent sur des pixels importants pour pouvoir reconnaître des caractères ensuite. Nous avons donc établit une autre version plus précise de la segmentation des caractères.
+    L'utilisation du dessin sur l'image de ligne de couleurs n'était au final pas le solution la plus précise, car il était possible que des lignes empiètent sur des pixels importants pour pouvoir reconnaître des caractères ensuite. Nous avons donc établit une autre version plus précise de la segmentation des caractères.\\
     
-    \textbf{Version finale:}\\
+    
+    \textbf{Version finale:}
     \paragraph{}
     Nous avons réfléchit à une solution permettant de stocker facilement les informations de début et de fin des caractères dans l'image, afin de pouvoir les réutiliser dans d'autres fonctions par la suite. La solution retenue à été d'avoir un tableau de positions des indices de début et de fin pour chaque caractères. Ainsi, lorsque le début d'un caractère est détecté, sa position est enregistrée dans un tableau, de même pour la fin d'une détection. Ainsi, le problème de perte de précision n'en n'est plus un.
 	
@@ -531,17 +588,17 @@ backgroundcolor=\color{whiteback},
 	\end{center}
 	
     \paragraph{}Cette architecture était une première version pour ce projet, mais nous avons finalement modifier cette dernière, notamment après avoir modifier notre segmentation des caractères pour quelque chose de plus précis. Nous avons au final très peu d'image qui sont sauvegardées après l'exécution du projet, seulement les colonnes et les paragraphes et quelques images d'analyse. \\
-    \par Cependant, nous sauvegardons temporairement les images telles que les lignes, les mots et les caractères découpés. En effet, lorsque le projet s'execute, des dossiers temporaires sont créés et contiennent quelques informations utiles à certaines fonctions, notamment pour récupérer les caractères à envoyer au réseau de neuronnes. Ces dossiers sont supprimés une fois la compilation terminée.
+    \par Cependant, nous sauvegardons temporairement les images telles que les lignes, les mots et les caractères découpés. En effet, lorsque le projet s'exécute, des dossiers temporaires sont créés et contiennent quelques informations utiles à certaines fonctions, notamment pour récupérer les caractères à envoyer au réseau de neurones. Ces dossiers sont supprimés une fois la compilation terminée.
     
     \subsubsection{Gestion du texte en italique}
     \paragraph{}
     Nous avons constaté que la gestion d'un texte en italique était plus complexe et demandait une approche différente que celle d'un texte classique. Nous avons donc réfléchit à quelles étaient les meilleures options pour pouvoir découper les caractères même s'ils sont en italique.
 
     \paragraph{}
-    Nous nous sommes tout de suite concentrés sur le fait de ne pas dessiner sur l'image pour ensuite découper les caractères à l'aide de ces marques, comme nous avions pu le faire pour les autres types de segmentation. Nous avons donc repris le système de pointeurs, implémenté pour la segmentation classique, qui stocke le début et la fin d'un caractère dans une tableau, nou permettant ensuite de découper et enregistrer le caractère dans une nouvelle petite image. Cette nouvelle image sera ensuite envoyée dans le réseau de neuronnes pour reconnaître le caractère écrit.
+    Nous nous sommes tout de suite concentrés sur le fait de ne pas dessiner sur l'image pour ensuite découper les caractères à l'aide de ces marques, comme nous avions pu le faire pour les autres types de segmentation. Nous avons donc repris le système de pointeurs, implémenté pour la segmentation classique, qui stocke le début et la fin d'un caractère dans une tableau, nous permettant ensuite de découper et enregistrer le caractère dans une nouvelle petite image. Cette nouvelle image sera ensuite envoyée dans le réseau de neurones pour reconnaître le caractère écrit.
 
     \paragraph{}
-    Pour ce qui est de détecter le début et la fin d'un caractère en italique, nous avons tout simplement repris le système codé pour une écriture classique et nous avons fait en sorte qu'il soit incliné. C'est-à-dire que nous vérifions que l'image est toute blanche en hauteur sur un pixel défini, tout ceci en fonction de ce qui est recherché (début ou fin de caractère). Nous ne testons cependant plus vraiment si l'image est toute blanche en hauteur, mais plutot si elle est toute blanche suivant un angle d'inclinaison donné, qui correspond à l'angle d'inclinaison d'un texte en italique classique. Voici l'algorithme: \\
+    Pour ce qui est de détecter le début et la fin d'un caractère en italique, nous avons tout simplement repris le système codé pour une écriture classique et nous avons fait en sorte qu'il soit incliné. C'est-à-dire que nous vérifions que l'image est toute blanche en hauteur sur un pixel défini, tout ceci en fonction de ce qui est recherché (début ou fin de caractère). Nous ne testons cependant plus vraiment si l'image est toute blanche en hauteur, mais plutôt si elle est toute blanche suivant un angle d'inclinaison donné, qui correspond à l'angle d'inclinaison d'un texte en italique classique. Voici l'algorithme: \\
 
     \begin{lstlisting}
         if (!fullWhite && firstCut)
@@ -612,7 +669,7 @@ backgroundcolor=\color{whiteback},
 
 \subsubsection{Fonction XOR}
 
-\paragraph{} La première étape pour obtenir un bon réseau de neurones était de développer un réseau capable d'apprendre la fonction XOR. Cela a pour avantage que le réseau serait rapide à entraîner, le réseau n'a que 2 entrées pour une seule sortie, et seulement 4 motifs d'entrainements.
+\paragraph{} La première étape pour obtenir un bon réseau de neurones était de développer un réseau capable d'apprendre la fonction XOR. Cela a pour avantage que le réseau serait rapide à entraîner, le réseau n'a que 2 entrées pour une seule sortie, et seulement 4 motifs d'entraînements.
 
 \begin{center}
 \vspace*{0.2cm}
@@ -629,7 +686,7 @@ backgroundcolor=\color{whiteback},
 \end{center}
 
 
-\paragraph{}N'étant alors pas tout à fait à l'aise avec ce « nouveau » langage qu'est le C, j'ai d'abord cherché à faire ce réseau en Python, un langage que je maîtrise depuis plusieurs années. J'ai donc cherché de l'aide et des exemples de réseaux de neurones par rétropropagation en Python, mais la plupart des résultats utilisaient le module Numpy pour la manipulation de matrice ainsi que certains calculs, or, en C, tout cela doit être traité manuellement.
+\paragraph{}N'étant alors pas tout à fait à l'aise avec ce "nouveau" langage qu'est le C, j'ai d'abord cherché à faire ce réseau en Python, un langage que je maîtrise depuis plusieurs années. J'ai donc cherché de l'aide et des exemples de réseaux de neurones par rétropropagation en Python, mais la plupart des résultats utilisaient le module Numpy pour la manipulation de matrice ainsi que certains calculs, or, en C, tout cela doit être traité manuellement.
 
 \paragraph{}Après plusieurs heures de recherche, je suis tombé sur un très bon tutoriel qui expliquait en détail le fonctionnement d'un tel programme, avec des exemples en C++. J'ai facilement réussi à refaire le programme en Python, puis en C.
 
@@ -824,7 +881,7 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 \subsection{La ponctuation}
 
 \paragraph{}
-Pour vérifier la ponctuation d’un texte j'ai opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
+Pour vérifier la ponctuation d’un texte nous avons opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
 
 \paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d'être utilisé avec une main qui leur enverrait l’index des points dans un texte.
 
@@ -1004,8 +1061,23 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \end{lstlisting}
 
 \begin{lstlisting}
-	./Lambda segmentation "image_path"
-	// Applique la segmentation complète et génère l'architecture de dossiers/fichiers
+	./Lambda column "image_path"
+	// Applique la segmentation partielle en colonnes de l'image et créer l'architecture resultColumn/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda paragraph "image_path"
+	// Applique la segmentation partielle en paragraphes de l'image et créer l'architecture resultParagraph/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda line "image_path"
+	// Applique la segmentation partielle en lignes de l'image et créer l'architecture resultLine/*.bmp
+\end{lstlisting}
+
+\begin{lstlisting}
+	./Lambda word "image_path"
+	// Applique la segmentation partielle en mots de l'image et créer l'architecture resultWord/*.bmp
 \end{lstlisting}
 
 \begin{lstlisting}
@@ -1013,11 +1085,17 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 	// Applique la segmentation partielle et génère l'architecture de dossiers/fichiers
 \end{lstlisting}
 
+
+
 \newpage
 \rhead{\textit{Conclusion}\vspace{0.25cm}}
 \section{Conclusion}
 
 \paragraph{}Ce projet est très motivant pour nous tous. Il nous permet d'expérimenter et de réfléchir à des problématiques intéressantes que nous prenons comme des défis. 
+
+\paragraph{}Nous avons fortement aimé le sujet ainsi que le cahier des charges de ce projet, et nous nous sommes ainsi entièrement investis dans sa réalisation. Nous sommes toujours autant motivés par ce projet, malgré les hauts et les bas qui, pour les derniers, peuvent être vraiment complexes à solutionner.\\
+
+\paragraph{}Nous vous avons ici présenté ce que nous avons pu réaliser en un mois dans le respect des consignes proposées par le cahier des charges.
 
 
 \newpage
