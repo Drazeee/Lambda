@@ -119,7 +119,9 @@ char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, char *destination,
 	int print, int isItalic)
 {
 	remove_directory(destination);
+	printf("Start cutLine\n");
 	imgDefault = cutLine(imgDefault, 0);
+	printf("Start removeLines for line\n");
 	char *allLines = removeLines(imgDefault, destination, 1, isItalic);
 	if (print)
 	{

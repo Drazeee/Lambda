@@ -109,7 +109,7 @@ SDL_Surface *cutLine(SDL_Surface *img, int first) {
         }
         
     }
-    SDL_FreeSurface(img);
+    //SDL_FreeSurface(img);
     return img_copy;
 }
 
@@ -308,6 +308,8 @@ char *removeLines(SDL_Surface *img, char *directory,
     
     char *allLines = "";
     int currentLine = 0;
+    char path[40];
+    mkdir(directory, 0777);
 
     
     for (int i = 0; i < pos; i+=2) {
@@ -326,12 +328,11 @@ char *removeLines(SDL_Surface *img, char *directory,
         }
 
         printf("Before image save %i\n", i);
-        mkdir(directory, 0777);
-        char path[40];
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
         printf("After image save %i\n", i);
         if (isLineSegmentation) {
+            printf("Call character segmentation %i\n", i);
 			char *line = characterSegmentationWithoutLoad(newImage, 
 				"results/tempChar", 0, isItalic);
 			strcat(line, "\n");
@@ -340,6 +341,7 @@ char *removeLines(SDL_Surface *img, char *directory,
 			strcpy(result, allLines);
 			strcat(result, line);
 			allLines = result;
+            printf("End character segmentation %i\n", i);
 			free(line);
 		}
 		else {
@@ -380,6 +382,7 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     float averageCharLength = (img -> h)*0.5;
     // Stores the estimated number of characters to create a good size array
     unsigned int size = (int) ((img->w/averageCharLength) * 2); 
+    char path[300];
     
     for (size_t i = 0; i < size && allPos[i] != -42; i+=2) {
         int width = 0;
@@ -492,7 +495,6 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
         
         // Save final image into directory in param
         mkdir(directory, 0777);
-        char path[300];
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
@@ -507,7 +509,6 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     paragraphsCount = 0;
     free(allPos);
     free(wordPos);
-    //SDL_FreeSurface(img);
     return result;
 }
 
