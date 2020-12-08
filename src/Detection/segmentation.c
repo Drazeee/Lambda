@@ -829,9 +829,9 @@ int *wordPositionsItalic(SDL_Surface *img){
 	unsigned int mod = 5;
 	int fullWhite = 1;
     int firstCut = 1;
-    //Gets the first pixel (height wise) with full white width
+    // Gets the first pixel (height wise) with full white width
     int endText = -1;
-    //Gets the first pixel without full white width after several full white 
+    // Gets the first pixel without full white width after several full white
     int beginingText = -1;
     //Average width of a space character, const
     float spaceAverage = img -> h * 0.3;
