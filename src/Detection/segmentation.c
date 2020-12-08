@@ -303,8 +303,6 @@ char *removeLines(SDL_Surface *img, char *directory,
             stop = -1;
         }
     }
-
-    printf("Declaration of allLines\n");
     
     char *allLines = "";
     int currentLine = 0;
@@ -327,12 +325,9 @@ char *removeLines(SDL_Surface *img, char *directory,
             
         }
 
-        printf("Before image save %i\n", i);
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
-        printf("After image save %i\n", i);
         if (isLineSegmentation) {
-            printf("Call character segmentation %i\n", i);
 			char *line = characterSegmentationWithoutLoad(newImage, 
 				"results/tempChar", 0, isItalic);
 			strcat(line, "\n");
@@ -341,11 +336,9 @@ char *removeLines(SDL_Surface *img, char *directory,
 			strcpy(result, allLines);
 			strcat(result, line);
 			allLines = result;
-            printf("End character segmentation %i\n", i);
 			free(line);
 		}
 		else {
-            printf("Call line segmentation %i\n", i/2);
 			char *line = lineSegmentationWithoutLoad(newImage, 
 				"result/tempLine", 0, isItalic);
 			strcat(line, "\n\n");
@@ -358,7 +351,6 @@ char *removeLines(SDL_Surface *img, char *directory,
 		}
         currentLine++;
     }
-    printf("=========\n");
     return allLines;
 }
 
@@ -765,7 +757,7 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
         snprintf(path, 100, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(newImage, path);
-        SDL_FreeSurface(img);
+        //SDL_FreeSurface(img);
         SDL_FreeSurface(newImage);
     }
 }
@@ -829,7 +821,7 @@ int *wordPositions(SDL_Surface *img){
         }
     }
     *(positions + current) = -42;
-    SDL_FreeSurface(img);
+    //SDL_FreeSurface(img);
     return positions;
 }
 
@@ -905,7 +897,7 @@ int *wordPositionsItalic(SDL_Surface *img){
         }
     }
     *(positions + current) = -42;
-    SDL_FreeSurface(img);
+    //SDL_FreeSurface(img);
     return positions;
 }
 
