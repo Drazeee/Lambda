@@ -355,7 +355,6 @@ char *removeLines(SDL_Surface *img, char *directory,
 			free(line);
 		}
         currentLine++;
-        SDL_FreeSurface(newImage);
     }
     return allLines;
 }
