@@ -507,7 +507,7 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
     paragraphsCount = 0;
     free(allPos);
     free(wordPos);
-    SDL_FreeSurface(img);
+    //SDL_FreeSurface(img);
     return result;
 }
 
