@@ -176,7 +176,6 @@ char *characterSegmentation(char *path, char *destination, int print)
 		printf("\33[0;32mLambda: segmentation ended successfully.\n");
 		printf("The result is here: \"%s\"\033[0m\n\n", destination);
 	}
-	free(allPos);
 	return result;
 }
 
@@ -273,6 +272,7 @@ int contrast = 0;
 int noise = 0;
 int correction = 1;
 int italic = 0;
+int rotate = 0;
 
 GtkBuilder *builder;
 SDL_Surface *img;
@@ -360,11 +360,25 @@ void toggleItalic()
 	italic = !italic;
 }
 
+void toggleRotation()
+{
+	rotate = !rotate;
+}
+
 void startRecognition()
 {
+	remove_directory("results/resultColumn");
+	remove_directory("results/resultParagraph");
+	remove_directory("results/tempParagraphs");
+	remove_directory("results/temp.bmp");
+	remove_directory("results/tempChar");
+	remove_directory("results/test");
 	GtkTextBuffer *buffer;
 	buffer =gtk_text_view_get_buffer (GTK_TEXT_VIEW (widgets->resultLabel));
     if (img) {
+		if (rotate) {
+			img = autoRotation(img);
+		}
 		grayscale(img, 1, "results/temp.bmp");
 		if (noise)
 			img = noiseReduction(img);
@@ -432,7 +446,6 @@ int main(int argc, char **argv) {
 			printf("\33[0;32mLambda: segmentation ended successfully.\n");
 			printf("The result is here: \"%s\"\033[0m\n\n", destination);
 		}
-		//printf("%s\n", result);
 		return 0;
 	}
 	
