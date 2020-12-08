@@ -321,7 +321,7 @@ Cette fonction est plutôt simple dans sa manière de fonctionner. Tout d'abord,
 \[
 \systeme*{x_2 = cos(\theta)*(x - x_0) + sin(\theta)*(y - y_0), y_2 = cos(\theta)*(y - y_0) + sin(\theta)*(x - x_0)}
 \] \\
-Après avoir calculé les nouvelles coordonnées, on ajoute $x_0$ à $x_2$ et $y_0$ à $y_2$ pour centrer la rotation. Finalement, il suffit d'ajouter le pixel sur lequel on est placé aux nouvelles coordonnées sur la nouvelle image. Le résultat est le bon, mais on obtient des pixels manquant sur l'image:
+Après avoir calculé les nouvelles coordonnées, on ajoute $x_0$ à $x_2$ et $y_0$ à $y_2$ pour centrer la rotation. Finalement, il suffit d'ajouter le pixel sur lequel on est placé aux nouvelles coordonnées sur la nouvelle image. Le résultat est le bon, mais on obtient des pixels manquant sur l'image: \\
 
 $Image_pixels_manquants$
 
@@ -329,6 +329,70 @@ $Image_pixels_manquants$
 Nous avons essayé plusieurs algorithmes pour corriger ce problème, mais nous n'avons pas eu de résultats concluant qui supprimaient totalement ce problème. C'est le défaut d'effectuer une rotation de l'image avant de traiter le texte.
 
 \subsection{Rotation automatique}
+\paragraph{}
+Nous avons souhaité implémenter une rotation automatique de l'image, c'est-à-dire que l'image donnée en entrée du programme est automatiquement testée pour savoir si elle doit être redressée ou non. Si c'est le cas, on utilise un algorithme qui se base sur l'utilisation du théorème de Pythagore. Voici un schéma de la situation: \\
+
+    \begin{center}
+    	\includegraphics[scale=0.4]{Schema-rotation.png}
+    \end{center}
+    
+\paragraph{}
+Tout d'abord, on recherche le couple de coordonnées ($x_0$, $y_0$), qui correspond simplement au pixel le plus bas de l'image qui n'est pas blanc: \\
+
+
+\begin{lstlisting}
+
+    coords leftpivot;
+    for (int i = img->h - 1; i > -1; i--)
+    {
+        unsigned char fullWhite = 1;
+        for (int j = 0; j < img -> w; j++)
+        {
+            Uint32 pixel = getpixel(img, j, i);
+            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+            if (r < 250 || g < 250 || b < 250)
+            {
+                fullWhite = 0;
+                leftpivot.x = j;
+                leftpivot.y = i;
+                break;
+            }
+        }
+    }
+\end{lstlisting}
+
+\paragraph{}
+Ensuite, on effectue une recherche similaire pour trouver le point le plus à droite de l'image, le couple de coordonnées ($x_1$, $y_1$): \\
+
+\begin{lstlisting}
+
+    coords rightpivot;
+    for (int i = img->w - 1; i > -1; i--)
+    {
+        unsigned char fullWhite = 1;
+        for (int j = 0; j < img -> h; j++)
+        {
+            Uint32 pixel = getpixel(img, i, j);
+            SDL_GetRGB(pixel, img -> format, &r, &g, &b);
+            if (r < 250 || g < 250 || b < 250)
+            {
+                fullWhite = 0;
+                rightpivot.x = i;
+                rightpivot.y = j;
+                break;
+            }
+        }
+    }
+\end{lstlisting}
+
+Lorsque ces deux couples sont définis, on peut simplement appliquer le théorème de Pythagore et trouver l'angle de rotation. Voici la formule: \\
+
+\[
+    \theta = arctan(\frac{y_1 - y_0}{x_1 - x_0})
+\]
+
+\paragraph{}
+Après avoir déterminer l'angle de rotation, on appelle tout simplement la fonction de rotation manuelle, qui va se charger du reste du travail.
 
 \newpage
 \rhead{\textit{Segmentation de l'image}\vspace{0.25cm}}
