@@ -303,6 +303,8 @@ char *removeLines(SDL_Surface *img, char *directory,
             stop = -1;
         }
     }
+
+    printf("Declaration of allLines\n");
     
     char *allLines = "";
     int currentLine = 0;
@@ -310,7 +312,8 @@ char *removeLines(SDL_Surface *img, char *directory,
     
     for (int i = 0; i < pos; i+=2) {
         int height = positions[i + 1] - positions[i] - 1;
-        SDL_Surface *newImage = SDL_CreateRGBSurface(0, img -> w, height, 32,
+        SDL_Surface *newImage;
+        newImage = SDL_CreateRGBSurface(0, img -> w, height, 32,
         0, 0, 0, 0);
         for (int x = 0; x < img -> w; x++)
         {
@@ -322,10 +325,12 @@ char *removeLines(SDL_Surface *img, char *directory,
             
         }
 
+        printf("Before image save %i\n", i);
         mkdir(directory, 0777);
         char path[40];
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
+        printf("After image save %i\n", i);
         if (isLineSegmentation) {
 			char *line = characterSegmentationWithoutLoad(newImage, 
 				"results/tempChar", 0, isItalic);
@@ -338,6 +343,7 @@ char *removeLines(SDL_Surface *img, char *directory,
 			free(line);
 		}
 		else {
+            printf("Call line segmentation %i\n", i/2);
 			char *line = lineSegmentationWithoutLoad(newImage, 
 				"result/tempLine", 0, isItalic);
 			strcat(line, "\n\n");
@@ -349,6 +355,7 @@ char *removeLines(SDL_Surface *img, char *directory,
 			free(line);
 		}
         currentLine++;
+        SDL_FreeSurface(newImage);
     }
     return allLines;
 }
