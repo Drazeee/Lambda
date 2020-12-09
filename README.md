@@ -91,6 +91,12 @@ But if you image has more than 1 column, use this command
 ./Lambda column exampleColumn2.bmp
 ```
 
+You can automatically rotate your image with a command (does not work well with an already rotated image)
+
+```
+./Lambda autorotate exampleRotate.bmp
+```
+
 You can open the project interface with this command
 
 ```

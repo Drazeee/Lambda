@@ -460,9 +460,16 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 	if (strcmp(argv[1], "autorotate") == 0) {
-		SDL_Surface *img = SDL_LoadBMP("exampleRotate.bmp");
+		SDL_Surface *img;
+		img = SDL_LoadBMP(argv[2]);
+		if (!img) {
+			printf("\033[0;31m"); 
+			printf("Error: unable to find bmp file at %s\n", argv[2]);
+			printf("\033[0m");
+			return 1;
+		}
 		img = autoRotation(img);
-		SDL_SaveBMP(img, "rotation.bmp");
+		SDL_SaveBMP(img, "results/rotation.bmp");
 		SDL_FreeSurface(img);
 		return 0;
 	}
