@@ -89,7 +89,18 @@ But if you image has more than 1 column, use this command
 
 ```bash
 ./Lambda column exampleColumn2.bmp
+
 ```
+
+You can open the project interface with this command
+
+```
+./Lambda
+```
+
+Then, you can select several options to indicate what type of treatment needs to be applied on your image. The output will be displayed in the rectangle below the program inputs.
+
+If it appears to have an error such as a "segmentation fault (core dumped)", please try to restart the operation, maybe it was not prepared to received your insane text.
 
 # <a name="features"></a> Features
 
