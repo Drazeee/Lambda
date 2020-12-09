@@ -89,7 +89,6 @@ But if you image has more than 1 column, use this command
 
 ```bash
 ./Lambda column exampleColumn2.bmp
-
 ```
 
 You can open the project interface with this command
