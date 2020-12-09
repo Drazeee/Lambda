@@ -77,7 +77,8 @@ MMImage LoadImage(const char* path) {
 MMImage* LoadDataset(
 				const char* datasetPath,
 				const int noDigits,
-				const int imagesPerDigit
+				const int imagesPerDigit,
+				MMContext* ctx
 			) {
 	
 	long numTrainingSets = noDigits * imagesPerDigit;
@@ -93,7 +94,7 @@ MMImage* LoadDataset(
 													);
 	}
 
-	char order[] = ORDER;
+	//char order[] = ctx->classes;
 
 	// Load images
 	int imageInputIdx = 0;
@@ -101,7 +102,7 @@ MMImage* LoadDataset(
 
 	for (int digit = 0; digit < noDigits; digit++) {
 		
-		char c = order[digit];
+		char c = ctx->classes[digit];
 
 		#if (LOADING_LOGS)
 			printf("	- Loading images for \"%c\"\n",c);
@@ -120,7 +121,7 @@ MMImage* LoadDataset(
 			dataSet[imageInputIdx].character = c;
 						
 			dataSet[imageInputIdx].expectedOutput = (double*)calloc(
-																(NO_CHARACTERS),
+																(ctx->nb_classes),
 																sizeof(double)
 															);
 			dataSet[imageInputIdx].expectedOutput[digit] = 1.0f;
@@ -135,7 +136,38 @@ MMImage* LoadDataset(
 	return dataSet;
 }
 
+/*
+ * Display an image in terminal
+ *
+ * Params:
+ *	MMImage* : Pointer to the image to show
+ */
+void PrintImage(MMImage* img) {
+	int i = 0;
+	for (int y = 0; y < img->h; y++) {
+		for (int x = 0; x < img->w; x++) {
+			double j = img->pixelsTable[i].pixelValue;
+			if (j) {
+				printf("#");
+			} else {
+				printf(".");
+			}
+			i++;
+		}
+		printf("\n");
+	}
+}
 
+/*
+ * Build a fake MMImage just from its inputs and (optional) outputs.
+ * This is useful to train a network with data that are not images (like XOR)
+ *
+ * Params:
+ *	int : Amount of inputs
+ *	double* : Values
+ *	int : Amount of outputs
+ *	double*	: Expected outputs (needed for training; not for predicting)
+ */
 MMImage MakeFakeData(int noInputs, double* inputs, int noOutputs, double* outputs) {
 	MMImage data;
 	data.h = 1;
@@ -152,5 +184,23 @@ MMImage MakeFakeData(int noInputs, double* inputs, int noOutputs, double* output
 	}
 	
 	return data;
+}
 
+/*
+ * Free a MMImage after use
+ */
+void DestroyImage(MMImage* img) {
+	free(img->expectedOutput);
+	//free(img->fileName); //Never used nor allocated
+	free(img->pixelsTable);
+	//free(img);
+}
+
+/*
+ * Free a whole Dataset
+ */
+void DestroyDataset(long noImages, MMImage* dataset) {
+	for (int i = 0; i < noImages; i++) {
+		DestroyImage(&dataset[i]);
+	}
 }

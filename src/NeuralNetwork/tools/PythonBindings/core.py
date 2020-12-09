@@ -58,7 +58,7 @@ Predict.restype = POINTER(c_double)
 
 
 OutputCharOrig = lib.OutputChar
-OutputCharOrig.argtypes = [POINTER(c_double)]
+OutputCharOrig.argtypes = [POINTER(c_double), POINTER(s.MMContext)]
 OutputCharOrig.restype = c_char
 
 OutputChar = lambda a: OutputCharOrig(a).decode('utf-8')
@@ -73,7 +73,7 @@ OutputLayer.restype = POINTER(c_double)
 
 
 Train = lib.Train
-Train.argtypes = [s.MMNetwork, POINTER(s.MMImage), s.MMTrainingEnvironment]
+Train.argtypes = [s.MMNetwork, POINTER(s.MMImage), s.MMTrainingEnvironment, POINTER(s.MMContext)]
 Train.restype = s.MMTrainingStats
 
 TrainingEnvironment = lib.TrainingEnvironment

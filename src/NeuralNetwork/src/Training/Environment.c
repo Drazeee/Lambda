@@ -7,6 +7,18 @@
 
 #include "Environment.h"
 
+/*
+ * Init a MMTrainingEnvironment from the training environment parameters.
+ *
+ * Params:
+ *	MMNetwork : The network that will be trained
+ *	int : Size of the training set
+ *	double : Learning rate
+ *
+ * Returns:
+ *	MMTrainingEnvironment : The training environment that could be used in
+ *			the Train function
+ */
 MMTrainingEnvironment TrainingEnvironment(MMNetwork network, int trainingSetSize, double learningRate) {
 	MMTrainingEnvironment env;
 	env.hiddenLayer = HiddenLayer(network);
@@ -22,4 +34,11 @@ MMTrainingEnvironment TrainingEnvironment(MMNetwork network, int trainingSetSize
 	}
 	
 	return env;
+}
+
+void DestroyTrainingEnvironment(MMTrainingEnvironment* env) {
+	free(env->hiddenLayer);
+	free(env->outputLayer);
+	free(env->trainingSetOrder);
+	free(env);
 }

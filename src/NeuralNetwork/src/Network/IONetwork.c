@@ -12,8 +12,6 @@
 #include <sys/types.h>
 #include "Network.h"
 #include "Functions.h"
-#include <string.h>
-#include <locale.h>
 
 
 /*
@@ -67,7 +65,7 @@ void PrintNetwork(const MMNetwork n) {
  * Params:
  *	MMNetwork : The network to save
  */
-void SaveNetwork(const MMNetwork n, const char *path) {	
+void SaveNetwork(const MMNetwork n, const char *path) {
 	
 	mkdir(path, 0700);
 	
@@ -242,7 +240,14 @@ MMNetwork LoadNetwork(const char* path) {
 		network.outputLayerBias[j] = value4;
 	}
 	
-	fclose(obfile);	
+	fclose(obfile);
+	
+	// Free
+	free(lineP);
+	free(line);
+	free(line2);
+	free(line3);
+	free(line4);
 	
 	return network;
 }

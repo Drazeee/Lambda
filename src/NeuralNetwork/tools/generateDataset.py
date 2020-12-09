@@ -4,13 +4,13 @@
 global outputDir, noImagesPerChar, fonts_basepath, fonts, chars, imgSize, tolerence # Bouhh des globals cépabo
 
 
-outputDir = "/Users/maxime/datasetWC" # Dossier de sortie du dataset (ne doit pas déjà exister)
+outputDir = "/Users/maxime/datasetBIGUL3" # Dossier de sortie du dataset (ne doit pas déjà exister)
 
-noImagesPerChar = 2000 # Combien d'images par caractères
+noImagesPerChar = 5000 # Combien d'images par caractères
 
 fonts_basepath = "/System/Library/Fonts/" # Chemin ou sont les fonts sur l'ordi (par défaut pour macOS)
 
-fonts = ["Helvetica.ttc","Courier.dfont","Menlo.ttc","Supplemental/Comic Sans MS.ttf","Supplemental/Courier New Italic.ttf","Supplemental/Impact.ttf","Times.ttc","Monaco.dfont","AppleSDGothicNeo.ttc","Avenir Next Condensed.ttc","Geneva.dfont","MarkerFelt.ttc","NewYork.ttf","Noteworthy.ttc","Palatino.ttc","Optima.ttc","SFNSDisplayCondensed-Black.otf","Supplemental/AmericanTypewriter.ttc","Supplemental/Apple Chancery.ttf","Supplemental/Athelas.ttc","Supplemental/Bradley Hand Bold.ttf","Supplemental/Chalkboard.ttc","Supplemental/Copperplate.ttc","Supplemental/Didot.ttc","Supplemental/Futura.ttc","Supplemental/Georgia Bold Italic.ttf","Supplemental/Kefa.ttc","Supplemental/Krungthep.ttf","Supplemental/Luminari.ttf","Supplemental/PTSans.ttc","Supplemental/PTSerif.ttc","Supplemental/Rockwell.ttc","Supplemental/Silom.ttf","Supplemental/STIXGeneral.otf","Supplemental/SuperClarendon.ttc","Supplemental/Telugu MN.ttc"] # Listes des polices à utiliser pour les images
+fonts = ["Helvetica.ttc","Courier.dfont","Menlo.ttc","Supplemental/Comic Sans MS.ttf","Supplemental/Courier New Italic.ttf","Supplemental/Impact.ttf","Times.ttc","Monaco.dfont","Avenir Next Condensed.ttc","Geneva.dfont","Palatino.ttc","Optima.ttc","SFNSDisplayCondensed-Black.otf","Supplemental/AmericanTypewriter.ttc","Supplemental/Chalkboard.ttc","Supplemental/Copperplate.ttc","Supplemental/Didot.ttc","Supplemental/Futura.ttc","Supplemental/Georgia Bold Italic.ttf","Supplemental/Kefa.ttc","Supplemental/Rockwell.ttc","Supplemental/STIXGeneral.otf"] # Listes des polices à utiliser pour les images
 
 
 multithreading = True # Utilise plusieurs processus & threads pour générer les images: bcp plus rapide mais bouffe tout le CPU.
@@ -36,11 +36,12 @@ except ModuleNotFoundError:
 	
 # Ne pas changer les paramètres qui suivent
 
-chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabdefghijklmnqrt0123456789.!?-%()&$\":;/+*=@#€àâäéèêëîïôöùüûÀÂÄÉÈÊËÎÏÔÖÙÜÛçÇ" # Characters list and order (no lowercased)
-merged = "COPSUVWXYZ" # Characters that look too similar between upper & lower
+chars = "ABDEFGHJLMNQRTabcdefghijklmnopqrstuvwxyz0123456789.!?-%()&$\":;/+*=@#" # Characters list and order (no lowercased)
+mixed = "cikopsuvwxyz"
+vars = {'E':'ÉÈÊËE','I':'ÎÏI','A':'ÀÄÂA','O':'ÔÖO','U':'ÙÛÜU','C':'ÇC','Y':'ŸY','e':'éèêëe','i':'îïi','a':'àâäa','o':'ôöo','u':'ùûüu','c':'çc','y':'ÿy'}
 
 imgSize = 32 # Image width & height
-tolerence = 200 # Tolerence of pixel detection when moving text to 0,0
+tolerence = 250 # Tolerence of pixel detection when moving text to 0,0
 
 
 class ImgGeneratorThread(multiprocessing.Process): # Generator thread
@@ -48,30 +49,37 @@ class ImgGeneratorThread(multiprocessing.Process): # Generator thread
 		global outputDir, noImagesPerChar, fonts_basepath, fonts, chars, imgSize, tolerence
 		multiprocessing.Process.__init__(self)
 		self.char = char
+		self.mixed = char in mixed
 		self.idx = idx
-		self.isMerged = char in merged
 		
 	def run(self):
 		for j in range(noImagesPerChar): # Generate specific image
 			# Random Color
-			r = random.randint(0, 100)
-			g = random.randint(0, 100)
-			b = random.randint(0, 100)
-			
+			r = 0#random.randint(0, 100)
+			g = 0#random.randint(0, 100)
+			b = 0#random.randint(0, 100)
+		
 			# Default position
-			y = 0
-			x = 0
-			
+			y = 10
+			x = 10
+		
 			#Random font & font size
 			size = random.randint(10,30)
 			font = random.choice(fonts)
-			
+		
 			t = self.char
-			if self.isMerged:
+			if self.char in vars.keys():
+				t = random.choice(vars[self.char])
+			else:
+				t = random.choice(self.char)
+				
+			if self.mixed:
 				if random.randint(0,1):
-					t = self.char.lower()
-			
-			img = Image.new("RGB", size = (imgSize, imgSize), color="white")
+					t = t.upper()
+					
+			#print (t)
+		
+			img = Image.new("RGB", size = (70, 70), color="white")
 			draw = ImageDraw.Draw(img)
 			fontpath = os.path.join(fonts_basepath, font)
 			try:
@@ -79,15 +87,14 @@ class ImgGeneratorThread(multiprocessing.Process): # Generator thread
 			except: # Invalid font
 				print ("Police invalide: \"%s\"" % fontpath)
 				sys.exit(3)
-				
-
+		
+		
 			# Draw text on initial image
-			draw.text((x, y), self.char, (r,g,b), font=font)
-			
-			
+			draw.text((x, y), t, (r,g,b), font=font)
+		
 			# Crop image to edge text on 0,0
 			shouldBreak = False
-			for topPadding in range(imgSize):
+			for topPadding in range(70):
 				for a in range(imgSize):
 					rc, gc, bc = img.getpixel((a,topPadding))
 					moy = (rc + gc + bc) * 0.33
@@ -96,10 +103,11 @@ class ImgGeneratorThread(multiprocessing.Process): # Generator thread
 						break
 				if shouldBreak:
 					break
-					
+				
+				
 			shouldBreak = False
-			for leftPadding in range(imgSize):
-				for a in range(topPadding, imgSize):
+			for leftPadding in range(70):
+				for a in range(topPadding, 70):
 					rc, gc, bc = img.getpixel((leftPadding,a))
 					moy = (rc + gc + bc) * 0.33
 					if moy < tolerence:
@@ -107,16 +115,22 @@ class ImgGeneratorThread(multiprocessing.Process): # Generator thread
 						break
 				if shouldBreak:
 					break
-			
-			
+				
+				
 			# Resize cropped text
-			imCrop = img.crop((leftPadding, topPadding, imgSize, imgSize))
+#			
+#			draw.rectangle((leftPadding, 0, leftPadding , 80), fill="red")
+#			draw.rectangle((0, topPadding, 80 , topPadding), fill="red")
+#		
+#			img.save(os.path.join(outputDir, str(self.idx), '%sWC.bmp'%j))
+		
+			
+			imCrop = img.crop((leftPadding, topPadding, leftPadding + imgSize, topPadding + imgSize))
 			img = Image.new("RGB", size = (imgSize, imgSize), color="white")
 			img.paste(imCrop, (0,0))
-			
+		
 			# Save image
-			img.save(os.path.join(outputDir, str(self.idx), '%s.bmp'%j))
-			
+			img.save(os.path.join(outputDir, str(self.idx), '%s.bmp'%j))			
 			
 t0 = time.time()
 

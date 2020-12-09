@@ -172,7 +172,138 @@ short MatchCharNoCase(char c1, char c2) {
 	return 0;
 }
 
-
-char* GetCharacters() {
-	return ORDER;
+/*
+ * Get an accentued character it it can from the character and the accent type.
+ * It this character can't take this accent (french syntax only), returns
+ * the character without accent.
+ * This actually is the worst function I had to write.
+ *
+ * Params:
+ *	char : The character without accent
+ *	char : Number between 0 and 5: type of accent
+ *
+ * Returns:
+ *	char* : String of char = the char with accent.
+ */
+char* Accent(char character, char accent) {
+	
+	if (character == 'c' && accent == 0) {
+		return "ç";
+	} else if (character == 'a') {
+		switch (accent) {
+			case 1:
+				return "à";
+			case 3:
+				return "â";
+			case 4:
+				return "ä";
+			default:
+				return "a";
+		}
+	} else if (character == 'e') {
+		switch (accent) {
+			case 1:
+				return "è";
+			case 2:
+				return "é";
+			case 3:
+				return "ê";
+			case 4:
+				return "ë";
+			default:
+				return "e";
+		}
+	} else if (character == 'i') {
+		switch (accent) {
+			case 3:
+				return "î";
+			case 4:
+				return "ï";
+			default:
+				return "i";
+		}
+	} else if (character == 'o') {
+		switch (accent) {
+			case 3:
+				return "ô";
+			case 4:
+				return "ö";
+			default:
+				return "o";
+		}
+	} else if (character == 'u') {
+		switch (accent) {
+			case 1:
+				return "ù";
+			case 3:
+				return "û";
+			case 4:
+				return "ü";
+			default:
+				return "u";
+		}
+	} else if (character == 'C' && accent == 0) {
+		return "Ç";
+	} else if (character == 'A') {
+		switch (accent) {
+			case 1:
+				return "À";
+			case 3:
+				return "Â";
+			case 4:
+				return "Ä";
+			default:
+				return "A";
+		}
+	} else if (character == 'E') {
+		switch (accent) {
+			case 1:
+				return "È";
+			case 2:
+				return "É";
+			case 3:
+				return "Ê";
+			case 4:
+				return "Ë";
+			default:
+				return "E";
+		}
+	} else if (character == 'I') {
+		switch (accent) {
+			case 3:
+				return "Î";
+			case 4:
+				return "Ï";
+			default:
+				return "I";
+		}
+	} else if (character == 'O') {
+		switch (accent) {
+			case 3:
+				return "Ô";
+			case 4:
+				return "Ö";
+			default:
+				return "O";
+		}
+	} else if (character == 'U') {
+		switch (accent) {
+			case 1:
+				return "Ù";
+			case 3:
+				return "Û";
+			case 4:
+				return "Ü";
+			default:
+				return "U";
+		}
+	}
+	char* s = malloc(sizeof(char));
+	s[0] = character;
+	return s;
+	
 }
+
+//char* GetCharacters() {
+//	return ORDER;
+//}

@@ -54,6 +54,8 @@ int main() {
 	}
 	printf("Trained!\n\n");
 	
+	
+	
 	// Tests
 		
 	for (int test = 0; test < 4; test ++) {

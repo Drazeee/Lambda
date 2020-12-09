@@ -52,9 +52,15 @@ char filterChar(char c) {
 }
 
 
-char recognition(MMImage img, MMNetwork n) {
-    double *output = Predict(n, &img);
-    char character = OutputChar(output);
+char recognition(MMImage img, MMNetwork nChar, MMNetwork nAccents) {
+    double *output = Predict(nChar, &img);
+    char character = OutputChar(output, &CHARS_CTX);
+	
+	double *outputAcc = Predict(nAccents, &img);
+	char characterAcc = OutputChar(output, &ACC_CTX);
+	
+	//char* charWithAccent = Accent(character, characterAcc
+	
     return character;
 }
 
@@ -68,7 +74,8 @@ char *lineRecognition(char *directory, int size,
 	char *result = malloc(150 * (sizeof(char)));
 	int charactersNumber = 0; // total number of chars in the DIR
 	int len = strlen(directory);
-	MMNetwork network = LoadNetwork("src/NeuralNetwork/src/IA/IAC");
+	MMNetwork networkChar = LoadNetwork("src/NeuralNetwork/IA/IA-Char/");
+	MMNetwork networkAcc = LoadNetwork("src/NeuralNetwork/IA/IA-Acc/");
 	if (d)
     {
         while ((dir = readdir(d)) != NULL)
@@ -85,7 +92,7 @@ char *lineRecognition(char *directory, int size,
 		char path[len + 40];
 		snprintf(path, len + 40, "%s/%i.bmp", directory, i);
 		MMImage mmimg = LoadImage(path);
-		char ch = recognition(mmimg, network);
+		char ch = recognition(mmimg, networkChar, networkAcc);
 		if (allPos[i * 2] > wordsPositions[wordIndex] 
 		&& wordsPositions[wordIndex] != -42) {
 			result[i + wordIndex] = ' ';

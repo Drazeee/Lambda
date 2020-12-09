@@ -37,11 +37,11 @@ learning: lib src/Executables/Learning.c
 xor: lib src/Executables/XOR.c
 	${CC} -o bin/xor ${HEADERS} lib/LambdaNeuralNetwork.o src/Executables/XOR.c ${SDLFLAGS} ${CFLAGS}
 
-all: shared analyze learning xor
+all: analyze learning xor
 
 
 clean:
-	rm -rf lib bin include
+	rm -r lib bin include
 
 # END
 

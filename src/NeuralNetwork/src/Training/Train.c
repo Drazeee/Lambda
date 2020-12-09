@@ -10,8 +10,22 @@
 
 #define LOGS 0 // Show every test output
 
-
-MMTrainingStats Train(MMNetwork network, MMImage* dataset, MMTrainingEnvironment env) {
+/*
+ * Main function for training a MMNetwork.
+ * Here applies the whole training by backpropagation.
+ * This is a training for only one generation.
+ * This will return statistics about this generation after this training.
+ *
+ * Params:
+ *	MMNetwork : The network to train
+ *	MMImage* : The dataset to use for training
+ *	MMTrainingEnvironment : Environment for the training
+ *	MMContext* : Context to use for the training
+ *
+ * Returns:
+ *	MMTrainingStats : Statistics about this generation training
+ */
+MMTrainingStats Train(MMNetwork network, MMImage* dataset, MMTrainingEnvironment env, MMContext* ctx) {
 	int fails = 0;
 	int success = 0;
 	
@@ -44,7 +58,7 @@ MMTrainingStats Train(MMNetwork network, MMImage* dataset, MMTrainingEnvironment
 		
 		
 		//MARK: Tests & stats
-		char detectedAs = OutputChar(env.outputLayer);
+		char detectedAs = OutputChar(env.outputLayer, ctx);
 		
 		if (detectedAs != dataset[i].character) {
 			fails ++;

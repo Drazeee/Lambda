@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <dirent.h>
 
-char recognition(MMImage img, MMNetwork n);
+char recognition(MMImage img, MMNetwork nChar, MMNetwork nAccents);
 char *lineRecognition(char *directory, int size, 
 	int *allPos, int *wordsPositions);
 

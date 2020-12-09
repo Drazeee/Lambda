@@ -22,8 +22,10 @@ void Analyze(
 			 const char* datasetPath,
 			 const int noImages,
 			 const int showLogs) {
+	 
 	
-	int noChars = NO_CHARACTERS;
+	MMContext ctx = CHARS_CTX;
+	int noChars = ctx.nb_classes;
 	int imgsPerChar = noImages;
 	
 	long numTrainingSets = noChars * imgsPerChar;
@@ -32,7 +34,7 @@ void Analyze(
 	// MARK: Loading
 	
 	
-	MMImage* dataSet = LoadDataset(datasetPath, noChars, imgsPerChar); // Load dataset
+	MMImage* dataSet = LoadDataset(datasetPath, noChars, imgsPerChar, &ctx); // Load dataset
 	
 	MMNetwork network = LoadNetwork(networkPath); // Load network
 	
@@ -50,8 +52,7 @@ void Analyze(
 		
 		double* output = Predict(network, img); // Get output layer for prediction
 		
-		char detectedAs = OutputChar(output); // Get predicted character
-		
+		char detectedAs = OutputChar(output, &ctx); // Get predicted character
 		
 		if (detectedAs == img -> character) {
 			success++;
@@ -88,7 +89,8 @@ void Analyze(
 	printf("%d success\n%d fails\n", successWoutCase, failsWoutCase);
 	printf("Success rate = %.2f%%\n\n", percentRateWoutCase);
 	
-	DestroyNetwork(network);
+	DestroyNetwork(&network);
+	DestroyDataset(numTrainingSets, dataSet);
 }
 
 
@@ -99,7 +101,7 @@ int main(int argc, const char * argv[]) {
 #ifdef XCODE // If run in Xcode: parameters are predefined (see Macros.h)
 	char* networkPath = NETWORK_PATH;
 	char* datasetPath = DATASET_PATH;
-	int noImages = 100;
+	int noImages = 1000;
 	int showLogs = 1;
 #else
 	if (argc < 4) { // 3 args minimum (+ executable path)

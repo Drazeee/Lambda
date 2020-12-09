@@ -49,17 +49,17 @@ MMNetwork InitNetwork(int numInputs, int numHiddenNodes, int numOutputs)
  * Params:
  *	MMNetwork : The network to free from memory
  */
-void DestroyNetwork(struct MMNetwork n) {
+void DestroyNetwork(MMNetwork* n) {
 	
-	free(n.hiddenLayerBias);
-	free(n.outputLayerBias);
+	free(n->hiddenLayerBias);
+	free(n->outputLayerBias);
 
-	for (short node = 0; node <n.numHiddenNodes; node++) {
-		free(n.hiddenWeights[node].weights);
-		free(n.outputWeights[node].weights);
+	for (short node = 0; node < n->numHiddenNodes; node++) {
+		free(n->hiddenWeights[node].weights);
+		free(n->outputWeights[node].weights);
 	}
-	free(n.hiddenWeights);
-	free(n.outputWeights);
+	free(n->hiddenWeights);
+	free(n->outputWeights);
 }
 
 /*
@@ -154,6 +154,7 @@ void InitWeightsForNetwork(MMNetwork network) {
 /*
  * Init an hidden layer.
  * Just a shortcut for a basic calloc.
+ * Don't forget to free after use!
  *
  * Parameters:
  *	MMNetwork
@@ -169,6 +170,7 @@ double* HiddenLayer(MMNetwork network) {
 /*
  * Init an output layer.
  * Just a shortcut for a basic calloc.
+ * Don't forget to free after use!
  *
  * Parameters:
  *	MMNetwork
