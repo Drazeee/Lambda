@@ -454,6 +454,11 @@ int main(int argc, char **argv) {
 		columnSegmentation(argv[2], "results/resultColumn", 1, italic);
 		return 0;
 	}
+	if (strcmp(argv[1], "wordpos") == 0) {
+		SDL_Surface *img  = SDL_LoadBMP("exampleItalic.bmp");
+		wordPositionsItalic(img);
+		return 0;
+	}
 	if (strcmp(argv[1], "autorotate") == 0) {
 		SDL_Surface *img = SDL_LoadBMP("exampleRotate.bmp");
 		img = autoRotation(img);

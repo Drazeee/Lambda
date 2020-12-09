@@ -323,7 +323,11 @@ Cette fonction est plutôt simple dans sa manière de fonctionner. Tout d'abord,
 \] \\
 Après avoir calculé les nouvelles coordonnées, on ajoute $x_0$ à $x_2$ et $y_0$ à $y_2$ pour centrer la rotation. Finalement, il suffit d'ajouter le pixel sur lequel on est placé aux nouvelles coordonnées sur la nouvelle image. Le résultat est le bon, mais on obtient des pixels manquant sur l'image: \\
 
-$Image_pixels_manquants$
+\begin{center}
+    \includegraphics[scale=0.6]{exampleRotateSimbaForFisch.bmp}
+    \vspace*{1cm}
+    \includegraphics[scale=0.6]{rotationPixelsManquants.bmp}
+\end{center}
 
 \paragraph{}
 Nous avons essayé plusieurs algorithmes pour corriger ce problème, mais nous n'avons pas eu de résultats concluant qui supprimaient totalement ce problème. C'est le défaut d'effectuer une rotation de l'image avant de traiter le texte.
@@ -642,13 +646,13 @@ Après avoir déterminer l'angle de rotation, on appelle tout simplement la fonc
 	La même technique est utilisée pour découper colonnes et mots, on regarde quelle taille fait l'espace entre la supposée fin d'un mot et le début de l'autre. Après avoir fait des recherches, un espace représente environ 25\% de la hauteur des caractères. On utilise ainsi cette donnée pour vérifié si l'espace trouvé est supérieur à 22\% de la hauteur de l'image. Cet algorithme fonctionne très bien est découpe brillamment les mots. En voici un exemple: \\
 	
 	\begin{center}
-		\includegraphics[scale=0.4]{cutWords}
+		\includegraphics[scale=0.4]{cutWords.png}
 	\end{center}
 	
 	\paragraph{}Dans ce même dossier se trouvent des dossiers pour les caractères de chaque mots contenus qui contiennent les images en 32x32 pixels avec le caractère positionné en haut à gauche de l'image. Voici donc l'architecture finale de notre projet:
 	
 	\begin{center}
-		\includegraphics[scale=0.35]{cutCharacters}
+		\includegraphics[scale=0.35]{cutCharacters.png}
 	\end{center}
 	
     \paragraph{}Cette architecture était une première version pour ce projet, mais nous avons finalement modifier cette dernière, notamment après avoir modifier notre segmentation des caractères pour quelque chose de plus précis. Nous avons au final très peu d'image qui sont sauvegardées après l'exécution du projet, seulement les colonnes et les paragraphes et quelques images d'analyse. \\
@@ -717,12 +721,16 @@ Après avoir déterminer l'angle de rotation, on appelle tout simplement la fonc
     On remarque que cet extrait de code gère le cas où ledébut d'un caractère est trouvé (première boucle), ainsi que le cas où la fin d'un caractère est trouvée (deuxième boucle). Leur fonctionnement est plutôt similaire et nous allons décortiquer la première boucle.
     \par Tout d'abord, on sauvegarde la position du caractère dans notre tableau 'allPositions' qui les stocke. Ensuite, on dessine sur l'image pour voir comment la segmentation s'est déroulée. Dessiner sur l'image est juste un indicateur pour voir comment le programme fonctionne et permet de comprendre comment on détecte que l'image est toute blanche sur la partie souhaitée. La façon dont se passe la detection inclinée est la suivante: on fait une boucle sur toute la hauteur de l'image, puis tous les 5 itérations, on décale le pixel de recherche de 1 vers la gauche, ce qui permet au final d'avoir une détection en biais. Voici le résulat d'une segmentation sur un texte en italique: \\
 
-    $IMAGE_CARACTERES_ITALIQUE$
+    \begin{center}
+		\includegraphics[scale=0.35]{italicChars.bmp}
+	\end{center}
 
     \paragraph{}
-    Nous avons également appliqué se processus de détection inclinée pour la segmentation des mots. L'exact même algorithme est appliqué, et il permet d'être plus précis sur la détection des mots. Voici le résultat obtenu:
+    Nous avons également appliqué se processus de détection inclinée pour la segmentation des mots. L'exact même algorithme est appliqué, et il permet d'être plus précis sur la détection des mots. Voici le résultat obtenu: \\
 
-    $IMAGE_MOTS_ITALIQUE$
+    \begin{center}
+		\includegraphics[scale=0.35]{wordItalic.bmp}
+	\end{center}
 	
 \newpage
 
