@@ -454,20 +454,8 @@ int main(int argc, char **argv) {
 		columnSegmentation(argv[2], "results/resultColumn", 1, italic);
 		return 0;
 	}
-	if (strcmp(argv[1], "wordpos") == 0) {
-		SDL_Surface *img  = SDL_LoadBMP("exampleItalic.bmp");
-		wordPositionsItalic(img);
-		return 0;
-	}
-	if (strcmp(argv[1], "rotate") == 0) {
-		SDL_Surface *img = SDL_LoadBMP("exampleColumnRotate.bmp");
-		img = rotation(img, -14.706850, 353, 461);
-		SDL_SaveBMP(img, "rotation.bmp");
-		SDL_FreeSurface(img);
-		return 0;
-	}
 	if (strcmp(argv[1], "autorotate") == 0) {
-		SDL_Surface *img = SDL_LoadBMP("exampleColumnRotate.bmp");
+		SDL_Surface *img = SDL_LoadBMP("exampleRotate.bmp");
 		img = autoRotation(img);
 		SDL_SaveBMP(img, "rotation.bmp");
 		SDL_FreeSurface(img);
