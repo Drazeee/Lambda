@@ -46,6 +46,9 @@
                 <property name="active">True</property>
                 <property name="draw-indicator">True</property>
                 <signal name="clicked" handler="toggleColumns" swapped="no"/>
+		<style>
+     			<class name="checkbox"/>
+    		</style>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -60,6 +63,9 @@
                 <property name="receives-default">False</property>
                 <property name="draw-indicator">True</property>
                 <signal name="clicked" handler="toggleContrast" swapped="no"/>
+		<style>
+     			<class name="checkbox"/>
+    		</style>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -74,6 +80,9 @@
                 <property name="receives-default">False</property>
                 <property name="draw-indicator">True</property>
                 <signal name="clicked" handler="toggleNoise" swapped="no"/>
+		<style>
+     			<class name="checkbox"/>
+    		</style>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -89,6 +98,9 @@
                 <property name="active">True</property>
                 <property name="draw-indicator">True</property>
                 <signal name="clicked" handler="toggleCorrection" swapped="no"/>
+		<style>
+     			<class name="checkbox"/>
+    		</style>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -103,6 +115,9 @@
                 <property name="receives-default">False</property>
                 <property name="draw-indicator">True</property>
                 <signal name="clicked" handler="toggleItalic" swapped="no"/>
+		<style>
+     			<class name="checkbox"/>
+    		</style>
               </object>
               <packing>
                 <property name="left-attach">0</property>
