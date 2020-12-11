@@ -1,4 +1,5 @@
 #include "main.h"
+#include <SDL2/SDL_surface.h>
 
 char *columnRecognition(char *directory, int isItalic)
 {
@@ -271,7 +272,7 @@ int remove_directory(const char *path) {
 int columns = 1;
 int contrast = 0;
 int noise = 0;
-int correction = 1;
+int correction = 0;
 int italic = 0;
 int rotate = 0;
 

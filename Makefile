@@ -18,6 +18,7 @@ recognition.o: src/Recognition/recognition.c
 	gcc -c src/Recognition/recognition.c $(NNFLAGS)
 
 segmentation.o: src/Detection/segmentation.c
+	$(MAKE) -C src/NeuralNetwork lib
 	gcc -c src/Detection/segmentation.c $(NNFLAGS) $(GTKFLAGS)
 
 tools.o: src/Tools/tools.c
