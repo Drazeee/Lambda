@@ -174,7 +174,6 @@ SDL_Surface *cutColumn(SDL_Surface *img) {
         }
         
     }
-    SDL_FreeSurface(img);
     return img_copy;
 }
 
@@ -309,7 +308,7 @@ char *removeLines(SDL_Surface *img, char *directory,
     char path[40];
     mkdir(directory, 0777);
 
-    
+    char *line = "";
     for (int i = 0; i < pos; i+=2) {
         int height = positions[i + 1] - positions[i] - 1;
         SDL_Surface *newImage;
@@ -328,7 +327,7 @@ char *removeLines(SDL_Surface *img, char *directory,
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
         if (isLineSegmentation) {
-			char *line = characterSegmentationWithoutLoad(newImage, 
+			line = characterSegmentationWithoutLoad(newImage, 
 				"results/tempChar", 0, isItalic);
 			strcat(line, "\n");
 
@@ -339,7 +338,7 @@ char *removeLines(SDL_Surface *img, char *directory,
 			free(line);
 		}
 		else {
-			char *line = lineSegmentationWithoutLoad(newImage, 
+			line = lineSegmentationWithoutLoad(newImage, 
 				"result/tempLine", 0, isItalic);
 			strcat(line, "\n\n");
 			
@@ -351,6 +350,7 @@ char *removeLines(SDL_Surface *img, char *directory,
 		}
         currentLine++;
     }
+    //free(line);
     return allLines;
 }
 
@@ -491,9 +491,9 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
-        SDL_FreeSurface(newImageSmall);
-        SDL_FreeSurface(lastImage);
-        SDL_FreeSurface(newImage);
+        // SDL_FreeSurface(newImageSmall);
+        // SDL_FreeSurface(lastImage);
+        // SDL_FreeSurface(newImage);
     }
     char *result;
     int *wordPos;
@@ -681,9 +681,9 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos)
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
-        SDL_FreeSurface(newImageSmall);
-		SDL_FreeSurface(lastImage);
-		SDL_FreeSurface(newImage);
+        // SDL_FreeSurface(newImageSmall);
+		// SDL_FreeSurface(lastImage);
+		// SDL_FreeSurface(newImage);
     }
     char *result;
     int *wordPos;
@@ -692,7 +692,6 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos)
     paragraphsCount = 0;
     free(allPos);
     free(wordPos);
-    SDL_FreeSurface(img);
     return result;
 }
 
@@ -758,7 +757,7 @@ void removeLinesForWords(SDL_Surface *img, char *directory) {
         paragraphsCount++;
         SDL_SaveBMP(newImage, path);
         //SDL_FreeSurface(img);
-        SDL_FreeSurface(newImage);
+        //SDL_FreeSurface(newImage);
     }
 }
 

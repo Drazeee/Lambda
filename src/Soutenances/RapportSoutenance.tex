@@ -23,6 +23,7 @@
 \usepackage{mathtools}
 \usepackage{amsmath}
 \usepackage{systeme}
+\usepackage{multicol}
 
 \usepackage{listings}
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -115,13 +116,12 @@ backgroundcolor=\color{whiteback},
 	\newpage
     \pagestyle{fancy}
     \fancyhf{}
-    \lhead{Rapport de soutenance\vspace{0.25cm}}
-    \rhead{Table des matières}
+    
     \cfoot{\thepage}
-    \chead{\includegraphics[scale=0.05]{LogoBitarrays.png}}
-    \tableofcontents
+	\tableofcontents
     
 \newpage
+\lhead{Rapport de soutenance\vspace{0.25cm}}
 \rhead{\textit{Prologue}\vspace{0.25cm}}
 \cfoot{\thepage}
 \chead{\includegraphics[scale=0.05]{LogoBitarrays.png}}
@@ -133,7 +133,7 @@ backgroundcolor=\color{whiteback},
 \vspace*{1cm}
 \vspace{0.4cm}
 	\paragraph{}
-    Voici le premier rapport de soutenance pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L'objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
+    Voici le premier rapport de soutenance final pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L'objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
 	
 	\paragraph{}
     Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et sommes directement entrés dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
@@ -143,10 +143,10 @@ backgroundcolor=\color{whiteback},
     Nous sommes tous très motivés par la création de l'OCR.
 	
 	\paragraph{}
-    Ce fut un gros investissement pour nous 4 durant ce premier mois pour proposer une segmentation des caractères convenable ainsi que le début de la réalisation de plusieurs éléments qui rendront notre OCR fonctionnel pour la date de la deuxième soutenance.
+    Ce fut un gros investissement pour nous 4 durant ce projet pour proposer une segmentation des caractères convenable, une IA capable de reconnaitre du texte, appliquer des filtres sur nos images et implémenter un correcteur orthographique.
 
 	\paragraph{}
-    Nous allons présenter ici nos réalisation ainsi que nos problèmes rencontrés jusqu'à aujourd'hui.
+    Nous allons présenter ici nos réalisation ainsi que nos problèmes rencontrés sur toute la durée du projet.
 
 \newpage
 \lhead{Rapport de soutenance\vspace{0.25cm}}
@@ -275,7 +275,8 @@ backgroundcolor=\color{whiteback},
         }
     }
 \end{lstlisting}
-
+\newpage
+\rhead{\textit{Rotation de l'image}\vspace{0.25cm}}
 \section{Rotation de l'image}
 \subsection{Rotation manuelle}
 \paragraph{}
@@ -324,9 +325,9 @@ Cette fonction est plutôt simple dans sa manière de fonctionner. Tout d'abord,
 Après avoir calculé les nouvelles coordonnées, on ajoute $x_0$ à $x_2$ et $y_0$ à $y_2$ pour centrer la rotation. Finalement, il suffit d'ajouter le pixel sur lequel on est placé aux nouvelles coordonnées sur la nouvelle image. Le résultat est le bon, mais on obtient des pixels manquant sur l'image: \\
 
 \begin{center}
-    \includegraphics[scale=0.6]{exampleRotateSimbaForFisch.bmp}
-    \vspace*{1cm}
-    \includegraphics[scale=0.6]{rotationPixelsManquants.bmp}
+    \includegraphics[scale=0.3]{exampleRotateSimbaForFisch}
+    \hspace*{1cm}
+    \includegraphics[scale=0.3]{rotationPixelsManquants}
 \end{center}
 
 \paragraph{}
@@ -337,7 +338,7 @@ Nous avons essayé plusieurs algorithmes pour corriger ce problème, mais nous n
 Nous avons souhaité implémenter une rotation automatique de l'image, c'est-à-dire que l'image donnée en entrée du programme est automatiquement testée pour savoir si elle doit être redressée ou non. Si c'est le cas, on utilise un algorithme qui se base sur l'utilisation du théorème de Pythagore. Voici un schéma de la situation: \\
 
     \begin{center}
-    	\includegraphics[scale=0.4]{Schema-rotation.png}
+    	\includegraphics[scale=0.35]{Schema-rotation.png}
     \end{center}
     
 \paragraph{}
@@ -576,7 +577,6 @@ Après avoir déterminer l'angle de rotation, on appelle tout simplement la fonc
 	\end{center}
 	
     \subsubsection{Découpage des mots et des caractères}
-    \\ 
     \textbf{Première Version:}
 	\paragraph{}
 	Nous présenter le découpage des mots et des caractères ensemble car ils sont effectués plus ou moins en même temps. En effet, le découpage des caractères reste une étape très délicate à appréhender car elle nécessite de prévoir ou doivent être découpés les caractères.
@@ -718,18 +718,18 @@ Après avoir déterminer l'angle de rotation, on appelle tout simplement la fonc
     \end{lstlisting}
 
     \paragraph{}
-    On remarque que cet extrait de code gère le cas où ledébut d'un caractère est trouvé (première boucle), ainsi que le cas où la fin d'un caractère est trouvée (deuxième boucle). Leur fonctionnement est plutôt similaire et nous allons décortiquer la première boucle.
-    \par Tout d'abord, on sauvegarde la position du caractère dans notre tableau 'allPositions' qui les stocke. Ensuite, on dessine sur l'image pour voir comment la segmentation s'est déroulée. Dessiner sur l'image est juste un indicateur pour voir comment le programme fonctionne et permet de comprendre comment on détecte que l'image est toute blanche sur la partie souhaitée. La façon dont se passe la detection inclinée est la suivante: on fait une boucle sur toute la hauteur de l'image, puis tous les 5 itérations, on décale le pixel de recherche de 1 vers la gauche, ce qui permet au final d'avoir une détection en biais. Voici le résulat d'une segmentation sur un texte en italique: \\
+    On remarque que cet extrait de code gère le cas où le début d'un caractère est trouvé (première boucle), ainsi que le cas où la fin d'un caractère est trouvée (deuxième boucle). Leur fonctionnement est plutôt similaire et nous allons décortiquer la première boucle.
+    \par Tout d'abord, on sauvegarde la position du caractère dans notre tableau 'allPositions' qui les stocke. Ensuite, on dessine sur l'image pour voir comment la segmentation s'est déroulée. Dessiner sur l'image est juste un indicateur pour voir comment le programme fonctionne et permet de comprendre comment on détecte que l'image est toute blanche sur la partie souhaitée. La façon dont se passe la detection inclinée est la suivante: on fait une boucle sur toute la hauteur de l'image, puis tous les 5 itérations, on décale le pixel de recherche de 1 vers la gauche, ce qui permet au final d'avoir une détection en biais. Voici le résultat d'une segmentation sur un texte en italique: \\
 
     \begin{center}
-		\includegraphics[scale=0.35]{italicChars.bmp}
+		\includegraphics[scale=1]{italicChars}
 	\end{center}
 
     \paragraph{}
-    Nous avons également appliqué se processus de détection inclinée pour la segmentation des mots. L'exact même algorithme est appliqué, et il permet d'être plus précis sur la détection des mots. Voici le résultat obtenu: \\
+    Nous avons également appliqué ce processus de détection inclinée pour la segmentation des mots. L'exact même algorithme est appliqué, et il permet d'être plus précis sur la détection des mots. Voici le résultat obtenu: \\
 
     \begin{center}
-		\includegraphics[scale=0.35]{wordItalic.bmp}
+		\includegraphics[scale=0.26]{wordItalic}
 	\end{center}
 	
 \newpage
@@ -957,16 +957,89 @@ Pour vérifier la ponctuation d’un texte nous avons opté pour un ensemble de 
 
 \paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d'être utilisé avec une main qui leur enverrait l’index des points dans un texte.
 
+\begin{lstlisting}
+char* dot_check (char* text_to_check, unsigned long start){
+    unsigned int i = start;
+    char *dest = calloc(4,sizeof(char));
+    dest[0] = '.';
+    dest[1] = ' ';
+
+    if (text_to_check[i+1] != ' ' ){
+        i--;
+    }
+    if (text_to_check[i+2] >= 'A' && text_to_check[i+2] <= 'Z')
+    {
+        dest[2] = text_to_check[i+2];
+    }
+    else if (text_to_check[i+2] >= 'a' && text_to_check[i+2] <= 'z')
+    {
+        dest[2] = text_to_check[i+2] - 32;
+    }
+    else
+    {
+        /* Make a call for the dictionnary function */
+    }
+
+    return dest;
+\end{lstlisting}
+
 \subsection{La cohérence}
 \paragraph{}Cette fonction a vu le jour pour palier un problème du réseau de neurones. En effet, il pouvait arriver que l'IA confonde une majuscule avec une minuscule. La fonction ci-dessous vérifie alors s’il y a plus de lettre majuscule ou minuscule dans le mot et change le tout.  Cette fonction nous apporte une sécurité supplémentaire.
+
+\begin{lstlisting}
+	char* capital_check (char* word){
+    size_t count_capital = 0;
+    size_t len = strlen(word);
+    size_t half = len / 2;
+    size_t i = 0;
+    char *dest = calloc(len + 1,sizeof(char));
+
+    while (i < len && count_capital < half){
+        if (word[i] >= 'A' && word[i] <= 'Z'){
+            count_capital++;
+        }
+        i++;
+    }
+    if (i < len){
+        for (size_t y = 0; y < len; y++)
+        {
+            if (word[y] >= 'a' && word[y] <= 'z'){
+                dest[y] = word[y] - 32;
+            }
+            else
+            {
+                dest[y] = word[y];
+            }
+        }
+    }
+    else
+    {
+        for (size_t y = 0; y < len; y++)
+        {
+            if (word[y] >= 'A' && word[y] <= 'Z'){
+                dest[y] = word[y] + 32;
+            }
+            else
+            {
+                dest[y] = word[y];
+            }
+        }
+    }
+
+    return dest;
+\end{lstlisting}
 
 \subsection{La distance de Levensthein}
 \paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l'heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l'utilisation d'une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
 
+\begin{center}
+	\includegraphics[scale=0.5]{matrice}
+\end{center}
+
 
 \newpage
-\rhead{\textit{Command parser}\vspace{0.25cm}}
-\section{Command parser}
+\rhead{\textit{Command parser et interface}\vspace{0.25cm}}
+\section{Command parser et interface}
 
 \subsection{L'objectif}
 
@@ -1072,21 +1145,71 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 		}
 \end{lstlisting}
 
+
+\subsection{L'interface}
+
+\paragraph{}Dans ce projet, il est nécessaire de créer une interface en C. Pour cela, nous avons décidé d'utiliser GTK et de construire l'interface via Glade qui permet de manipuler les éléments et les évènement de façon plus simple et plus intuitive. L'interface de glade ressemble à cela:
+
+\begin{center}
+	\includegraphics[scale=0.18]{glade_start_screen}
+\end{center}
+
+\paragraph{}Notre interface est donc générée grâce à ce logiciel, ainsi que les évènements directement. Voici notre vision de l'interface dans glade: 
+
+\begin{center}
+	\includegraphics[scale=0.18]{glade_start_screen}
+\end{center}
+
+\paragraph{}Pour utiliser les éléments de l'interface, nous utilisons la partie Signals associée à chaque éléments qui se trouvent sur l'interface. Par exemple, pour modifier le statut des options de notre programme comme la gestion du multi-colonnes, du texte en italique, etc nous avons un booléen global dans notre code en C une fonction qui permet d'inverser le statut de ce booléen. Notre interface possède un signal 'clicked' sur ces éléments qui appelle la fonction et maintient le booléen à 1 si la checkbox est cochée et 0 sinon.
+
+\newpage
+
+\paragraph{}Pour utiliser notre interface depuis une commande, il faut utiliser ./Lambda sans argument. C'est alors une fenêtre qui ne peut pas être redimensionnée qui s'ouvre. Dans cette dernière, il est possible de faire charger sa propre image pour la tester à travers notre OCR, en sélectionnant les options adéquates (pas de multi-colonnes si l'image ne possède qu'une colonne, pas de rotation si l'image est droite, etc... Le texte rendu par notre programme s'écrit dans l'encadré. Il est ensuite possible de scroller dans le texte envoyé, de le copier et de le coller ailleurs.
+
+\begin{center}
+	\includegraphics[scale=0.25]{glade-terminal-interface}
+\end{center}
+
+
+\paragraph{}Cette interface répond donc bien au cahier des charges du projet. Elle permet d'utiliser toutes les fonctionnalités de notre programme et de récupérer le texte détecté sur une image entrée en paramètre.
+
+\paragraph{}Le petit point supplémentaire qu'il est intéressant de souligner est le fait que notre interface s'adapte au thème de l'OS (sous Linux et macOS). Sous Linux, la simple implémentation de la fenêtre comme nous l'avons fait suffit à l'adapter au thème de l'OS, sous macOS il a fallu y ajouter une feuille de style CSS pour configurer ce changement de couleur de la fenêtre. Voici un aperçu de notre interface en thème clair: 
+
+\begin{center}
+	\includegraphics[scale=0.25]{glade-light-theme}
+\end{center}
+
+\newpage
+\rhead{\textit{Cheminement du programme}\vspace{0.25cm}}
+\section{Cheminement du programme}
+
+\subsection{Les filtres et le pré-traitement}
+
+\paragraph{yo}
+
+\subsection{La segmentation jusqu'à la reconnaissance}
+
+\paragraph{yo}
+
+\subsection{Output du programme}
+
+\paragraph{yo}
+
 \newpage
 \rhead{\textit{Avancement}\vspace{0.25cm}}
 \section{Notre avancement et répartition des tâches}
 
 
+\paragraph{} Nous vous avons présenté les fonctionnalités de notre projet sans dire qui était en charge de ces dernières. Ce tableau est le récapitulatif global de nos tâches respectives pour la première soutenance, le X signifie que la personne a participé à cette tâche. L'objectif ici est de clarifier nos rôles, nous formons un seul groupe qui progresse et se donne des objectifs en fonction des possibilités et envies de chacun. Le nombre de tâches réalisées n'a pas de rapport avec l'investissement dans le projet car la complexité est différente.
+
 \subsection{Répartition des tâches à la première soutenance}
 
-\paragraph{} Nous vous avons présenté les fonctionnalités de notre projet sans dire qui était en charge de ces dernières. Ce tableau est le récapitulatif global de nos tâches respectives pour la première soutenance, le X signifie que la personne a participé à cette tâche. L'objectif ici est de clarifier nos rôles, nous formons un seul groupe qui progresse et se donne des objectifs en fonction des possibilités et envies de chacun. Le nombre de tâches réalisées n'a pas de rapport avec l'investissement dans le projet car la complexité est différente.
+
 \begin{center}
 \vspace*{0.2cm}
 \begin{tabular}{|l|c|c|c|c|}
   \hline
   & Quentin & Maxime & Charles & Nathan \\
-  \hline
-  Pré-traitement & X &  & X &  \\
   \hline
   Segmentation de l'image & X &  & X &  \\
   \hline
@@ -1094,24 +1217,48 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
   \hline
   Correcteur orthographique &  &  &  & X \\
   \hline
-  Command parser &  &  & X &  \\
+  Command parser &  & & X &  \\
+  \hline
+  Pré-traitement & X &  & X & \\
   \hline
 \end{tabular}
 \end{center}
 
 \vspace*{1cm}
 
-\subsection{Nos objectifs et envies}
+\subsection{Répartition des tâches à la deuxième soutenance}
 
-\paragraph{}La deuxième soutenance sera la dernière pour ce projet, il faut donc qu'il soit terminé d'ici là. Nous devons donc mettre tout en oeuvre pour lier la segmentation en caractères de notre image source avec la reconnaissance de ces derniers pour permettre à l'utilisateur de récupérer son texte.
+\begin{center}
+\vspace*{0.2cm}
+\begin{tabular}{|l|c|c|c|c|}
+  \hline
+  & Quentin & Maxime & Charles & Nathan \\
+  \hline
+  Rotation de l'image & X &  & X &  \\
+  \hline
+  Segmentation italique & X &  &  &  \\
+  \hline
+  Réseau de neurones &  & X &  &  \\
+  \hline
+  Correcteur orthographique &  &  &  & X \\
+  \hline
+  Interface &  & X & X &  \\
+  \hline
+  Architecture globale & X &  & X & \\
+  \hline
+\end{tabular}
+\end{center}
 
-\paragraph{}Il nous faut aussi commencer l'interface graphique pour donner vie à notre projet et lui faire dépasser le stade des lignes de commandes. Nous avons déjà commencé à utiliser pour GTK et Glade pour créer cette dernière et elle sera terminée pour la deuxième soutenance. L'objectif est créer une interface en adéquation avec le style graphique que nous avons mis au point pour le groupe.
+\vspace*{1cm}
 
-\paragraph{}La finalisation du correcteur orthographique est une étape importante pour le projet. Elle ajouterai une fonctionnalité utile pour l'utilisateur. Cela nous apportera beaucoup dans la compréhension de l'implémentation d'un correcteur orthographique et sa réalisation et nous fera réfléchir à l'optimisation de notre programme pour ne pas perdre trop de temps sur la correction. 
+\subsection{Résumé de ce que nous avons fait}
 
-\paragraph{}L'IA doit encore être entrainée pour avoir un taux d'erreur le plus bas possible et reconnaître au mieux les caractères de l'image. Il faut penser à la reconnaissance des accents, virgules, points, ...
+\paragraph{}Notre segmentation des caractères est plutôt efficace, il arrive parfois d'avoir 2 caractères qui sont détectés comme un seul mais cela est assez rare pour que la forme globale du texte reconnu soit intéressante. Nous avons ajouté une découpe des caractères en italique en reprenant notre méthode pour les caractères non italiques. Le seul problème est que nous n'avons pas pu faire une segmentation sur du texte qui est écrit en police classique puis en italique sur une autre ligne.
 
-\paragraph{}Nous devons aussi penser à améliorer notre segmentation des caractères pour éviter les problèmes auxquels nous sommes confrontés aujourd'hui et peut être créer un réseau de neurones qui pourrait apprendre à reconnaître des caractères sur une ligne grâce si nous avons le temps.
+\paragraph{}Notre IA possède un nombre important de caractères et symboles reconnus, et notre temps d'entrainement (bien qu'important) n'est surement pas encore suffisant pour qu'elle soit parfaite. Le pourcentage d'erreur est faible mais il est encore assez important pour que l'on remarque des erreurs dans les mots.
+
+\paragraph{}Le correcteur orthographique était une partie bien compliquée de notre programme, celui-ci est fonctionnel mais manque de méthodes différentes pour choisir le bon mot à remplacer quand celui que nous détectons est erroné. La simple utilisation de la distance de Levenshtein à ses limites mais faire un premier essai d'un correcteur orthographique était intéressant.
+
 
 \newpage
 \subsection{Utilisation du programme}
@@ -1157,6 +1304,10 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 	// Applique la segmentation partielle et génère l'architecture de dossiers/fichiers
 \end{lstlisting}
 
+\begin{lstlisting}
+	./Lambda
+	// Ouvre l'interface, nécessite GTK et une interface graphique
+\end{lstlisting}
 
 
 \newpage
@@ -1167,7 +1318,7 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 
 \paragraph{}Nous avons fortement aimé le sujet ainsi que le cahier des charges de ce projet, et nous nous sommes ainsi entièrement investis dans sa réalisation. Nous sommes toujours autant motivés par ce projet, malgré les hauts et les bas qui, pour les derniers, peuvent être vraiment complexes à solutionner.\\
 
-\paragraph{}Nous vous avons ici présenté ce que nous avons pu réaliser en un mois dans le respect des consignes proposées par le cahier des charges.
+\paragraph{}Ce projet dans un langage qui nous était inconnu au début de l'année nous a apporté des connaissances, mais dans le même temps c'est un projet beaucoup trop court pour assimiler tout ce qui nous est demandé. Ainsi, nous en voyons aujourd'hui les limites avec des problèmes dans notre code qui proviennent de notions que nous n'avons pas eu le temps d'approfondir et nous n'arrivons pas à expliquer la provenance de ses dernières. C'est un point un peu frustrant sur le projet car avec du temps supplémentaire et notre expérience, nous serions près à reprendre une grande partie de notre code pour le simplifier et limiter les problèmes que nous avons aujourd'hui.
 
 
 \newpage

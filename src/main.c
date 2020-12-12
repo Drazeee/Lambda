@@ -17,14 +17,13 @@ char *columnRecognition(char *directory, int isItalic)
 				columnsNumber++;
 			}
 		}
-
 	}
-	
+	char *temp = "";
 	int columnIndex = 0;
 	for (int i = 0; i < columnsNumber; i++) {
 		char path[len + 40];
 		snprintf(path, len + 40, "%s/%i.bmp", directory, i);
-		char *temp = paragraphSegmentation(path, "results/tempParagraphs", 0, 
+		temp = paragraphSegmentation(path, "results/tempParagraphs", 0, 
 			isItalic);
 		strcat(temp, "\n===========\n");
 
@@ -33,6 +32,7 @@ char *columnRecognition(char *directory, int isItalic)
 		strcat(result, temp);
 		resultColumns = result;
 	}
+	//free(temp);
 	return resultColumns;
 }
 
@@ -458,6 +458,7 @@ int main(int argc, char **argv) {
 	if (strcmp(argv[1], "wordpos") == 0) {
 		SDL_Surface *img  = SDL_LoadBMP("exampleItalic.bmp");
 		wordPositionsItalic(img);
+		SDL_SaveBMP(img, "salut.bmp");
 		return 0;
 	}
 	if (strcmp(argv[1], "autorotate") == 0) {
