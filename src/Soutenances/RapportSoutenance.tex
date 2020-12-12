@@ -1032,9 +1032,21 @@ char* dot_check (char* text_to_check, unsigned long start){
 \subsection{La distance de Levensthein}
 \paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l'heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l'utilisation d'une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
 
+
 \begin{center}
 	\includegraphics[scale=0.5]{matrice}
 \end{center}
+
+\newpage
+
+\paragraph{}Pour cette deuxième soutenance nous devions améliorer le temps d’exécution de la distance de Levenshtein. Cependant, nous nous sommes rendu compte que la version présentée à la première soutenance avait encore des bugs importants qui était passés inaperçu. De ce fait, le temps annoncé à la dernière soutenance n’avait plus autant d’importance que prévu. Nos plans ont donc changé et sont passés d’optimisation à correction puis optimisation.
+
+\paragraph{}Par exemple, un mot comme bonjour ne répondait pas correctement à notre algorithme et renvoyé une distance erronée avec le mot bonjour. En effet, les mots dont il existe un préfixe dans la langue française faussait le résultat. A l’heure de cette soutenance ce problème est réglé.
+\paragraph{}De plus, des mots comme anticonstitutionnellement (pour prendre un exemple long) avait tendance à avoir un résultat non pertinent en fonction des différentes erreurs possibles dans le mot. Ce problème est à présent corrigé.
+\paragraph{}Après ces corrections, le correcteur orthographique s’effectuait en 0.7 secondes. Nous avions donc perdu du temps d’exécution, ce qui était l’opposé de l’objectif pour cette soutenance.
+\paragraph{}Nous avons ensuite essayé de l’optimiser par la technique prévue à la première soutenance, cependant, les résultats ne vu pas ceux escomptés et nous ne gagnions que 0.2 secondes dans le processus. Nous revenions alors à notre point de départ… Nous avons alors abandonné cette idée pour pouvoir nous concentrer sur l’optimisation du calcul de la distance de Levenshtein.
+\paragraph{}La meilleure nouvelle version de notre distance était plus rapide pour les mots étant dans les premiers dans l’ordre alphabétique mais plus longue pour les derniers (On oscillait entre 0.3 et 0.8). Cette version n’étant pas viable pour un correcteur orthographique car nous avons autant de chance et détecter un mot de la fin de l’alphabet que du début, nous nous sommes décidés à garder l’ancienne version et à tenter de trouver de nouvelles optimisations.  (Optimisation de code ou bien réduction du dictionnaire).
+\paragraph{}A la suite de ces optimisations, nous avons obtenu une distance de Levenshtein avec un temps d’exécution de 0.25 secondes ce qui n’est malheureusement toujours pas assez bas pour pouvoir l’utiliser en condition réel mais qui nous a permis d’en apprendre plus sur les différentes techniques d’optimisation de code en C.
 
 
 \newpage
@@ -1185,9 +1197,11 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 
 \subsection{Les filtres et le pré-traitement}
 
-\paragraph{yo}
+\paragraph{}La première chose qui est exécutée au lancement du programme est la suppression de tous les dossiers et fichiers qui peuvent se trouver dans le dossier results à la racine de notre projet. C'est dans ce dernier que les fichiers temporaires nécessaires au fonctionnement de notre programme sont stockés. Après cela, nous nous assurons de pouvoir lancer notre programme sans avoir de problèmes de fichiers/dossiers déjà existants ou non vides.
 
-\subsection{La segmentation jusqu'à la reconnaissance}
+\paragraph{}La prochaine étape est l'application des filtres et des traitements sur l'image. Dans tous les cas nous effectuons un niveau de gris puis une binarisation de l'image entrée en paramètre. Cette dernière est stockée dans results/temp.bmp. C'est avec cette image que notre programme commencera. Avant de faire ces étapes nous effectuons les options sélectionnées à partir de notre interface: c'est à dire la réduction de bruit, l'augmentation des contrastes, la rotation automatique.
+
+\subsection{De la segmentation jusqu'à la reconnaissance}
 
 \paragraph{yo}
 
