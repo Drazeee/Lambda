@@ -843,43 +843,12 @@ MMNetwork LoadNetwork(char* path);
 
 \begin{lstlisting}
 double*	Predict(MMNetwork network, const MMImage* image);
-char OutputChar(double* outputLayer);
+char OutputChar(double* outputLayer, MMContext *ctx);
 \end{lstlisting}
 
 \textbf{Exemple de programme:}
 
 \paragraph{}Analysons maintenant le programme suivant, qui permet de prédire le caractère présent sur une image:
-
-
-\begin{lstlisting}
-#include <stdio.h>
-#include "LambdaNeuralNetwork.h"
-
-int main(int argc, const char* argv[]) {
-
-	MMImage img = LoadImage("/Users/maxime/Documents/OCR/W.bmp");
-	MMNetwork n = LoadNetwork("/Users/maxime/Documents/OCR/IA");
-	
-	double* output = Predict(n, &img);
-	char character = OutputChar(output);
-	
-	printf("Recognized as a %d\n", character);
-	printf("\n");
-	
-	return 0;
-}
-\end{lstlisting}
-
-
-\begin{itemize}
-	\item Ligne 2: On inclut le header principal, qui définit toutes les fonctions et structs utilisées pour la prédiction et l'utilisation des réseaux de neurones du projet.
-	\item Ligne 6: On charge une image à partir de son chemin d'accès dans une variable img
-	\item Ligne 7: On charge le réseau précédemment entraîné à partir du chemin où il a été enregistré dans une variable n
-	\item Ligne 9: On fait une prédiction sur l'image img par le réseau n. Les valeurs de la couche de sortie sont enregistrées dans une variable output.
-	\item Ligne 10: À partir de la couche de sortie output, on récupère le caractère correspondant. C'est ce caractère qui est écrit sur l'image.
-\end{itemize}
-
-\paragraph{}Juste ces 4 lignes permettent de faire une prédiction sur le caractère écrit sur une image.
 
 \newpage
 
@@ -938,9 +907,50 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 
 (où $outputLayerBias_k$ est le biais du neurone, $outputWeight_{j\rightarrow k}$ le poids de la transition du neurone caché i vers le neurone de sortie)
 
+\subsection{Finitions}
+
+\subsubsection{Caractères}
+
+Lors de la 1e soutenance, nous avions déjà un réseau capable de reconnaître les 26 majuscules, les 26 minuscules, les 10 chiffres et 16 symboles avec une précision relativement bonne. Or il nous manquait quelque chose d’essentiel dans la langue française: les caractères accentués.
+Nous avons donc décidé de simplement rajouter ces caractères à la liste. Mais il s’est alors posé un problème. Les fonctions écrites pour le réseau de neurones ont été développées pour retourner un char après une prédiction. Or, il se trouve que les caractères accentués sont des caractères Unicodes, représentés par deux char à la suite.
+Deux solutions s’offraient alors à nous:
+Re-écrire toutes les fonctions pour ne renvoyer plus un char mais deux
+Trouver un moyen de représenter les caractères Unicodes par un seul char.
+
+C’est pour cette deuxième solution que nous avons opté.
+Il existe des normes ASCII étendues, qui permettent de représenter d’autres caractères par des valeurs comprises entre 128 et 256. Or, un objet char pouvant représenter 256 valeurs (-128 à 127 en signé, ou 0 à 255 en non signé), il est donc tout à fait possible pour un char de représenter un caractères ASCII étendu.
+La majorité du réseau de neurones ayant été développée sous macOS, nous avons donc utilisé la norme ASCII étendue Apple.
+
 \begin{center}
-	\includegraphics[scale=0.5]{Meme}
+	\includegraphics[scale=0.5]{tableauXAscii}
 \end{center}
+
+Nous nous somme finalement retrouvés avec 111 symboles à reconnaitre dans notre réseau de neurones.
+Mais, même après plusieurs semaines/mois d’entrainement, les résultats n’étaient pas satisfaisants.
+Nous sommes alors parti sur une toute autre stratégie: nous sommes revenus sur notre ancien réseau, qui ne reconnaissait pas les caractères accentués, et à côté, nous avons développé un autre réseau, dont le but est de reconnaitre quel type d’accent possède un caractère (aigu, grave, trémas, circonflexe, cédille, ou pas d’accent).
+Ce réseau n’ayant que 5 classes, et par conséquent une couche intermédiaire contenant moins de neurones, l’apprentissage a été très rapide: en moins de 5 minutes, on a eu près de 98\% de réussite pour un training-set de 60000 images.
+
+\paragraph{}Cette stratégie a pour avantage d’être très fiable, mais a pour inconvénient majeur que l’on doit effectuer 2 prédictions pour chaque caractère (une pour déterminer le caractère, et une pour déterminer l’accent) au lieu de une, ce qui augmente le temps de traitement d’un caractère.
+
+\paragraph{}En plus de cela, nous avons remarqué que certaines lettres se ressemblaient en majuscules et en minuscules, et sont même pour nous difficile à différencier. Ces lettres sont les suivantes: CIKOPSUVWXYZ. Ces lettres provoquant des erreurs, nous avons décidé sur le modèle du catalogue MNIST, de retirer leur majuscules, pour ne les apprendre que en minuscules. La cohérence sera assurée par la suite par le correcteur orthographique de Nathan.
+
+
+
+\subsubsection{Bindings Python}
+Afin de pouvoir avoir un retour visuel de l’avancée des entraînements, et des résultats, j’ai écrit des Bindings, qui nous permettent d’utiliser tout le programme et la library en Python. Grâce à cela, je peux utiliser le programme avec un environnement Python interactif comme Jupyter et, par exemple, dessiner des graphiques en fonction des résultats.
+La plupart des fonctions et structures ont été bindées en Python, grâce au module ctypes.
+\paragraph{}Pour l’utiliser, il faut compiler la bibliothèque partagée avec la commande "make shared".
+Cela créera un fichier .so dans le dossier lib.
+Si le Python sera exécuté depuis un autre dossier, il faut mettre la variable d’environnement "LAMBDALIBPATH" au chemin de ce .so.
+Ensuite, on peut importer le module NNPythonBindings.
+Les fonctions sont définies dans le module NNPythonBindings.core, les structures dans NNPythonBindings.structures.
+Des exemples de Notebooks sont disponibles dans le dossier "tools". Ceux ci ont notamment permis de générer les graphiques que vous trouverez dans la sous-section "Entrainement".
+
+
+
+\subsubsection{Entrainements}
+
+
 
 \newpage
 \rhead{\textit{Correcteur orthographique}\vspace{0.25cm}}
@@ -1190,6 +1200,13 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \begin{center}
 	\includegraphics[scale=0.25]{glade-light-theme}
 \end{center}
+
+
+\subsubsection{Problème de locale}
+L’interface nous a posé un gros problème à un moment, qui a mis plusieurs jours avant d’être trouvé et résolu. En fait, lorsqu’on utilisait le programme pour extraire le texte d’une image depuis sa version CLI, un résultat correct apparaissait. Mais lorsqu’on passait par l’interface, le résultat était étrange et complètement faux.
+Comme indiqué précédemment, les réseaux sont enregistrés sous la forme de fichiers textes, contenant les paramètres numériques, chacun dans une ligne, et au chargement du réseau, les lignes de ces fichiers sont lues une par une, et transformées en nombres grâce à la fonction strtod.
+Or, à son initialisation, GTK change le langage du programme, ainsi que les formats utilisés par ceux du système. Nos ordinateurs étant en français, le programme utilise donc les formats français, dont le format décimal avec une virgule au lieu du point. Les valeurs n’étaient alors plus lues correctement; elles étaient tronquées à l’entier. Le réseau chargé était alors totalement incorrect, et les résultats donnés étaient donc complètement faussés.
+Pour remédier à ce problème, nous avons utilisé la fonction \textit{gtk\_disable\_setlocale()}, qui empêche GTK de changer la langue et les formats du programme.
 
 \newpage
 \rhead{\textit{Cheminement du programme}\vspace{0.25cm}}
