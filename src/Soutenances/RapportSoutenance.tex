@@ -164,7 +164,7 @@ backgroundcolor=\color{whiteback},
 \paragraph{}Passionné d'informatique depuis mes années du collège ou j'ai commencé à développer des serveurs sur Minecraft, EPITA est pour moi une révélation. Une école avec une formation permettant d'atteindre le statut d'ingénieur ainsi que des compétences en informatique plus que confortables est pour moi le cursus idéal. J'ai appris par moi même certains langages comme le HTML/CSS, Java et aujourd'hui je me perfectionne et corrige mes défauts grâce à l'école. Ce projet devrait m'apporter à titre personnel beaucoup d'expérience, autant au niveau humain que dans les compétences informatiques.
 
 \subsubsection{Nathan "Goruza" AVÉ}
-\paragraph{}Après une première année de sup ou j’ai pu vivre ma première expérience de travail de groupe à EPITA, je poursuis l’aventure avec plus d’expérience dans les projets de ce type et aussi un groupe différent. Pour moi, l’OCR est une seconde expérience de travail où je vais devoir apprendre à maitriser des notions par moi-même et non pas lors des cours. Cela s’inscrit dans la continuité de mon stage réalisé cet été par l’apprentissage d’un nouveau langage et la similarité de mes collègues pour ce projet ayant fait ce stage avec Quentin et Charles. Préparez-vous ce projet sera légendaire !
+\paragraph{}Après une première année de sup ou j’ai pu vivre ma première expérience de travail de groupe à EPITA, je poursuis l’aventure avec plus d’expérience dans les projets de ce type et aussi un groupe différent. Pour moi, l'OCR est une seconde expérience de travail où je vais devoir apprendre à maitriser des notions par moi-même et non pas lors des cours. Cela s’inscrit dans la continuité de mon stage réalisé cet été par l’apprentissage d’un nouveau langage et la similarité de mes collègues pour ce projet ayant fait ce stage avec Quentin et Charles. Préparez-vous ce projet sera légendaire !
 
 
 \newpage
@@ -949,6 +949,40 @@ Des exemples de Notebooks sont disponibles dans le dossier "tools". Ceux ci ont 
 
 
 \subsubsection{Entrainements}
+Nous avons testé un nombre important de paramètres pour l’entrainement des réseaux de neurones. En effet, nous devions jouer sur le nombre de neurones cachés, le taux d’apprentissage, ou encore le nombre d’images du training-set.
+\paragraph{}Nous avons remarqué qu’un taux d’apprentissage trop fort provoquait une précision médiocre sur les résultats, un plafond se formait sur le taux de succès. À l’inverse, un taux d’apprentissage trop faible donnait des résultats très bons, mais uniquement sur le training-set qui a servi à l’apprentissage. Dès que nous testions le réseau sur d’autres images, les prédictions était pratiquement toujours fausses. 
+
+\begin{center}
+	\includegraphics[scale=0.25]{learningRateGraph.png}
+	
+	Graphique montrant l'évolution du taux de succès en fonction des générations, avec différents taux d'apprentissage (L.Rate).
+	
+	\begin{tabular}{r@{: }l r@{: }l}
+		Générations & 200 & Classes & 68 \\
+		Neurones cachés & 150 & Images & 6800 \\
+	\end{tabular}
+	
+\end{center}
+
+De même pour le nombre d’images du training-set, un nombre d’images trop faible ne permettait pas au réseau de "comprendre" les caractéristiques communes à chaque classes et donc d’apprendre. Un nombre d’images trop important à l’inverse avait tendance à rendre le programme "confus", il n’arrivait pas à cibler les caractéristiques à reconnaître.
+
+\paragraph{}Pour ce qui est du nombre de neurones cachés, nous avons fait des essais entre 90 et 1200 neurones. Globalement, le réseau parvient toujours à apprendre en donnant des résultats plus ou moins bons (voir graphique ci dessous), mais le nombre de générations nécessaires à avoir de bons résultats est minimal autour de 200 neurones.
+
+\begin{center}
+	\includegraphics[scale=0.3]{hiddenNodesGraph.png}
+	
+	Graphique montrant l'évolution du taux de succès en fonction du nombre de neurones cachés.
+	
+	\begin{tabular}{r@{: }l r@{: }l}
+		Générations & 10 & Classes & 68 \\
+		Learning Rate & 0.5 & Images & 6800 \\
+	\end{tabular}
+	
+\end{center}
+
+
+
+
 
 
 
