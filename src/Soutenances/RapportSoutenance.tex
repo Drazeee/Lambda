@@ -133,14 +133,14 @@ backgroundcolor=\color{whiteback},
 \vspace*{1cm}
 \vspace{0.4cm}
 	\paragraph{}
-    Voici le premier rapport de soutenance final pour notre projet d'OCR à réaliser en groupe de 4 étudiants. L'objectif est de répondre pleinement au cahier des charges imposé par l'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
+    Voici le premier rapport de soutenance final pour notre projet d\'OCR à réaliser en groupe de 4 étudiants. L\'objectif est de répondre pleinement au cahier des charges imposé par l\'école et obtenir un résultat satisfaisant dans la reconnaissance des caractères.
 	
 	\paragraph{}
-    Nous n'avons pas eu de phase de réflexion sur le projet pour cette année et sommes directement entrés dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
+    Nous n\'avons pas eu de phase de réflexion sur le projet pour cette année et sommes directement entrés dans le vif du sujet et la réalisation des tâches obligatoires pour respecter scrupuleusement les deadlines du projet et ne pas prendre de retard. Il nous fallait nous familiariser avec le langage C et comprendre les attentes du projet.
 	
 	\paragraph{}
-    Nous allons apprendre à communiquer et à s'adapter aux différents caractères des membres de notre groupe. Nous avons, par expérience, déjà compris qu'un projet de groupe est un réel défi au niveau humain mais ce projet s'annonce encore plus complexe.
-    Nous sommes tous très motivés par la création de l'OCR.
+    Nous allons apprendre à communiquer et à s\'adapter aux différents caractères des membres de notre groupe. Nous avons, par expérience, déjà compris qu\'un projet de groupe est un réel défi au niveau humain mais ce projet s\'annonce encore plus complexe.
+    Nous sommes tous très motivés par la création de l\'OCR.
 	
 	\paragraph{}
     Ce fut un gros investissement pour nous 4 durant ce projet pour proposer une segmentation des caractères convenable, une IA capable de reconnaitre du texte, appliquer des filtres sur nos images et implémenter un correcteur orthographique.
@@ -155,7 +155,7 @@ backgroundcolor=\color{whiteback},
 \section{Présentations}
 \subsection{Les membres}
 \subsubsection{Quentin "Scout" FISCH}
-\paragraph{}J'ai vraiment découvert ma passion pour l'informatique par le biais de TP effectués en Sciences de L'ingénieur en Première et Terminale. J'ai donc décider d'étudier car je suis très intéressé en ce qui concerne la robotique et le développement de technologies dans les systèmes embarqués. Ce projet sera pour moi le premier en langage C et m'apprendra comment gérer un tel projet en respectant des deadlines et diverses contraintes. Je suis ainsi très motivé à sortir le meilleur projet possible et développer mes compétences en informatique.
+\paragraph{}J\'ai vraiment découvert ma passion pour l\'informatique par le biais de TP effectués en Sciences de L'ingénieur en Première et Terminale. J'ai donc décider d'étudier car je suis très intéressé en ce qui concerne la robotique et le développement de technologies dans les systèmes embarqués. Ce projet sera pour moi le premier en langage C et m'apprendra comment gérer un tel projet en respectant des deadlines et diverses contraintes. Je suis ainsi très motivé à sortir le meilleur projet possible et développer mes compétences en informatique.
 
 \subsubsection{Maxime "Maxmad" MADRAU}
 \paragraph{}Passionné d'informatique depuis toujours, j'ai commencé a développer des programmes simples très tôt dans mon enfance. J'ai par la suite appris des langages comme le Python, le Lua, le Javascript, le Swift, et les langages web comme le HTML et le CSS. Mes domaines de prédilection sont les applications mobiles, les bases de données et le client/serveur.
@@ -801,24 +801,55 @@ La dérivée de la sigmoïde s'écrit comme ceci:
 
 \paragraph{}Une fois ce problème résolu, on a obtenu des résultats proches de 95\% pour une couche intermédiaire de seulement 760 neurones.
 
+\subsubsection{Caractères}
+
+Lors de la 1e soutenance, nous avions déjà un réseau capable de reconnaître les 26 majuscules, les 26 minuscules, les 10 chiffres et 16 symboles avec une précision relativement bonne. Or il nous manquait quelque chose d\'essentiel dans la langue française: les caractères accentués.
+Nous avons donc décidé de simplement rajouter ces caractères à la liste. Mais il s’est alors posé un problème. Les fonctions écrites pour le réseau de neurones ont été développées pour retourner un char après une prédiction. Or, il se trouve que les caractères accentués sont des caractères Unicodes, représentés par deux char à la suite.
+Deux solutions s’offraient alors à nous:
+Re-écrire toutes les fonctions pour ne renvoyer plus un char mais deux
+Trouver un moyen de représenter les caractères Unicodes par un seul char.
+
+C’est pour cette deuxième solution que nous avons opté.
+Il existe des normes ASCII étendues, qui permettent de représenter d’autres caractères par des valeurs comprises entre 128 et 256. Or, un objet char pouvant représenter 256 valeurs (-128 à 127 en signé, ou 0 à 255 en non signé), il est donc tout à fait possible pour un char de représenter un caractères ASCII étendu.
+La majorité du réseau de neurones ayant été développée sous macOS, nous avons donc utilisé la norme ASCII étendue Apple.
+
+\begin{center}
+	\includegraphics[scale=0.5]{tableauXAscii}
+\end{center}
+
+Nous nous somme finalement retrouvés avec 111 symboles à reconnaitre dans notre réseau de neurones.
+Mais, même après plusieurs semaines/mois d’entrainement, les résultats n’étaient pas satisfaisants.
+Nous sommes alors parti sur une toute autre stratégie: nous sommes revenus sur notre ancien réseau, qui ne reconnaissait pas les caractères accentués, et à côté, nous avons développé un autre réseau, dont le but est de reconnaitre quel type d’accent possède un caractère (aigu, grave, trémas, circonflexe, cédille, ou pas d’accent).
+Ce réseau n’ayant que 5 classes, et par conséquent une couche intermédiaire contenant moins de neurones, l’apprentissage a été très rapide: en moins de 5 minutes, on a eu près de 98\% de réussite pour un training-set de 60000 images.
+
+\paragraph{}Cette stratégie a pour avantage d’être très fiable, mais a pour inconvénient majeur que l’on doit effectuer 2 prédictions pour chaque caractère (une pour déterminer le caractère, et une pour déterminer l’accent) au lieu de une, ce qui augmente le temps de traitement d’un caractère.
+
+\paragraph{}En plus de cela, nous avons remarqué que certaines lettres se ressemblaient en majuscules et en minuscules, et sont même pour nous difficile à différencier. Ces lettres sont les suivantes: CIKOPSUVWXYZ. Ces lettres provoquant des erreurs, nous avons décidé sur le modèle du catalogue MNIST, de retirer leur majuscules, pour ne les apprendre que en minuscules. La cohérence sera assurée par la suite par le correcteur orthographique de Nathan.
+
+
 \subsection{Fonctionnement}
 
 \subsubsection{Scripting}
-
-\paragraph{}Une fois que j'étais sûr que le réseau était bien en train d'apprendre, je me suis chargé du scripting, c'est à dire de créer des structs et des fonctions qui permettent d'interagir avec le réseau plutôt que de tout avoir dans un même fichier .c.
+\paragraph{}Une fois que j\\'étais sûr que le réseau était bien en train d\'apprendre, je me suis chargé du scripting, c\'est à dire de créer des structs et des fonctions qui permettent d\'interagir avec le réseau plutôt que de tout avoir dans un même fichier .c.
 
 Le réseau de neurones tourne donc autour de deux structs: 
 
 \begin{itemize}
-	\item MMImage est une struct qui contient toutes les informations caractérisant une image pour une prédiction (dimensions de l'image, valeurs des pixels, …) ou le training (caractère que c'est vraiment, …)
-	\item MMNetwork, qui contient les informations à propos d'un réseau de neurones (nombre d'entrées, sorties, neurones, les poids et les biais)
+	\item MMImage est une struct qui contient toutes les informations caractérisant une image pour une prédiction (dimensions de l\'image, valeurs des pixels, …) ou le training (caractère que c\'est vraiment, …)
+	\item MMNetwork, qui contient les informations à propos d\'un réseau de neurones (nombre d\'entrées, sorties, neurones, les poids et les biais)
 \end{itemize}
 
-\paragraph{}J'ai implémenté des fonctions autour de ces structs, comme la fonction LoadDataset, qui permet de charger un dataset complet en mémoire, ou LoadImage qui permet de ne charger qu'une seule image.
+\paragraph{}J\'ai implémenté des fonctions autour de ces structs, comme la fonction LoadDataset, qui permet de charger un dataset complet en mémoire, ou LoadImage qui permet de ne charger qu\'une seule image.
 
 \begin{lstlisting}
 MMImage*		LoadDataset(int noChars, int imagesPerChar);
 MMImage		LoadImage(char* path);
+\end{lstlisting}
+
+\paragraph{}On peut libérer un dataset ou une MMImage de la mémoire avec les fonctions suivantes:
+\begin{lstlisting}
+void 		DestroyImage(MMImage* img);
+void 		DestroyDataset(long noImages, MMImage* dataset);
 \end{lstlisting}
 
 \paragraph{}Concernant MMNetwork, on peut initialiser un réseau grâce à la fonction InitNetwork.
@@ -830,7 +861,7 @@ void DestroyNetwork(struct MMNetwork n);
 
 \end{lstlisting}
 
-\paragraph{}L'avantage de MMNetwork, c'est qu'il peut être enregistré et chargé dans des fichiers. Cela sert notamment à sauvegarder l'état d'un réseau entraîné pour pouvoir le récupérer par la suite pour faire des prédictions.
+\paragraph{}L\'avantage de MMNetwork, c\'est qu\'il peut être enregistré et chargé dans des fichiers. Cela sert notamment à sauvegarder l\'état d\'un réseau entraîné pour pouvoir le récupérer par la suite pour faire des prédictions. L\'enregistrement et le chargement des MMNetwork est détaillé un peu plus bas.
 
 \begin{lstlisting}
 void SaveNetwork(MMNetwork n, char* path);
@@ -838,28 +869,97 @@ MMNetwork LoadNetwork(char* path);
 \end{lstlisting}
 
 
+
+\paragraph{}Le développement d’un réseau capable de reconnaitre les accents demande des classes différentes. Pour ne pas avoir à réécrire toutes les fonctions, pour prendre en compte les nouvelles classes dues aux accents, j’ai défini une nouvelle structure qui définit le contexte des classes. Cette structure est appelée MMContext. Une MMContext contient un tableau de char qui représente ces différentes classes, ainsi qu’un nombre (int), qui est le nombre de classes différentes.
+
+\begin{lstlisting}
+typedef struct MMContext {
+	char* classes;
+	int nb_classes;
+} MMContext;		
+\end{lstlisting}
+
+Si on peut définir nos propres contextes, les contextes pour les caractères et les accents sont déjà pré-définis. Ils sont nommés CHARS\_CTX et ACC\_CTX.\newline
+Les fonctions d’entrainement et de prédiction prennent donc en argument un pointeur vers la struct MMContext correspondant au contexte que l\'on veut utiliser.
+
+\paragraph{}En plus de cela, j’ai écrit une structure MMTrainingEnvironment, qui contient toutes les informations nécessaires à l’entraînement du réseau, à savoir:
+\begin{enumerate}
+	\item Une couche intermédiaire
+	\item Une couche de sortie
+	\item Le taux d’apprentissage (learning rate)
+	\item La taille du training-set
+\end{enumerate}
+
+On initialise un MMTrainingEnvironment grâce à la fonction TrainingEnvironment, à partir du réseau, de la taille du training set et du taux d’apprentissage.
+
+\begin{lstlisting}
+MMTrainingEnvironment TrainingEnvironment(MMNetwork network, int trainingSetSize, double learningRate);		
+\end{lstlisting}
+Pour libérer un MMTrainingEnvironment de la mémoire, on utilise:
+\begin{lstlisting}
+	void DestroyTrainingEnvironment(MMTrainingEnvironment* env);
+
+\end{lstlisting}
+
+
 \paragraph{}
-À partir de là, les bases sont posées pour effectuer n'importe quel type d'opérations avec les réseaux. En effet, une simple prédiction peut se faire avec la fonction Predict, qui à partir d'un MMImage et d'un MMNetwork, renvoie les valeurs de la couche de sortie du réseau, qui peut être analysée par la fonction OutputChar.
+Enfin, j’ai développé une fonction PredictionDetails, qui permet à partir d’une couche de sortie et d’un MMContext, d’obtenir des détails sur le résultat d’une prédiction. \newline
+PredictionDetails renvoie un pointeur vers un tableau de MMGuess, qui eux, contiennent les résultats par caractères (caractère, pourcentage, score).\newline
+Ainsi, \texttt{PredictionDetails(output, \&CHARS\_CTX)[0].character} sera le caractère étant le plus certain pour une prédiction.
+
+\paragraph{}
+À partir de là, les bases sont posées pour effectuer n\'importe quel type d\'opérations avec les réseaux. En effet, une simple prédiction peut se faire avec la fonction Predict, qui à partir d\'un MMImage et d\'un MMNetwork, renvoie les valeurs de la couche de sortie du réseau, qui peut être analysée par la fonction OutputChar.
 
 \begin{lstlisting}
 double*	Predict(MMNetwork network, const MMImage* image);
 char OutputChar(double* outputLayer, MMContext *ctx);
 \end{lstlisting}
 
-\textbf{Exemple de programme:}
 
-\paragraph{}Analysons maintenant le programme suivant, qui permet de prédire le caractère présent sur une image:
+
+
+\subsubsection{Enregistrement \& chargement des réseaux}
+
+
+Les réseaux sous la forme d’un MMNetwork peuvent être sauvegardées pour être re-chargées par la suite. Un réseau possède 3 paramètres qui définissent sa structure:
+\begin{itemize}
+	\item Le nombre de neurones d’entrée
+	\item Le nombre de neurones dans la couche intermédiaire (neurones cachés)
+	\item Le nombre de neurones de sortie
+\end{itemize}
+
+En plus de cela, les réseaux contiennent 4 listes de nombres:
+\begin{itemize}
+	\item Les biais des neurones cachés
+	\item Les biais des neurones de sortie
+	\item Les poids des transitions des neurones d’entrée vers les neurones cachés
+	\item Les poids des transitions des neurones cachés vers les neurones de sortie
+\end{itemize}
+
+
+Tout ces paramètres là doivent être enregistrés. Un réseau est donc enregistré sous la forme d’un dossier (ou répertoire), contenant 5 fichiers:
+\begin{itemize}
+	\item{params\hphantom{..}} contient les 3 paramètres décrits ci-dessus
+	\item{hbiases\hphantom{..}} contient les biais des neurones cachés
+	\item{obiases\hphantom{..}} contient les biais des neurones de sortie
+	\item{hweights\hphantom{}} contient les poids des transitions vers les neurones cachés
+	\item{oweights\hphantom{}} contient les poids des transitions vers les neurones de sortie
+\end{itemize}
+
+Chacun de ces fichiers contient des valeurs numériques, une par ligne.
+Au chargement des réseaux, ces lignes sont lues, et transformées en double ou int avec les fonctions strtod ou strtol.
+Dans certains réseaux, un fichier « training.tcsv » est aussi présent. Il ne contient pas d’informations sur le réseau mais apporte des statistiques sur l’état de l’entrainement. C’est un fichier en format cdv, qui contient pour chaque génération le taux de succès, le nombre d’échecs, et de succès. Il nous permettait de suivre graphiquement l'avancée de l'entrainement.
 
 \newpage
 
 \subsubsection{Compilation}
-Le réseau de neurones a été entièrement programmé sur l'IDE Xcode, et a été organisé en 3 projets:
+Le réseau de neurones a été entièrement programmé sur l\'IDE Xcode, et a été organisé en 3 projets:
 
 
 \begin{itemize}
 	\item La library "LambdaNeuralNetwork" qui contient les fonctions et les structs
-	\item Un programme "Learning" qui s'occupe de l'entraînement du réseau
-	\item Un programme "Analyze" qui va effectuer des prédiction sur un testing-set afin d'obtenir un taux de réussite sur un réseau après entraînement
+	\item Un programme "Learning" qui s\'occupe de l\'entraînement du réseau
+	\item Un programme "Analyze" qui va effectuer des prédiction sur un testing-set afin d\'obtenir un taux de réussite sur un réseau après entraînement
 \end{itemize}
 Un Makefile permet de compiler chacun de ces projets:
 
@@ -872,7 +972,7 @@ make all
 make clean
 \end{lstlisting}
 
-Effectuer un make pour compiler un des programme va créer l'exécutable correspondant dans un dossier bin.
+Effectuer un make pour compiler un des programme va créer l\'exécutable correspondant dans un dossier bin.
 Compiler la lib va créer un dossier lib contenant des fichiers .o. Le fichier principal LambdaNeuralNetwork.o est le lien vers tous les autres .o.
 
 Importer le fichier LambdaNeuralNetwork.o et include le fichier "include/LambdaNeuralNetwork.h" suffit pour pouvoir utiliser toutes les fonction et les structs.
@@ -880,10 +980,10 @@ Importer le fichier LambdaNeuralNetwork.o et include le fichier "include/LambdaN
 
 \subsubsection{Fonctionnement du réseau}
 
-\paragraph{}L'apprentissage du réseau utilise un algorithme du gardient stochastique (Stochastic Gradient Descent), une "variante" de la descente du gradient qui a pour particularité de l'utiliser qu'un seul élément (en l'occurrence une image) choisi aléatoirement du training-set à la fois pour modifier les poids. (Un algorithme standard de descente du gradient utilisera tous les éléments en même temps).
+\paragraph{}L\'apprentissage du réseau utilise un algorithme du gardient stochastique (Stochastic Gradient Descent), une "variante" de la descente du gradient qui a pour particularité de l\'utiliser qu\'un seul élément (en l\'occurrence une image) choisi aléatoirement du training-set à la fois pour modifier les poids. (Un algorithme standard de descente du gradient utilisera tous les éléments en même temps).
 
 \paragraph{}Voici un schéma simplifié de notre réseau.
-(Le réseau comporte 1024 entrées, 760 neurones cachés, et 78 sorties. Pour des raisons de clarté, je n'ai représenté que certains d'entre eux.)
+
 
 \begin{center}
 	\includegraphics[scale=0.5]{Neuron}
@@ -909,33 +1009,6 @@ $outputLayer_k=\sigma(outputLayerBias_k+\sum_i hiddenLayer_j\times outputWeight_
 
 \subsection{Finitions}
 
-\subsubsection{Caractères}
-
-Lors de la 1e soutenance, nous avions déjà un réseau capable de reconnaître les 26 majuscules, les 26 minuscules, les 10 chiffres et 16 symboles avec une précision relativement bonne. Or il nous manquait quelque chose d’essentiel dans la langue française: les caractères accentués.
-Nous avons donc décidé de simplement rajouter ces caractères à la liste. Mais il s’est alors posé un problème. Les fonctions écrites pour le réseau de neurones ont été développées pour retourner un char après une prédiction. Or, il se trouve que les caractères accentués sont des caractères Unicodes, représentés par deux char à la suite.
-Deux solutions s’offraient alors à nous:
-Re-écrire toutes les fonctions pour ne renvoyer plus un char mais deux
-Trouver un moyen de représenter les caractères Unicodes par un seul char.
-
-C’est pour cette deuxième solution que nous avons opté.
-Il existe des normes ASCII étendues, qui permettent de représenter d’autres caractères par des valeurs comprises entre 128 et 256. Or, un objet char pouvant représenter 256 valeurs (-128 à 127 en signé, ou 0 à 255 en non signé), il est donc tout à fait possible pour un char de représenter un caractères ASCII étendu.
-La majorité du réseau de neurones ayant été développée sous macOS, nous avons donc utilisé la norme ASCII étendue Apple.
-
-\begin{center}
-	\includegraphics[scale=0.5]{tableauXAscii}
-\end{center}
-
-Nous nous somme finalement retrouvés avec 111 symboles à reconnaitre dans notre réseau de neurones.
-Mais, même après plusieurs semaines/mois d’entrainement, les résultats n’étaient pas satisfaisants.
-Nous sommes alors parti sur une toute autre stratégie: nous sommes revenus sur notre ancien réseau, qui ne reconnaissait pas les caractères accentués, et à côté, nous avons développé un autre réseau, dont le but est de reconnaitre quel type d’accent possède un caractère (aigu, grave, trémas, circonflexe, cédille, ou pas d’accent).
-Ce réseau n’ayant que 5 classes, et par conséquent une couche intermédiaire contenant moins de neurones, l’apprentissage a été très rapide: en moins de 5 minutes, on a eu près de 98\% de réussite pour un training-set de 60000 images.
-
-\paragraph{}Cette stratégie a pour avantage d’être très fiable, mais a pour inconvénient majeur que l’on doit effectuer 2 prédictions pour chaque caractère (une pour déterminer le caractère, et une pour déterminer l’accent) au lieu de une, ce qui augmente le temps de traitement d’un caractère.
-
-\paragraph{}En plus de cela, nous avons remarqué que certaines lettres se ressemblaient en majuscules et en minuscules, et sont même pour nous difficile à différencier. Ces lettres sont les suivantes: CIKOPSUVWXYZ. Ces lettres provoquant des erreurs, nous avons décidé sur le modèle du catalogue MNIST, de retirer leur majuscules, pour ne les apprendre que en minuscules. La cohérence sera assurée par la suite par le correcteur orthographique de Nathan.
-
-
-
 \subsubsection{Bindings Python}
 Afin de pouvoir avoir un retour visuel de l’avancée des entraînements, et des résultats, j’ai écrit des Bindings, qui nous permettent d’utiliser tout le programme et la library en Python. Grâce à cela, je peux utiliser le programme avec un environnement Python interactif comme Jupyter et, par exemple, dessiner des graphiques en fonction des résultats.
 La plupart des fonctions et structures ont été bindées en Python, grâce au module ctypes.
@@ -955,7 +1028,7 @@ Nous avons testé un nombre important de paramètres pour l’entrainement des r
 \begin{center}
 	\includegraphics[scale=0.25]{learningRateGraph.png}
 	
-	Graphique montrant l'évolution du taux de succès en fonction des générations, avec différents taux d'apprentissage (L.Rate).
+	Graphique montrant l\'évolution du taux de succès en fonction des générations, avec différents taux d\'apprentissage (L.Rate).
 	
 	\begin{tabular}{r@{: }l r@{: }l}
 		Générations & 200 & Classes & 68 \\
@@ -971,7 +1044,7 @@ De même pour le nombre d’images du training-set, un nombre d’images trop fa
 \begin{center}
 	\includegraphics[scale=0.3]{hiddenNodesGraph.png}
 	
-	Graphique montrant l'évolution du taux de succès en fonction du nombre de neurones cachés.
+	Graphique montrant l\'évolution du taux de succès en fonction du nombre de neurones cachés.
 	
 	\begin{tabular}{r@{: }l r@{: }l}
 		Générations & 10 & Classes & 68 \\
@@ -990,16 +1063,16 @@ De même pour le nombre d’images du training-set, un nombre d’images trop fa
 \rhead{\textit{Correcteur orthographique}\vspace{0.25cm}}
 \section{Correcteur orthographique}
 
-\subsection{L'objectif}
+\subsection{L\'objectif}
 
 \paragraph{}Notre but ici était de pouvoir corriger les fautes dans un texte scanné par l’OCR et avoir une vérification supplémentaire de ce qu’a renvoyé le réseau de neurones.
 
 \subsection{La ponctuation}
 
 \paragraph{}
-Pour vérifier la ponctuation d’un texte nous avons opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s'il y a bien un espace après le point et une majuscule.
+Pour vérifier la ponctuation d’un texte nous avons opté pour un ensemble de fonction vérifiant chacune des règles particulières de la ponctuation de la langue française. Par exemple, le code ci-dessous vérifie s\'il y a bien un espace après le point et une majuscule.
 
-\paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d'être utilisé avec une main qui leur enverrait l’index des points dans un texte.
+\paragraph{}Il existe deux fonctions similaires respectivement pour les règles du point d’interrogation et celui d’exclamation. Ces fonctions ont pour vocation d\'être utilisé avec une main qui leur enverrait l’index des points dans un texte.
 
 \begin{lstlisting}
 char* dot_check (char* text_to_check, unsigned long start){
@@ -1074,7 +1147,7 @@ char* dot_check (char* text_to_check, unsigned long start){
 \end{lstlisting}
 
 \subsection{La distance de Levensthein}
-\paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l'heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l'utilisation d'une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
+\paragraph{}Pour concevoir un correcteur orthographique assez rapide pour être utilisé, nous avons dû faire de nombreuses recherches qui nous ont conduit vers la matrice de Levenshtein. Cette dernière est la méthode de calcul la plus rapide que nous avons pu implémenter et elle compare n’importe quel mot avec tous les autres du dictionnaire français (336 524 mots au total) en 0.5 seconde. A l\'heure actuelle, le correcteur orthographique est utilisable pour corriger 1 mot à la fois. Cependant, le temps actuel bien que déjà très bon n’est pas suffisamment faible pour pouvoir être utilisé à une plus grande échelle. Nous avons donc pour objectif pour la prochaine soutenance d’améliorer ce temps notamment par l’utilisation d’une table de hachage ou bien par la comparaison de triplet de caractères et pour pouvoir améliorer nos chances de réussite de correction d’un mot dans le même temps. La plus grande difficulté pour nous aura été de trouver un moyen de contourner l\'utilisation d\'une IA et d’apporter des solutions de correction viable sans l’utilisation des habitudes de l’utilisateur.
 
 
 \begin{center}
@@ -1097,15 +1170,15 @@ char* dot_check (char* text_to_check, unsigned long start){
 \rhead{\textit{Command parser et interface}\vspace{0.25cm}}
 \section{Command parser et interface}
 
-\subsection{L'objectif}
+\subsection{L\'objectif}
 
-\paragraph{}Notre but ici était de permettre l'utilisation de notre programme via des lignes de commandes dans un premier temps avant de réaliser l'interface graphique.
+\paragraph{}Notre but ici était de permettre l\'utilisation de notre programme via des lignes de commandes dans un premier temps avant de réaliser l\'interface graphique.
 
-\paragraph{}Nous avons donc ajouté 3 commandes qui permettent d'exécuter des fonctionnalités clés telles que nos filtres, notre niveau de gris ainsi que la segmentation d'une image quelconque.
+\paragraph{}Nous avons donc ajouté 3 commandes qui permettent d\'exécuter des fonctionnalités clés telles que nos filtres, notre niveau de gris ainsi que la segmentation d\'une image quelconque.
 
 \subsection{Grayscale}
 
-\paragraph{}C'est une fonction qui a besoin de 2 paramètres, le premier est le chemin de l'image d'origine et le deuxième le chemin auquel l'image en niveau de gris sera sauvegardée. Si les deux paramètres ne sont pas entrés ou bien que l'image entrée en paramètre ne peut être chargée, le programme s'arrête et renvoie un message d'erreur.
+\paragraph{}C\'est une fonction qui a besoin de 2 paramètres, le premier est le chemin de l\'image d\'origine et le deuxième le chemin auquel l\'image en niveau de gris sera sauvegardée. Si les deux paramètres ne sont pas entrés ou bien que l\'image entrée en paramètre ne peut être chargée, le programme s\'arrête et renvoie un message d\'erreur.
 
 \begin{lstlisting}
 
@@ -1125,13 +1198,13 @@ char* dot_check (char* text_to_check, unsigned long start){
 	}
 \end{lstlisting}
 
-\paragraph{}Ici, l'objectif est de couvrir tous les cas d'utilisation et d'éviter les crash de notre programme. Ainsi la fonction n'est appelée uniquement lorsque tous les paramètres sont entrés et la fonction grayscale renvoi un booléen indiquant qu'une erreur s'est produite pendant l'exécution et ainsi permet au parser de prévenir l'utilisateur.
+\paragraph{}Ici, l\'objectif est de couvrir tous les cas d\'utilisation et d\'éviter les crash de notre programme. Ainsi la fonction n\'est appelée uniquement lorsque tous les paramètres sont entrés et la fonction grayscale renvoi un booléen indiquant qu\'une erreur s\'est produite pendant l\'exécution et ainsi permet au parser de prévenir l\'utilisateur.
 
 \subsection{Filtres}
 
-\paragraph{}Il fallait ajouter la possibilité d'utiliser les filtres de notre programme. Pour cela, nous avons créé la fonction filters à notre programme. Celle ci applique une augmentation des contrastes de façon systématique et la reduction de bruits si le 3ème paramètre est vrai.
+\paragraph{}Il fallait ajouter la possibilité d\'utiliser les filtres de notre programme. Pour cela, nous avons créé la fonction filters à notre programme. Celle ci applique une augmentation des contrastes de façon systématique et la reduction de bruits si le 3ème paramètre est vrai.
 
-\paragraph{}De la même façon que les autres commandes, il ne faut pas faire crasher le programme de façon involontaire. C'est pour cela que nous avons fait en sorte de sortir des exceptions et d'arrêter le programme dès qu'une erreur peut se produire. Voici le code pour cette commande:
+\paragraph{}De la même façon que les autres commandes, il ne faut pas faire crasher le programme de façon involontaire. C\'est pour cela que nous avons fait en sorte de sortir des exceptions et d\'arrêter le programme dès qu\'une erreur peut se produire. Voici le code pour cette commande:
 
 \begin{lstlisting}
 	if (argc == 4 || argc == 5) {
@@ -1161,7 +1234,7 @@ char* dot_check (char* text_to_check, unsigned long start){
 \subsection{Segmentation}
 
 \subsubsection{Segmentation complète}
-La fonction de segmentation s'exécute avec simplement un paramètre: le chemin de l'image qu'il faut segmenter. Pour le reste, tout est géré via une architecture de dossiers et fichiers précise, l'utilisateur n'a pour l'instant pas le choix de ce dernier.
+La fonction de segmentation s\'exécute avec simplement un paramètre: le chemin de l\'image qu\'il faut segmenter. Pour le reste, tout est géré via une architecture de dossiers et fichiers précise, l\'utilisateur n\'a pour l\'instant pas le choix de ce dernier.
 
 \begin{lstlisting}
 	if (argc == 3) {
@@ -1178,9 +1251,9 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 	}
 \end{lstlisting}
 
-\subsubsection{Segmentation d'une ligne}
+\subsubsection{Segmentation d\'une ligne}
 
-\paragraph{}Notre programme gérant le multi-colonnes, nous avons dans l'idée d'ajouter une option pour que l'utilisateur indique si oui ou non l'image entrée est sur une colonne ou sur plusieurs. Voici la fonction qui gère ce cas:
+\paragraph{}Notre programme gérant le multi-colonnes, nous avons dans l\'idée d\'ajouter une option pour que l\'utilisateur indique si oui ou non l\'image entrée est sur une colonne ou sur plusieurs. Voici la fonction qui gère ce cas:
 
 \begin{lstlisting}
 	if (argc == 3) {
@@ -1202,15 +1275,15 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \end{lstlisting}
 
 
-\subsection{L'interface}
+\subsection{L\'interface}
 
-\paragraph{}Dans ce projet, il est nécessaire de créer une interface en C. Pour cela, nous avons décidé d'utiliser GTK et de construire l'interface via Glade qui permet de manipuler les éléments et les évènement de façon plus simple et plus intuitive. L'interface de glade ressemble à cela:
+\paragraph{}Dans ce projet, il est nécessaire de créer une interface en C. Pour cela, nous avons décidé d\'utiliser GTK et de construire l\'interface via Glade qui permet de manipuler les éléments et les évènement de façon plus simple et plus intuitive. L\'interface de glade ressemble à cela:
 
 \begin{center}
 	\includegraphics[scale=0.18]{glade_start_screen}
 \end{center}
 
-\paragraph{}Notre interface est donc générée grâce à ce logiciel, ainsi que les évènements directement. Voici notre vision de l'interface dans glade: 
+\paragraph{}Notre interface est donc générée grâce à ce logiciel, ainsi que les évènements directement. Voici notre vision de l\'interface dans glade: 
 
 \begin{center}
 	\includegraphics[scale=0.18]{glade_start_screen}
@@ -1227,9 +1300,9 @@ La fonction de segmentation s'exécute avec simplement un paramètre: le chemin 
 \end{center}
 
 
-\paragraph{}Cette interface répond donc bien au cahier des charges du projet. Elle permet d'utiliser toutes les fonctionnalités de notre programme et de récupérer le texte détecté sur une image entrée en paramètre.
+\paragraph{}Cette interface répond donc bien au cahier des charges du projet. Elle permet d\'utiliser toutes les fonctionnalités de notre programme et de récupérer le texte détecté sur une image entrée en paramètre.
 
-\paragraph{}Le petit point supplémentaire qu'il est intéressant de souligner est le fait que notre interface s'adapte au thème de l'OS (sous Linux et macOS). Sous Linux, la simple implémentation de la fenêtre comme nous l'avons fait suffit à l'adapter au thème de l'OS, sous macOS il a fallu y ajouter une feuille de style CSS pour configurer ce changement de couleur de la fenêtre. Voici un aperçu de notre interface en thème clair: 
+\paragraph{}Le petit point supplémentaire qu\'il est intéressant de souligner est le fait que notre interface s\'adapte au thème de l\'OS (sous Linux et macOS). Sous Linux, la simple implémentation de la fenêtre comme nous l\'avons fait suffit à l\'adapter au thème de l\'OS, sous macOS il a fallu y ajouter une feuille de style CSS pour configurer ce changement de couleur de la fenêtre. Voici un aperçu de notre interface en thème clair: 
 
 \begin{center}
 	\includegraphics[scale=0.25]{glade-light-theme}
@@ -1248,11 +1321,11 @@ Pour remédier à ce problème, nous avons utilisé la fonction \textit{gtk\_dis
 
 \subsection{Les filtres et le pré-traitement}
 
-\paragraph{}La première chose qui est exécutée au lancement du programme est la suppression de tous les dossiers et fichiers qui peuvent se trouver dans le dossier results à la racine de notre projet. C'est dans ce dernier que les fichiers temporaires nécessaires au fonctionnement de notre programme sont stockés. Après cela, nous nous assurons de pouvoir lancer notre programme sans avoir de problèmes de fichiers/dossiers déjà existants ou non vides.
+\paragraph{}La première chose qui est exécutée au lancement du programme est la suppression de tous les dossiers et fichiers qui peuvent se trouver dans le dossier results à la racine de notre projet. C\'est dans ce dernier que les fichiers temporaires nécessaires au fonctionnement de notre programme sont stockés. Après cela, nous nous assurons de pouvoir lancer notre programme sans avoir de problèmes de fichiers/dossiers déjà existants ou non vides.
 
-\paragraph{}La prochaine étape est l'application des filtres et des traitements sur l'image. Dans tous les cas nous effectuons un niveau de gris puis une binarisation de l'image entrée en paramètre. Cette dernière est stockée dans results/temp.bmp. C'est avec cette image que notre programme commencera. Avant de faire ces étapes nous effectuons les options sélectionnées à partir de notre interface: c'est à dire la réduction de bruit, l'augmentation des contrastes, la rotation automatique.
+\paragraph{}La prochaine étape est l\'application des filtres et des traitements sur l\'image. Dans tous les cas nous effectuons un niveau de gris puis une binarisation de l\'image entrée en paramètre. Cette dernière est stockée dans results/temp.bmp. C\'est avec cette image que notre programme commencera. Avant de faire ces étapes nous effectuons les options sélectionnées à partir de notre interface: c\'est à dire la réduction de bruit, l\'augmentation des contrastes, la rotation automatique.
 
-\subsection{De la segmentation jusqu'à la reconnaissance}
+\subsection{De la segmentation jusqu\'à la reconnaissance}
 
 \paragraph{yo}
 
@@ -1265,7 +1338,7 @@ Pour remédier à ce problème, nous avons utilisé la fonction \textit{gtk\_dis
 \section{Notre avancement et répartition des tâches}
 
 
-\paragraph{} Nous vous avons présenté les fonctionnalités de notre projet sans dire qui était en charge de ces dernières. Ce tableau est le récapitulatif global de nos tâches respectives pour la première soutenance, le X signifie que la personne a participé à cette tâche. L'objectif ici est de clarifier nos rôles, nous formons un seul groupe qui progresse et se donne des objectifs en fonction des possibilités et envies de chacun. Le nombre de tâches réalisées n'a pas de rapport avec l'investissement dans le projet car la complexité est différente.
+\paragraph{} Nous vous avons présenté les fonctionnalités de notre projet sans dire qui était en charge de ces dernières. Ce tableau est le récapitulatif global de nos tâches respectives pour la première soutenance, le X signifie que la personne a participé à cette tâche. L\'objectif ici est de clarifier nos rôles, nous formons un seul groupe qui progresse et se donne des objectifs en fonction des possibilités et envies de chacun. Le nombre de tâches réalisées n\'a pas de rapport avec l\'investissement dans le projet car la complexité est différente.
 
 \subsection{Répartition des tâches à la première soutenance}
 
@@ -1318,17 +1391,17 @@ Pour remédier à ce problème, nous avons utilisé la fonction \textit{gtk\_dis
 
 \subsection{Résumé de ce que nous avons fait}
 
-\paragraph{}Notre segmentation des caractères est plutôt efficace, il arrive parfois d'avoir 2 caractères qui sont détectés comme un seul mais cela est assez rare pour que la forme globale du texte reconnu soit intéressante. Nous avons ajouté une découpe des caractères en italique en reprenant notre méthode pour les caractères non italiques. Le seul problème est que nous n'avons pas pu faire une segmentation sur du texte qui est écrit en police classique puis en italique sur une autre ligne.
+\paragraph{}Notre segmentation des caractères est plutôt efficace, il arrive parfois d\'avoir 2 caractères qui sont détectés comme un seul mais cela est assez rare pour que la forme globale du texte reconnu soit intéressante. Nous avons ajouté une découpe des caractères en italique en reprenant notre méthode pour les caractères non italiques. Le seul problème est que nous n\'avons pas pu faire une segmentation sur du texte qui est écrit en police classique puis en italique sur une autre ligne.
 
-\paragraph{}Notre IA possède un nombre important de caractères et symboles reconnus, et notre temps d'entrainement (bien qu'important) n'est surement pas encore suffisant pour qu'elle soit parfaite. Le pourcentage d'erreur est faible mais il est encore assez important pour que l'on remarque des erreurs dans les mots.
+\paragraph{}Notre IA possède un nombre important de caractères et symboles reconnus, et notre temps d\'entrainement (bien qu\'important) n\'est surement pas encore suffisant pour qu\'elle soit parfaite. Le pourcentage d\'erreur est faible mais il est encore assez important pour que l\'on remarque des erreurs dans les mots.
 
-\paragraph{}Le correcteur orthographique était une partie bien compliquée de notre programme, celui-ci est fonctionnel mais manque de méthodes différentes pour choisir le bon mot à remplacer quand celui que nous détectons est erroné. La simple utilisation de la distance de Levenshtein à ses limites mais faire un premier essai d'un correcteur orthographique était intéressant.
+\paragraph{}Le correcteur orthographique était une partie bien compliquée de notre programme, celui-ci est fonctionnel mais manque de méthodes différentes pour choisir le bon mot à remplacer quand celui que nous détectons est erroné. La simple utilisation de la distance de Levenshtein à ses limites mais faire un premier essai d\'un correcteur orthographique était intéressant.
 
 
 \newpage
 \subsection{Utilisation du programme}
 
-\paragraph{}Il faut d'abord générer notre exécutable en entrant la commande make dans le dossier parent de notre projet. Le nom de l'exécutable est Lambda il faut donc utiliser ./Lambda pour commencer à utiliser notre programme. Voici la liste des fonctions qui sont utilisables:
+\paragraph{}Il faut d\'abord générer notre exécutable en entrant la commande make dans le dossier parent de notre projet. Le nom de l\'exécutable est Lambda il faut donc utiliser ./Lambda pour commencer à utiliser notre programme. Voici la liste des fonctions qui sont utilisables:
 
 \vspace*{0.5cm}
 
@@ -1379,11 +1452,11 @@ Pour remédier à ce problème, nous avons utilisé la fonction \textit{gtk\_dis
 \rhead{\textit{Conclusion}\vspace{0.25cm}}
 \section{Conclusion}
 
-\paragraph{}Ce projet est très motivant pour nous tous. Il nous permet d'expérimenter et de réfléchir à des problématiques intéressantes que nous prenons comme des défis. 
+\paragraph{}Ce projet est très motivant pour nous tous. Il nous permet d\'expérimenter et de réfléchir à des problématiques intéressantes que nous prenons comme des défis. 
 
 \paragraph{}Nous avons fortement aimé le sujet ainsi que le cahier des charges de ce projet, et nous nous sommes ainsi entièrement investis dans sa réalisation. Nous sommes toujours autant motivés par ce projet, malgré les hauts et les bas qui, pour les derniers, peuvent être vraiment complexes à solutionner.\\
 
-\paragraph{}Ce projet dans un langage qui nous était inconnu au début de l'année nous a apporté des connaissances, mais dans le même temps c'est un projet beaucoup trop court pour assimiler tout ce qui nous est demandé. Ainsi, nous en voyons aujourd'hui les limites avec des problèmes dans notre code qui proviennent de notions que nous n'avons pas eu le temps d'approfondir et nous n'arrivons pas à expliquer la provenance de ses dernières. C'est un point un peu frustrant sur le projet car avec du temps supplémentaire et notre expérience, nous serions près à reprendre une grande partie de notre code pour le simplifier et limiter les problèmes que nous avons aujourd'hui.
+\paragraph{}Ce projet dans un langage qui nous était inconnu au début de l\'année nous a apporté des connaissances, mais dans le même temps c\'est un projet beaucoup trop court pour assimiler tout ce qui nous est demandé. Ainsi, nous en voyons aujourd\'hui les limites avec des problèmes dans notre code qui proviennent de notions que nous n\'avons pas eu le temps d\'approfondir et nous n\'arrivons pas à expliquer la provenance de ses dernières. C\'est un point un peu frustrant sur le projet car avec du temps supplémentaire et notre expérience, nous serions près à reprendre une grande partie de notre code pour le simplifier et limiter les problèmes que nous avons aujourd\'hui.
 
 
 \newpage
