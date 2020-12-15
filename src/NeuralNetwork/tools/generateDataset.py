@@ -4,9 +4,9 @@
 global outputDir, noImagesPerChar, fonts_basepath, fonts, chars, imgSize, tolerence # Bouhh des globals cépabo
 
 
-outputDir = "/Users/maxime/datasetBIGUL3" # Dossier de sortie du dataset (ne doit pas déjà exister)
+outputDir = "/Users/maxime/datasetBIGRED3" # Dossier de sortie du dataset (ne doit pas déjà exister)
 
-noImagesPerChar = 5000 # Combien d'images par caractères
+noImagesPerChar = 10000 # Combien d'images par caractères
 
 fonts_basepath = "/System/Library/Fonts/" # Chemin ou sont les fonts sur l'ordi (par défaut pour macOS)
 
@@ -36,7 +36,7 @@ except ModuleNotFoundError:
 	
 # Ne pas changer les paramètres qui suivent
 
-chars = "ABDEFGHJLMNQRTabcdefghijklmnopqrstuvwxyz0123456789.!?-%()&$\":;/+*=@#" # Characters list and order (no lowercased)
+chars = "ABDEFGHJLMNQRTabcdefghijklmnopqrstuvwxyz0123456789.!?,:" # Characters list and order (no lowercased)
 mixed = "cikopsuvwxyz"
 vars = {'E':'ÉÈÊËE','I':'ÎÏI','A':'ÀÄÂA','O':'ÔÖO','U':'ÙÛÜU','C':'ÇC','Y':'ŸY','e':'éèêëe','i':'îïi','a':'àâäa','o':'ôöo','u':'ùûüu','c':'çc','y':'ÿy'}
 

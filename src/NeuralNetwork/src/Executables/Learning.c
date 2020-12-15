@@ -32,13 +32,13 @@ void TrainMain(
 	
 	int imgsPerChars = noImages;
 	
-	int numTrainingSets = ACC_CTX.nb_classes * imgsPerChars;
+	int numTrainingSets = CHARS_CTX.nb_classes * imgsPerChars;
 	
 	
 	
 	
 	// Load dataset
-	MMImage* dataSet = LoadDataset(datasetPath, ACC_CTX.nb_classes, imgsPerChars, &ACC_CTX);
+	MMImage* dataSet = LoadDataset(datasetPath, CHARS_CTX.nb_classes, imgsPerChars, &CHARS_CTX);
 	
 	
 	// Load/ Init network
@@ -48,8 +48,8 @@ void TrainMain(
 		
 		// Set network parameters
 		int numInputs = 1024;
-		int numHiddenNodes = 680; // 100
-		int numOutputs = ACC_CTX.nb_classes;
+		int numHiddenNodes = 204; // 100
+		int numOutputs = CHARS_CTX.nb_classes;
 		
 		// Init empty network
 		network = InitNetwork(numInputs, numHiddenNodes, numOutputs);
@@ -68,7 +68,7 @@ void TrainMain(
 		printf("Network loaded\n");
 	}
 	
-	MMTrainingEnvironment env = TrainingEnvironment(network, numTrainingSets, 0.15);
+	MMTrainingEnvironment env = TrainingEnvironment(network, numTrainingSets, 0.5);
 		
 	
 	printf("\n");
@@ -79,7 +79,7 @@ void TrainMain(
 	int gen = 0;
 	while (1) {
 		
-		MMTrainingStats stats = Train(network, dataSet, env, &ACC_CTX);
+		MMTrainingStats stats = Train(network, dataSet, env, &CHARS_CTX);
 		
 		SaveNetwork(network, networkPath);
 		
@@ -113,7 +113,7 @@ int main(int argc, const char * argv[]) {
 	char* networkPath = NETWORK_PATH;
 	char* datasetPath = DATASET_PATH;
 	int newNetwork = NEW_NETWORK;
-	int noImages = 3000;
+	int noImages = 10000;
 #else
 	if (argc < 4) { // 3 args minimum (+ executable path)
 		errx(1, "Not enough arguments\n\nUsage:\n%s networkPath datasetPath noImages --new-network", argv[0]);

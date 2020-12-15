@@ -5,3 +5,5 @@
 #include "Structs.h"
 #include "Dataset.h"
 #include "Predict.h"
+#include "Context.h"
+#include "ContextDef.h"

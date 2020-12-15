@@ -15,7 +15,7 @@
 int main(int argc, const char * argv[]) {
 	// insert code here...
 	
-	MMNetwork n = LoadNetwork("/Users/maxime/IAPYCHAR9/");
+	MMNetwork n = LoadNetwork("/Users/maxime/IAPYCHARRED/");
 	for (int i = 0; i < 23; i++) {
 		char path[70];
 		sprintf(path, "/Users/maxime/Documents/resultChar/%d.bmp", i);

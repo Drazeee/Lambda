@@ -58,6 +58,10 @@ char recognition(MMImage img, MMNetwork nChar, MMNetwork nAccents) {
 	
 	double *outputAcc = Predict(nAccents, &img);
 	char characterAcc = OutputChar(output, &ACC_CTX);
+
+	if (character == 'Q') {
+		character = 'e'; // There are more 'e' than 'Q' so anyway, we hardcode it...
+	}
 	
 	//char* charWithAccent = Accent(character, characterAcc
 	

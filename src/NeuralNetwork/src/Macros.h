@@ -22,8 +22,8 @@
 
 
 #ifdef XCODE_MBP
-#	define DATASET_PATH "/Users/maxime/datasetBIGUL2"
-#	define NETWORK_PATH "/Users/maxime/IAPYCHAR/"
+#	define DATASET_PATH "/Users/maxime/datasetBIGUL30"
+#	define NETWORK_PATH "/Users/maxime/IASM/"
 #	define NEW_NETWORK 1
 #endif
 

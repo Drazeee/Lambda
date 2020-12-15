@@ -55,6 +55,9 @@ Uint32 GetPixel(SDL_Surface *surf, int x, int y)
  * Used as activation function for the neural network.
  */
 double Sigmoid(double Sum) {
+
+    //SilentUnusedWarnings(); // Just silent those warnings...
+
     return (1.0/(1.0 + exp(-Sum)));
 }
 
@@ -72,6 +75,11 @@ double Sigmoid(double Sum) {
 double dSigmoid(double a) {
     //double a = Sigmoid(x);
 	return a * (1.0 - a);
+}
+
+
+double Softmax(double a, double sum) {
+	return a / sum;
 }
 
 
@@ -304,6 +312,4 @@ char* Accent(char character, char accent) {
 	
 }
 
-//char* GetCharacters() {
-//	return ORDER;
-//}
+
