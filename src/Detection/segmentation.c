@@ -258,8 +258,8 @@ int paragraphsCount = 0;
  * 		- isLineSegmentation : true if we are on a line
  */
 
-char *removeLines(SDL_Surface *img, char *directory, 
-	int isLineSegmentation, int isItalic) 
+void removeLines(SDL_Surface *img, char *directory, 
+	int isLineSegmentation, int isItalic, char *result) 
 {
     Uint32 pixel;
     Uint8 r;
@@ -303,12 +303,11 @@ char *removeLines(SDL_Surface *img, char *directory,
         }
     }
     
-    char *allLines = "";
     int currentLine = 0;
     char path[40];
+    char newline = '\n';
     mkdir(directory, 0777);
 
-    char *line = "";
     for (int i = 0; i < pos; i+=2) {
         int height = positions[i + 1] - positions[i] - 1;
         SDL_Surface *newImage;
@@ -327,31 +326,20 @@ char *removeLines(SDL_Surface *img, char *directory,
         snprintf(path, 40, "%s/%d.bmp", directory, currentLine);
         SDL_SaveBMP(newImage, path);
         if (isLineSegmentation) {
-			line = characterSegmentationWithoutLoad(newImage, 
-				"results/tempChar", 0, isItalic);
-			strcat(line, "\n");
-
-			char *result = malloc(strlen(allLines) + strlen(line) + 1);
-			strcpy(result, allLines);
-			strcat(result, line);
-			allLines = result;
-			free(line);
+			characterSegmentationWithoutLoad(newImage, 
+				"results/tempChar", 0, isItalic, result);
+			strncat(result, &newline, 1);
 		}
 		else {
-			line = lineSegmentationWithoutLoad(newImage, 
-				"result/tempLine", 0, isItalic);
-			strcat(line, "\n\n");
-			
-			char *result = malloc(strlen(allLines) + strlen(line) + 1);
-			strcpy(result, allLines);
-			strcat(result, line);
-			allLines = result;
-			free(line);
+			lineSegmentationWithoutLoad(newImage, 
+				"result/tempLine", 0, isItalic, result);
+			strncat(result, &newline, 1);
+            strncat(result, &newline, 1);
 		}
         currentLine++;
     }
     //free(line);
-    return allLines;
+    return;
 }
 
 /*
@@ -365,7 +353,9 @@ char *removeLines(SDL_Surface *img, char *directory,
  *      - *allPos : the array containing every begining and ending indexes
  */
 
-char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
+char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos,
+    char *result)
+{
     Uint32 pixel;
     Uint8 r;
     Uint8 g;
@@ -495,10 +485,9 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos){
         // SDL_FreeSurface(lastImage);
         // SDL_FreeSurface(newImage);
     }
-    char *result;
     int *wordPos;
     wordPos = wordPositions(img);
-    result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
+    lineRecognition(directory, paragraphsCount, allPos, wordPos, result);
     paragraphsCount = 0;
     free(allPos);
     free(wordPos);
@@ -685,10 +674,10 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos)
 		// SDL_FreeSurface(lastImage);
 		// SDL_FreeSurface(newImage);
     }
-    char *result;
     int *wordPos;
     wordPos = wordPositionsItalic(img);
-    result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
+    //result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
+    char *result = malloc(5 * sizeof(char));
     paragraphsCount = 0;
     free(allPos);
     free(wordPos);

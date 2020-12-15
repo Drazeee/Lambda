@@ -1,53 +1,54 @@
 #include "recognition.h"
 
-char filterChar(char c) {
-	if (c > -1) {
-		return c;
+void filterChar(char *c) {
+	if (*c > -1) {
+		return;
 	}
-	switch(c){
-		case -120:
-		case -119:
-		case -112:
-			return 'e';
-		case -113:
-		case -114:
-		case -111:
-		case -84:
-			return 'a';
-		case -108:
-		case -107:
-			return 'i';
-		case -103:
-		case -102:
-			return 'o';
-		case -99:
-		case -98:
-		case -97:
-			return 'u';
-		case -53:
-		case -27:
-		case -128:
-			return 'E';
-		case -125:
-		case -23:
-		case -26:
-		case -24:
-			return 'A';
-		case -20:
-		case -21:
-			return 'I';
-		case -17:
-		case -123:
-			return 'O';
-		case -12:
-		case -122:
-		case -13:
-			return 'U';
-		case -15:
-		case -126:
-			return 'C';
+	switch(*c){
+		// case -120:
+		// case -119:
+		// case -112:
+		// 	return 'e';
+		// case -113:
+		// case -114:
+		// case -111:
+		// case -84:
+		// 	return 'a';
+		// case -108:
+		// case -107:
+		// 	return 'i';
+		// case -103:
+		// case -102:
+		// 	return 'o';
+		// case -99:
+		// case -98:
+		// case -97:
+		// 	return 'u';
+		// case -53:
+		// case -27:
+		// case -128:
+		// 	return 'E';
+		// case -125:
+		// case -23:
+		// case -26:
+		// case -24:
+		// 	return 'A';
+		// case -20:
+		// case -21:
+		// 	return 'I';
+		// case -17:
+		// case -123:
+		// 	return 'O';
+		// case -12:
+		// case -122:
+		// case -13:
+		// 	return 'U';
+		// case -15:
+		// case -126:
+		// 	return 'C';
 		default:
-			return '_';
+			*c = ' ';
+			return;
 	}
 }
 
@@ -70,12 +71,12 @@ char recognition(MMImage img, MMNetwork nChar, MMNetwork nAccents) {
 
 
 char *lineRecognition(char *directory, int size, 
-	int *allPos, int *wordsPositions)
+	int *allPos, int *wordsPositions, char *result)
 {
 	DIR *d;
 	struct dirent *dir;
 	d = opendir(directory);
-	char *result = malloc(150 * (sizeof(char)));
+	char space = ' ';
 	int charactersNumber = 0; // total number of chars in the DIR
 	int len = strlen(directory);
 	MMNetwork networkChar = LoadNetwork("src/NeuralNetwork/IA/IA-Char/");
@@ -99,12 +100,13 @@ char *lineRecognition(char *directory, int size,
 		char ch = recognition(mmimg, networkChar, networkAcc);
 		if (allPos[i * 2] > wordsPositions[wordIndex] 
 		&& wordsPositions[wordIndex] != -42) {
-			result[i + wordIndex] = ' ';
+			strncat(result, &space, 1);
 			wordIndex++;
 		}
-		ch = filterChar(ch);
-		result[i + wordIndex] = ch;
+		filterChar(&ch);
+		strncat(result, &ch, 1);
 	}
-	result[charactersNumber + wordIndex] = 0;
+	char end = '\0';
+	strncat(result, &end, 1);
 	return result;
 }

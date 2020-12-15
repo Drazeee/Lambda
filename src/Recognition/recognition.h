@@ -10,6 +10,6 @@
 
 char recognition(MMImage img, MMNetwork nChar, MMNetwork nAccents);
 char *lineRecognition(char *directory, int size, 
-	int *allPos, int *wordsPositions);
+	int *allPos, int *wordsPositions, char *result);
 
 #endif

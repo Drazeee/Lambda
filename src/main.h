@@ -17,13 +17,14 @@
 
 
 int main(int argc, char **argv);
-char *characterSegmentation(char *path, char *destination, int print);
+char *characterSegmentation(char *path, char *destination, int print,
+	char *result);
 char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault, 
-	char *destination, int print, int isItalic);
+	char *destination, int print, int isItalic, char* result);
 char *lineSegmentationWithoutLoad(SDL_Surface *imgDefault, 
-	char *destination, int print, int isItalic);
+	char *destination, int print, int isItalic, char* result);
 char *paragraphSegmentation(char *path, char *destination, 
-	int print, int isItalic);
+	int print, int isItalic, char* result);
 void array_print(int *begin);
 int remove_directory(const char *path);
 
