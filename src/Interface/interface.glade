@@ -132,6 +132,9 @@
                 <property name="receives-default">False</property>
                 <property name="draw-indicator">True</property>
                 <signal name="clicked" handler="toggleRotation" swapped="no"/>
+		<style>
+                  <class name="checkbox"/>
+                </style>
               </object>
               <packing>
                 <property name="left-attach">0</property>
