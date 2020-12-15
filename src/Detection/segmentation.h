@@ -22,7 +22,8 @@ void removeLines(SDL_Surface *img, char *directory,
 	int isLineSegmentation, int isItalic, char *result);
 char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos, 
 	char *result);
-void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos);
+void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos,
+	char *result);
 void removeLinesForWords(SDL_Surface *img, char *directory);
 int *wordPositionsItalic(SDL_Surface *img);
 int *wordPositions(SDL_Surface *img);

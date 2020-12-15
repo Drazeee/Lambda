@@ -506,7 +506,8 @@ char *removeLinesForCharacters(SDL_Surface *img, char *directory, int *allPos,
  *      - *allPos : the array containing every begining and ending indexes
  */
 
-void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos)
+void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos,
+    char *result)
 {
     unsigned int mod = 5;
     Uint32 pixel;
@@ -670,14 +671,10 @@ void *removeLinesForItalicChars(SDL_Surface *img, char *directory, int *allPos)
         snprintf(path, 300, "%s/%d.bmp", directory, paragraphsCount);
         paragraphsCount++;
         SDL_SaveBMP(lastImage, path);
-        // SDL_FreeSurface(newImageSmall);
-		// SDL_FreeSurface(lastImage);
-		// SDL_FreeSurface(newImage);
     }
     int *wordPos;
     wordPos = wordPositionsItalic(img);
-    //result = lineRecognition(directory, paragraphsCount, allPos, wordPos);
-    char *result = malloc(5 * sizeof(char));
+    lineRecognition(directory, paragraphsCount, allPos, wordPos, result);
     paragraphsCount = 0;
     free(allPos);
     free(wordPos);

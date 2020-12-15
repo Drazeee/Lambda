@@ -185,7 +185,7 @@ char *characterSegmentationWithoutLoad(SDL_Surface *imgDefault,
 	}
 	else {
 		allPos = cutCharactersItalic(imgDefault, destination);
-		result = removeLinesForItalicChars(imgDefault, destination, allPos);
+		removeLinesForItalicChars(imgDefault, destination, allPos, result);
 	}
 	if (print)
 	{
@@ -435,11 +435,13 @@ int main(int argc, char **argv) {
 			}
 			return 1;
 		}
+		char *result = malloc(5000 * 5000 * sizeof(char));
 		int *allPos = cutCharactersItalic(imgDefault, destination);
 		array_print(allPos);
-		removeLinesForItalicChars(imgDefault, destination, allPos);
+		removeLinesForItalicChars(imgDefault, destination, allPos, result);
 		if (1)
 		{
+			printf("%s\n", result);
 			printf("\33[0;32mLambda: segmentation ended successfully.\n");
 			printf("The result is here: \"%s\"\033[0m\n\n", destination);
 		}
