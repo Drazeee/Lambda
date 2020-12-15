@@ -105,7 +105,10 @@ char *lineRecognition(char *directory, int size,
 		}
 		filterChar(&ch);
 		strncat(result, &ch, 1);
+
 	}
+	DestroyNetwork(&networkChar);
+	DestroyNetwork(&networkAcc);
 	char end = '\0';
 	strncat(result, &end, 1);
 	return result;

@@ -317,7 +317,7 @@ void on_destroy()
 
 void file_set (GtkFileChooser *file_chooser, gpointer data)
 {
-    filename = gtk_file_chooser_get_preview_filename (file_chooser);
+    filename = gtk_file_chooser_get_filename (file_chooser);
     img = SDL_LoadBMP(filename);
     if (!img) {
         gtk_label_set_text(GTK_LABEL(widgets->errorImageLabel),
